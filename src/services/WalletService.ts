@@ -6,7 +6,7 @@ import {
   BrowserWindowMessageConnection,
 } from "@aeternity/aepp-sdk";
 
-const Sdk = new AeSdkAepp({
+export const Sdk = new AeSdkAepp({
   name: "Bridge and Swap App",
   nodes: [
     {
@@ -15,9 +15,15 @@ const Sdk = new AeSdkAepp({
     },
   ],
   onNetworkChange: async ({ networkId }) => {
-    const [{ name }] = (await Sdk.getNodesInPool()).filter(
-      (node) => node.nodeNetworkId === networkId
+    console.log(await Sdk.getNodesInPool(), networkId);
+    const currentNetwork = (await Sdk.getNodesInPool()).filter(
+        (node) => node.nodeNetworkId === networkId
     );
+    if(!currentNetwork.length) {
+      alert(`Unsupported network "${networkId}". Please switch to aeternity mainnet.`);
+      return;
+    }
+    const [{ name }] = currentNetwork;
     Sdk.selectNode(name);
     console.log("setNetworkId", networkId);
   },
@@ -25,6 +31,7 @@ const Sdk = new AeSdkAepp({
   onDisconnect: () => console.log("Aepp is disconnected"),
 });
 
+// TODO rewrite this to use the new SDK https://github.com/aeternity/aepp-sdk-js/blob/2d6ec8138af448204271b10c7517ede96f0ef998/examples/browser/aepp/src/components/ConnectFrame.vue#L61
 export default class WalletService {
   static async connectMetamask() {
     try {

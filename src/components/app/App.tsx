@@ -12,6 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import BridgeService from "../../services/BridgeService";
+import DexService from "../../services/DexService";
+import WebsocketService from "../../services/WebsocketService";
+
 
 function App() {
   const effectRan = useRef(false);
@@ -45,12 +48,16 @@ function App() {
 
       WalletService.connectMetamask().then(handleConnectMetamask);
       WalletService.connectSuperHero().then(setAeternityAddress);
+
+      WebsocketService.init();
     }
 
     return () => {
       effectRan.current = true;
     };
   }, [handleConnectMetamask]);
+
+
 
   const areWalletsConnected = ethereumAddress && aeternityAddress;
   const exchangeRatio = prices ? prices.ETH / prices.AE : null;
@@ -60,10 +67,16 @@ function App() {
       return;
     }
 
-    await BridgeService.bridgeEthToAe(parseFloat(ethAmount), aeternityAddress);
+    const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
+
+    // await BridgeService.bridgeEthToAe(parseFloat(ethAmount), aeternityAddress);
     // Bridge completed successfully
     // Wait for a moment to let the bridge finalize
-    // Then you can swap AE tokens
+    // await WebsocketService.waitForBridgeToComplete(amountInWei, aeternityAddress);
+    // console.log("bridge completed successfully");
+    // Then we can swap AE tokens
+    await DexService.swapAeEthToAE(amountInWei, aeternityAddress);
+
   }, [ethAmount, aeternityAddress]);
 
   return (
