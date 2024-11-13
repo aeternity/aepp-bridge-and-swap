@@ -9,23 +9,20 @@ const ROUTER_MAINNET = 'ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3';
 
 
 class DexService {
-    static async swapAeEthToAE(amountWei: bigint, aeAddress: string): Promise<void> {
 
-        console.log(routerACI);
-
-        const routerContract = await Sdk.initializeContract({
-            aci: routerACI,
-            address: ROUTER_MAINNET,
-        });
-
-        // get allowance
+    static async changeAllowance(amountWei: bigint): Promise<void> {
         const tokenContract = await Sdk.initializeContract({
             aci: aex9ACI,
             address: AE_ETH_MAINNET,
         });
-        // debugger;
-        await tokenContract.create_allowance(ROUTER_MAINNET.replace('ct_', 'ak_'), (amountWei * 2n).toString()) // double the amount so we can be sure
-        // await tokenContract.$call('create_allowance', [ROUTER_MAINNET.replace('ct_', 'ak_'), (amountWei * 2n).toString()]) // double the amount so we can be sure
+        await tokenContract.change_allowance(ROUTER_MAINNET.replace('ct_', 'ak_'), (amountWei * 2n).toString()) // double the amount so we can be sure
+    }
+
+    static async swapAeEthToAE(amountWei: bigint, aeAddress: string): Promise<void> {
+        const routerContract = await Sdk.initializeContract({
+            aci: routerACI,
+            address: ROUTER_MAINNET,
+        });
 
         // debugger;
         // do swap

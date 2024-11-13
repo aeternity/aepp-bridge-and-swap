@@ -71,9 +71,14 @@ function App() {
 
     // await BridgeService.bridgeEthToAe(parseFloat(ethAmount), aeternityAddress);
     // Bridge completed successfully
+
     // Wait for a moment to let the bridge finalize
     // await WebsocketService.waitForBridgeToComplete(amountInWei, aeternityAddress);
     // console.log("bridge completed successfully");
+
+    // Change allowance
+    await DexService.changeAllowance(amountInWei);
+
     // Then we can swap AE tokens
     await DexService.swapAeEthToAE(amountInWei, aeternityAddress);
 

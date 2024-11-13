@@ -1,9 +1,9 @@
 import {
-  Node,
   AeSdkAepp,
-  walletDetector,
-  SUBSCRIPTION_TYPES,
   BrowserWindowMessageConnection,
+  Node,
+  SUBSCRIPTION_TYPES,
+  walletDetector,
 } from "@aeternity/aepp-sdk";
 
 export const Sdk = new AeSdkAepp({
@@ -23,6 +23,7 @@ export const Sdk = new AeSdkAepp({
       alert(`Unsupported network "${networkId}". Please switch to aeternity mainnet.`);
       return;
     }
+
     const [{ name }] = currentNetwork;
     Sdk.selectNode(name);
     console.log("setNetworkId", networkId);
