@@ -2,6 +2,7 @@ import routerACI from "dex-contracts-v2/build/AedexV2Router.aci.json";
 import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
 
 import { Sdk } from "./WalletService";
+import { payForTx } from "../app/actions/payForTx";
 
 const WAE_MAINNET = "ct_J3zBY8xxjsRr3QojETNw48Eb38fjvEuJKkQ6KzECvubvEcvCa";
 const AE_ETH_MAINNET = "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh";
@@ -13,6 +14,7 @@ class DexService {
       aci: aex9ACI,
       address: AE_ETH_MAINNET,
     });
+
     await tokenContract.change_allowance(
       ROUTER_MAINNET.replace("ct_", "ak_"),
       (amountWei * 2n).toString(),
@@ -22,16 +24,19 @@ class DexService {
   static async swapAeEthToAE(
     amountWei: bigint,
     aeAddress: string,
-  ): Promise<void> {
+  ): Promise<[bigint, bigint]> {
     const routerContract = await Sdk.initializeContract({
       aci: routerACI,
       address: ROUTER_MAINNET,
     });
 
+    const a = await payForTx("test");
+    console.log(a);
+
     // debugger;
     // do swapw
     const aHourFromNow = Date.now() + 60 * 60 * 1000;
-    await routerContract.swap_exact_tokens_for_ae(
+    const result = await routerContract.swap_exact_tokens_for_ae(
       1,
       0, // min amount out TODO make this save
       // [ aeEth, wAE] // path
@@ -39,6 +44,7 @@ class DexService {
       aeAddress,
       aHourFromNow, // deadline is 1 hour
     );
+    return result.decodedResult as [bigint, bigint];
   }
 }
 

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import TextInput from "../base/TextInput";
-import WalletService from "../../services/WalletService";
-import TokenPriceService from "../../services/TokenPriceService";
+import TextInput from "./components/TextInput";
+import WalletService from "./services/WalletService";
+import TokenPriceService from "./services/TokenPriceService";
 import {
   Box,
   Button,
@@ -14,9 +14,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-import BridgeService from "../../services/BridgeService";
-import DexService from "../../services/DexService";
-import WebsocketService from "../../services/WebsocketService";
+import BridgeService from "./services/BridgeService";
+import DexService from "./services/DexService";
+import WebsocketService from "./services/WebsocketService";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
@@ -29,6 +29,10 @@ function App() {
   const [ethereumAddress, setEthereumAddress] = useState("");
   const [aeternityAddress, setAeternityAddress] = useState("");
   const [activeStep, setActiveStep] = useState(0);
+  const [swapResult, setSwapResult] = useState({
+    aeEthIn: BigInt(0),
+    aeOut: BigInt(0),
+  });
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
@@ -83,17 +87,21 @@ function App() {
     // Wait for a moment to let the bridge finalize
     // await WebsocketService.waitForBridgeToComplete(amountInWei, aeternityAddress);
     // console.log("bridge completed successfully");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     setActiveStep(2);
 
     // Change allowance
-    await DexService.changeAllowance(amountInWei);
+    // await DexService.changeAllowance(amountInWei);
 
     setActiveStep(3);
 
     // Then we can swap AE tokens
-    await DexService.swapAeEthToAE(amountInWei, aeternityAddress);
+    const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
+      amountInWei,
+      aeternityAddress,
+    );
+    setSwapResult({ aeOut: aeOut, aeEthIn: aeEthIn });
 
     setActiveStep(4);
   }, [ethAmount, aeternityAddress]);
@@ -118,24 +126,22 @@ function App() {
           </Typography>
         </Grid>
         <Grid size={6}>
-          <Typography textAlign={"left"}>
-            <Typography fontWeight={"normal"} variant="h5">
-              Aeternity Address:
-            </Typography>
-            {aeternityAddress || "Waiting for wallet connection..."}
-            <br />
-            <br />
-            <Typography fontWeight={"normal"} variant="h5">
-              Ethereum Address:
-            </Typography>
-            {ethereumAddress || "Waiting for wallet connection..."}
-            <br />
-            {ethereumAddress && (
-              <Typography fontWeight={"normal"}>
-                Balance: {ethBalance} ETH
-              </Typography>
-            )}
+          <Typography fontWeight={"normal"} variant="h5">
+            Aeternity Address:
           </Typography>
+          {aeternityAddress || "Waiting for wallet connection..."}
+          <br />
+          <br />
+          <Typography fontWeight={"normal"} variant="h5">
+            Ethereum Address:
+          </Typography>
+          {ethereumAddress || "Waiting for wallet connection..."}
+          <br />
+          {ethereumAddress && (
+            <Typography fontWeight={"normal"}>
+              Balance: {ethBalance} ETH
+            </Typography>
+          )}
         </Grid>
         <Grid size={6}>
           {areWalletsConnected && (
@@ -262,10 +268,8 @@ function App() {
             <Divider sx={{ background: "white", marginY: 3 }} />
             <Typography textAlign={"center"} variant="h6">
               You swapped {ethAmount} ETH to ~
-              {exchangeRatio
-                ? (parseFloat(ethAmount) * exchangeRatio).toFixed(0)
-                : 0}{" "}
-              AE tokens successfully!
+              {exchangeRatio ? Number(swapResult.aeOut) / 10 ** 18 : 0} AE
+              tokens successfully!
               <br />
               <Button onClick={() => setActiveStep(0)}>Swap again</Button>
             </Typography>

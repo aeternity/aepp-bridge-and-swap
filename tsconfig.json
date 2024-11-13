@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,8 +17,24 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve",
+    "incremental": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["src", "src/global.d.ts"],
-  "files": ["src/global.d.ts"]
+  "include": [
+    "src",
+    "src/global.d.ts",
+    "./build/types/**/*.ts"
+  ],
+  "files": [
+    "src/global.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
