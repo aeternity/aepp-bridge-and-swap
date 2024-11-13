@@ -17,10 +17,12 @@ export const Sdk = new AeSdkAepp({
   onNetworkChange: async ({ networkId }) => {
     console.log(await Sdk.getNodesInPool(), networkId);
     const currentNetwork = (await Sdk.getNodesInPool()).filter(
-        (node) => node.nodeNetworkId === networkId
+      (node) => node.nodeNetworkId === networkId,
     );
-    if(!currentNetwork.length) {
-      alert(`Unsupported network "${networkId}". Please switch to aeternity mainnet.`);
+    if (!currentNetwork.length) {
+      alert(
+        `Unsupported network "${networkId}". Please switch to aeternity mainnet.`,
+      );
       return;
     }
 
@@ -61,13 +63,13 @@ export default class WalletService {
           newWallet ||= Object.values(wallets)[0];
           if (newWallet) {
             const walletInfo = await Sdk.connectToWallet(
-              newWallet.getConnection()
+              newWallet.getConnection(),
             );
             const {
               address: { current },
             } = await Sdk.subscribeAddress(
               SUBSCRIPTION_TYPES.subscribe,
-              "connected"
+              "connected",
             );
             const address = Object.keys(current)[0];
             console.log(walletInfo, current);

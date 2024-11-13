@@ -13,7 +13,7 @@ class BridgeService {
     const bridgeContract = new ethers.Contract(
       ETH_BRIDGE_ADDRESS,
       BRIDGE_ABI,
-      signer
+      signer,
     );
 
     const amountInWei = BigInt(amount * 1e18);
@@ -25,7 +25,7 @@ class BridgeService {
       BRIDGE_ETH_ACTION_TYPE,
       {
         value: amountInWei,
-      }
+      },
     );
   }
 }

@@ -5,7 +5,7 @@ const BASE_URL = "https://min-api.cryptocompare.com/data/";
 class TokenPriceService {
   static async getPrice(tokenSymbol: string): Promise<number> {
     const response = await fetch(
-      `${BASE_URL}price?fsym=${tokenSymbol}&tsyms=USD&api_key=${API_KEY}`
+      `${BASE_URL}price?fsym=${tokenSymbol}&tsyms=USD&api_key=${API_KEY}`,
     );
     const result = await response.json();
     return result.USD;
@@ -13,7 +13,7 @@ class TokenPriceService {
 
   static async getPrices(): Promise<{ AE: number; ETH: number }> {
     const response = await fetch(
-      `${BASE_URL}pricemulti?fsyms=AE,ETH&tsyms=USD&api_key=${API_KEY}`
+      `${BASE_URL}pricemulti?fsyms=AE,ETH&tsyms=USD&api_key=${API_KEY}`,
     );
     const results = await response.json();
 
