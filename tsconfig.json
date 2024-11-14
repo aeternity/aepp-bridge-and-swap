@@ -34,7 +34,7 @@
   "include": [
     "src",
     "src/global.d.ts",
-    "./build/types/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "files": [
     "src/global.d.ts"
