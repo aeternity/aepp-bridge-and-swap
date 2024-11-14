@@ -92,7 +92,7 @@ function App() {
     setActiveStep(2);
 
     // Change allowance
-    // await DexService.changeAllowance(amountInWei);
+    await DexService.changeAllowance(amountInWei);
 
     setActiveStep(3);
 

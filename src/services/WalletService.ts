@@ -6,7 +6,7 @@ import {
   walletDetector,
 } from "@aeternity/aepp-sdk";
 
-export const Sdk = new AeSdkAepp({
+export const aeSdk = new AeSdkAepp({
   name: "Bridge and Swap App",
   nodes: [
     {
@@ -15,8 +15,8 @@ export const Sdk = new AeSdkAepp({
     },
   ],
   onNetworkChange: async ({ networkId }) => {
-    console.log(await Sdk.getNodesInPool(), networkId);
-    const currentNetwork = (await Sdk.getNodesInPool()).filter(
+    console.log(await aeSdk.getNodesInPool(), networkId);
+    const currentNetwork = (await aeSdk.getNodesInPool()).filter(
       (node) => node.nodeNetworkId === networkId,
     );
     if (!currentNetwork.length) {
@@ -27,7 +27,7 @@ export const Sdk = new AeSdkAepp({
     }
 
     const [{ name }] = currentNetwork;
-    Sdk.selectNode(name);
+    aeSdk.selectNode(name);
     console.log("setNetworkId", networkId);
   },
   onAddressChange: ({ current }) => console.log(Object.keys(current)[0]),
@@ -62,13 +62,13 @@ export default class WalletService {
         try {
           newWallet ||= Object.values(wallets)[0];
           if (newWallet) {
-            const walletInfo = await Sdk.connectToWallet(
+            const walletInfo = await aeSdk.connectToWallet(
               newWallet.getConnection(),
             );
             const {
               address: { current },
-            } = await Sdk.subscribeAddress(
-              SUBSCRIPTION_TYPES.subscribe,
+            } = await aeSdk.subscribeAddress(
+              "subscribe" as SUBSCRIPTION_TYPES,
               "connected",
             );
             const address = Object.keys(current)[0];
