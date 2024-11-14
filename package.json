@@ -51,7 +51,6 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "craco": "^0.0.3",
     "prettier": "^3.3.3"
   }
 }
