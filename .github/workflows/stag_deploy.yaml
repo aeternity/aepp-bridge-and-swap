@@ -1,0 +1,39 @@
+name: Staging deploy
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION:
+        description: "Version to deploy to staging"
+        default: "main"
+        required: false
+        type: string
+      CONTAINER_NAME:
+        description: "Container name prefix"
+        default: "staging-aepp-bridge-and-swap"
+        required: false
+        type: string
+  workflow_call:
+    inputs:
+      VERSION:
+        description: "Version to deploy to staging"
+        default: "main"
+        required: false
+        type: string
+      CONTAINER_NAME:
+        description: "Container name prefix"
+        default: "staging-aepp-bridge-and-swap"
+        required: false
+        type: string
+jobs:
+  call_deploy:
+    name: Deploy staging (uat)
+    uses: ./.github/workflows/ssh_deploy.yaml
+    with:
+      VERSION: ${{ inputs.VERSION }}
+      CONTAINER_NAME: "${{ inputs.CONTAINER_NAME }}-testnet"
+    secrets:
+      HOST_PORT: "3100"
+      DEPLOY_HOST: "${{ secrets.STAG_DEPLOY_HOST }}"
+      DEPLOY_USERNAME: "${{ secrets.STAG_DEPLOY_USERNAME }}"
+      DEPLOY_KEY: "${{ secrets.STAG_DEPLOY_KEY }}"
+
