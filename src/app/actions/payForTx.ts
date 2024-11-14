@@ -39,50 +39,51 @@ const routerContract = await aeSdk.initializeContract({
 });
 
 export async function payForTx(singedTx: Encoded.Transaction) {
-  // const result = unpackTx(singedTx, Tag.SignedTx); // TODO validate tx
-  // if (result.encodedTx.tag !== Tag.ContractCallTx)
-  //   throw new Error("Wrong tx type");
-  //
-  // // check for token contract
-  // if (
-  //   result.encodedTx.contractId ===
-  //   "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh"
-  // ) {
-  //   const args = tokenContract._calldata.decodeContractByteArray(
-  //     result.encodedTx.callData,
-  //   ) as [string, [string, bigint]];
-  //
-  //   // hash of the allowance function
-  //   if (Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70=") {
-  //     throw new Error("Invalid function");
-  //   }
-  //   // check for router address
-  //   if (args[1][0] !== ROUTER_MAINNET.replace("ct_", "ak_")) {
-  //     throw new Error("Invalid router address");
-  //   }
-  //   return aeSdk.payForTransaction(singedTx);
-  // }
-  //
-  // // check for swap
-  // if (
-  //   result.encodedTx.contractId ===
-  //   "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3"
-  // ) {
-  //   const args = routerContract._calldata.decodeContractByteArray(
-  //     result.encodedTx.callData,
-  //   ) as [string, [bigint, bigint, [string, string], string, bigint]];
-  //
-  //   console.log(Buffer.from(args[0]).toString("base64"));
-  //   // hash of the swap function
-  //   if (Buffer.from(args[0]).toString("base64") !== "QiZRBw==") {
-  //     throw new Error("Invalid function");
-  //   }
-  //   // check for router address
-  //   if (args[1][2][0] !== ROUTER_MAINNET && args[1][2][1] !== WAE_MAINNET) {
-  //     throw new Error("Invalid router address");
-  //   }
-  //   console.log(args);
-  //   return aeSdk.payForTransaction(singedTx);
-  // }
-  return aeSdk.payForTransaction(singedTx);
+  const result = unpackTx(singedTx, Tag.SignedTx);
+  if (result.encodedTx.tag !== Tag.ContractCallTx)
+    throw new Error("Wrong tx type");
+
+  // check for token contract
+  if (
+    result.encodedTx.contractId ===
+    "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh"
+  ) {
+    const args = tokenContract._calldata.decodeContractByteArray(
+      result.encodedTx.callData,
+    ) as [string, [string, bigint]];
+
+    // hash of the allowance function
+    if (Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70=") {
+      throw new Error("Invalid function");
+    }
+    // check for router address
+    if (args[1][0] !== ROUTER_MAINNET.replace("ct_", "ak_")) {
+      throw new Error("Invalid router address");
+    }
+    return aeSdk.payForTransaction(singedTx);
+  }
+
+  // check for swap
+  if (
+    result.encodedTx.contractId ===
+    "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3"
+  ) {
+    const args = routerContract._calldata.decodeContractByteArray(
+      result.encodedTx.callData,
+    ) as [string, [bigint, bigint, [string, string], string, bigint]];
+
+    console.log(Buffer.from(args[0]).toString("base64"));
+    // hash of the swap function
+    if (Buffer.from(args[0]).toString("base64") !== "QiZRBw==") {
+      throw new Error("Invalid function");
+    }
+    // check for router address
+    if (args[1][2][0] !== ROUTER_MAINNET && args[1][2][1] !== WAE_MAINNET) {
+      throw new Error("Invalid router address");
+    }
+    console.log(args);
+    return aeSdk.payForTransaction(singedTx);
+  }
+
+  throw Error("Could not determine contract");
 }

@@ -20,10 +20,15 @@
     "jsx": "preserve",
     "incremental": true,
     "isolatedModules": true,
+    "strictFunctionTypes": false,
     "plugins": [
       {
         "name": "next"
-      }
+      },
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/@aeternity/aepp-sdk/src/typings"
     ]
   },
   "include": [
