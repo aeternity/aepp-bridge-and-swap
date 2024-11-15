@@ -81,13 +81,16 @@ function App() {
     // Waiting for bridge to complete
     setActiveStep(1);
 
-    // await BridgeService.bridgeEthToAe(parseFloat(ethAmount), aeternityAddress);
+    await BridgeService.bridgeEthToAe(parseFloat(ethAmount), aeternityAddress);
     // Bridge completed successfully
 
     // Wait for a moment to let the bridge finalize
-    // await WebsocketService.waitForBridgeToComplete(amountInWei, aeternityAddress);
+    await WebsocketService.waitForBridgeToComplete(
+      amountInWei,
+      aeternityAddress,
+    );
     // console.log("bridge completed successfully");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
     setActiveStep(2);
 
