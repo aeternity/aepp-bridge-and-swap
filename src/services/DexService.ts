@@ -78,7 +78,7 @@ class DexService {
       "AedexV2Router",
       "swap_exact_tokens_for_ae",
       [
-        1, // how much eth to swap for ae
+        amountWei, // how much eth to swap for ae // set to 1 for demo
         0, // min amount out TODO make this save
         // [ aeEth, wAE] // path
         [AE_ETH_MAINNET, WAE_MAINNET],
