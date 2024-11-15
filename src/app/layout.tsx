@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "../index.css";
 
 export const metadata: Metadata = {
-  title: "React App",
-  description: "Web site created with Next.js.",
+  title: "Buy AE with ETH",
+  description:
+    "A website which can be used to buy Aeternity coins with native Ethereum",
 };
 
 export default function RootLayout({
