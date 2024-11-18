@@ -71,6 +71,20 @@ function App() {
   const areWalletsConnected = ethereumAddress && aeternityAddress;
   const exchangeRatio = prices ? prices.ETH / prices.AE : null;
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue =
+        "Buying AE with ETH is currently in progress. If you leave the funds will not be lost but the process will be interrupted and can currently not be picked up again.";
+    };
+
+    if (activeStep > 0 && activeStep < 4) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [activeStep]);
+
   const handleBridgeClick = useCallback(async () => {
     if (!ethAmount) {
       return;
