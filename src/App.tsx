@@ -22,6 +22,8 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import Stepper from "@mui/material/Stepper";
 
+const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
+
 function App() {
   const effectRan = useRef(false);
   const [ethAmount, setEthAmount] = useState("");
@@ -95,16 +97,21 @@ function App() {
     // Waiting for bridge to complete
     setActiveStep(1);
 
-    await BridgeService.bridgeEthToAe(parseFloat(ethAmount), aeternityAddress);
-    // Bridge completed successfully
+    if (!SKIP_ETH) {
+      await BridgeService.bridgeEthToAe(
+        parseFloat(ethAmount),
+        aeternityAddress,
+      );
+      // Bridge completed successfully
 
-    // Wait for a moment to let the bridge finalize
-    await WebsocketService.waitForBridgeToComplete(
-      amountInWei,
-      aeternityAddress,
-    );
-    // console.log("bridge completed successfully");
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Wait for a moment to let the bridge finalize
+      await WebsocketService.waitForBridgeToComplete(
+        amountInWei,
+        aeternityAddress,
+      );
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
 
     setActiveStep(2);
 

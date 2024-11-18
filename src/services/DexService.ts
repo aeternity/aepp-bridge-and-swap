@@ -103,8 +103,19 @@ class DexService {
 
     const result = await payForTx(signedContractCallTx);
 
-    console.log("swap result", result);
+    // https://mainnet.aeternity.io/mdw/v3/transactions/th_EG3uqBCpT2jcerSKha5opxq8LvHrt8jRNgfBp5SgkN92PxEVb
+    const swapResult = await fetch(
+      `https://mainnet.aeternity.io/mdw/v3/transactions/${result.hash}`,
+    ).then((res) => res.json());
 
+    console.log("swap result", swapResult);
+
+    if (swapResult?.tx?.tx?.tx?.result === "ok") {
+      return [
+        swapResult.tx.tx.tx.return.value[0].value,
+        swapResult.tx.tx.tx.return.value[1].value,
+      ];
+    }
     return [0n, 0n];
   }
 }
