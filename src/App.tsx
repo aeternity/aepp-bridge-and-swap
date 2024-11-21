@@ -40,12 +40,6 @@ function App() {
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
-  const handleConnectMetamask = useCallback(async (address: string) => {
-    const balance = await WalletService.getEthBalance(address);
-    setEthBalance(balance);
-    setEthereumAddress(address);
-  }, []);
-
   const handleAmountChange = useCallback(
     (event: any) => {
       setEthAmount(
@@ -66,7 +60,7 @@ function App() {
     return () => {
       effectRan.current = true;
     };
-  }, [handleConnectMetamask]);
+  }, []);
 
   const connectSuperhero = async () => {
     try {
@@ -87,6 +81,8 @@ function App() {
     try {
       setIsEthereumConnecting(true);
       const address = await WalletService.connectMetamask();
+      const balance = await WalletService.getEthBalance(address);
+      setEthBalance(balance);
       setEthereumAddress(address);
       setIsEthereumConnecting(false);
     } catch (error) {
