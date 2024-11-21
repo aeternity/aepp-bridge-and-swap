@@ -30,6 +30,8 @@ function App() {
   const [ethBalance, setEthBalance] = useState(0);
   const [ethereumAddress, setEthereumAddress] = useState("");
   const [aeternityAddress, setAeternityAddress] = useState("");
+  const [isEthereumConnecting, setIsEthereumConnecting] = useState(false);
+  const [isAeternityConnecting, setIsAeternityConnecting] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [swapResult, setSwapResult] = useState({
     aeEthIn: BigInt(0),
@@ -58,10 +60,6 @@ function App() {
   useEffect(() => {
     if (!effectRan.current) {
       TokenPriceService.getPrices().then(setPrices);
-
-      WalletService.connectMetamask().then(handleConnectMetamask);
-      WalletService.connectSuperHero().then(setAeternityAddress);
-
       WebsocketService.init();
     }
 
@@ -69,6 +67,36 @@ function App() {
       effectRan.current = true;
     };
   }, [handleConnectMetamask]);
+
+  const connectSuperhero = async () => {
+    try {
+      setIsAeternityConnecting(true);
+      const address = await WalletService.connectSuperHero();
+      setAeternityAddress(address);
+      setIsAeternityConnecting(false);
+    } catch (error) {
+      console.error(error);
+      setAeternityAddress(
+        "Error connecting wallet, check that you have your wallet installed and accept the connection.",
+      );
+      setIsAeternityConnecting(false);
+    }
+  };
+
+  const connectMetamask = async () => {
+    try {
+      setIsEthereumConnecting(true);
+      const address = await WalletService.connectMetamask();
+      setEthereumAddress(address);
+      setIsEthereumConnecting(false);
+    } catch (error) {
+      console.error(error);
+      setEthereumAddress(
+        "Error connecting wallet, check that you have your wallet installed and accept the connection.",
+      );
+      setIsEthereumConnecting(false);
+    }
+  };
 
   const areWalletsConnected = ethereumAddress && aeternityAddress;
   const exchangeRatio = prices ? prices.ETH / prices.AE : null;
@@ -151,15 +179,35 @@ function App() {
         </Grid>
         <Grid size={6}>
           <Typography fontWeight={"normal"} variant="h5">
-            Aeternity Address:
+            Aeternity:
           </Typography>
-          {aeternityAddress || "Waiting for wallet connection..."}
+          {!isAeternityConnecting && !aeternityAddress ? (
+            <Button
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={connectSuperhero}
+            >
+              Connect Superhero Wallet
+            </Button>
+          ) : (
+            aeternityAddress || "Waiting for wallet connection..."
+          )}
           <br />
           <br />
           <Typography fontWeight={"normal"} variant="h5">
-            Ethereum Address:
+            Ethereum:
           </Typography>
-          {ethereumAddress || "Waiting for wallet connection..."}
+          {!isEthereumConnecting && !ethereumAddress ? (
+            <Button
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={connectMetamask}
+            >
+              Connect Metamask Wallet
+            </Button>
+          ) : (
+            ethereumAddress || "Waiting for wallet connection..."
+          )}
           <br />
           {ethereumAddress && (
             <Typography fontWeight={"normal"}>

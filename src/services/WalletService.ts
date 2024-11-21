@@ -37,14 +37,10 @@ export const aeSdk = new AeSdkAepp({
 // TODO rewrite this to use the new SDK https://github.com/aeternity/aepp-sdk-js/blob/2d6ec8138af448204271b10c7517ede96f0ef998/examples/browser/aepp/src/components/ConnectFrame.vue#L61
 export default class WalletService {
   static async connectMetamask() {
-    try {
-      const accounts = await window.ethereum?.request({
-        method: "eth_requestAccounts",
-      });
-      return accounts[0];
-    } catch (error) {
-      console.error(error);
-    }
+    const accounts = await window.ethereum?.request({
+      method: "eth_requestAccounts",
+    });
+    return accounts[0];
   }
 
   static async getEthBalance(address: string): Promise<number> {
