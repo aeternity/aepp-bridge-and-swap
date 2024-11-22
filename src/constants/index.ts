@@ -1,6 +1,20 @@
 export const BRIDGE_ETH_ACTION_TYPE = 1;
 export const ETH_MOCK_ADDRESS = "0xAbaE76F98A84D1DC3E0af8ed68465631165d33B2";
 export const ETH_BRIDGE_ADDRESS = "0xd099E3Ab65d6294d1d2D1Ad92897Cc29286F8cA5";
+export const AE_BRIDGE_ADDRESS =
+  "ct_2Xdym95f2i998W9Zoh1NgAB7pVuQ34ztEsema7u4XwSoq5VKUJ";
+export const AE_WAE_ADDRESS =
+  "ct_J3zBY8xxjsRr3QojETNw48Eb38fjvEuJKkQ6KzECvubvEcvCa";
+export const AE_DEX_ROUTER_ADDRESS =
+  "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3";
+export const AE_WETH_ADDRESS =
+  "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh";
+export const ETH_NATIVE_ETH_PLACEHOLDER_ADDRESS =
+  "0xabae76f98a84d1dc3e0af8ed68465631165d33b2"; // needs to be lowercase!
+export const AE_WEB_SOCKET_URL = "wss://mainnet.aeternity.io/mdw/v2/websocket";
+export const AE_NODE_URL = "https://mainnet.aeternity.io";
+export const AE_NETWORK_ID = "ae_mainnet";
+export const AE_MIDDLEWARE_URL = "https://mainnet.aeternity.io/mdw/v3";
 
 export const BRIDGE_ABI = [
   {

@@ -6,12 +6,16 @@ import {
   walletDetector,
 } from "@aeternity/aepp-sdk";
 
+if (!process.env.NEXT_PUBLIC_AE_NODE_URL) {
+  throw new Error("NEXT_PUBLIC_AE_NODE_URL is not set");
+}
+
 export const aeSdk = new AeSdkAepp({
   name: "Bridge and Swap App",
   nodes: [
     {
       name: "mainnet",
-      instance: new Node("https://mainnet.aeternity.io"),
+      instance: new Node(process.env.NEXT_PUBLIC_AE_NODE_URL),
     },
   ],
   onNetworkChange: async ({ networkId }) => {

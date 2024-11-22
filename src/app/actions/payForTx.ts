@@ -10,32 +10,34 @@ import {
 } from "@aeternity/aepp-sdk";
 import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
 import routerACI from "dex-contracts-v2/build/AedexV2Router.aci.json";
-
-const NODE_URL = "https://mainnet.aeternity.io";
-const WAE_MAINNET = "ct_J3zBY8xxjsRr3QojETNw48Eb38fjvEuJKkQ6KzECvubvEcvCa";
-const AE_ETH_MAINNET = "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh";
-const ROUTER_MAINNET = "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3";
+import {
+  AE_DEX_ROUTER_ADDRESS,
+  AE_NETWORK_ID,
+  AE_NODE_URL,
+  AE_WAE_ADDRESS,
+  AE_WETH_ADDRESS,
+} from "../../constants";
 
 if (!process.env.AE_PRIVATE_KEY) {
   throw new Error("AE_PRIVATE_KEY is required");
 }
 
 const payerAccount = new MemoryAccount(process.env.AE_PRIVATE_KEY);
-console.log(payerAccount.address);
-const node = new Node(NODE_URL); // TODO move to env
+
+const node = new Node(AE_NODE_URL);
 const aeSdk = new AeSdk({
-  nodes: [{ name: "mainnet", instance: node }],
+  nodes: [{ name: AE_NETWORK_ID, instance: node }],
   accounts: [payerAccount],
 });
 
 const tokenContract = await aeSdk.initializeContract({
   aci: aex9ACI,
-  address: AE_ETH_MAINNET,
+  address: AE_WETH_ADDRESS,
 });
 
 const routerContract = await aeSdk.initializeContract({
   aci: routerACI,
-  address: ROUTER_MAINNET,
+  address: AE_DEX_ROUTER_ADDRESS,
 });
 
 export async function payForTx(singedTx: Encoded.Transaction) {
@@ -44,10 +46,7 @@ export async function payForTx(singedTx: Encoded.Transaction) {
     throw new Error("Wrong tx type");
 
   // check for token contract
-  if (
-    result.encodedTx.contractId ===
-    "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh"
-  ) {
+  if (result.encodedTx.contractId === AE_WETH_ADDRESS) {
     const args = tokenContract._calldata.decodeContractByteArray(
       result.encodedTx.callData,
     ) as [string, [string, bigint]];
@@ -57,17 +56,14 @@ export async function payForTx(singedTx: Encoded.Transaction) {
       throw new Error("Invalid function");
     }
     // check for router address
-    if (args[1][0] !== ROUTER_MAINNET.replace("ct_", "ak_")) {
+    if (args[1][0] !== AE_DEX_ROUTER_ADDRESS.replace("ct_", "ak_")) {
       throw new Error("Invalid router address");
     }
     return aeSdk.payForTransaction(singedTx);
   }
 
   // check for swap
-  if (
-    result.encodedTx.contractId ===
-    "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3"
-  ) {
+  if (result.encodedTx.contractId === AE_DEX_ROUTER_ADDRESS) {
     const args = routerContract._calldata.decodeContractByteArray(
       result.encodedTx.callData,
     ) as [string, [bigint, bigint, [string, string], string, bigint]];
@@ -78,7 +74,10 @@ export async function payForTx(singedTx: Encoded.Transaction) {
       throw new Error("Invalid function");
     }
     // check for router address
-    if (args[1][2][0] !== ROUTER_MAINNET && args[1][2][1] !== WAE_MAINNET) {
+    if (
+      args[1][2][0] !== AE_DEX_ROUTER_ADDRESS &&
+      args[1][2][1] !== AE_WAE_ADDRESS
+    ) {
       throw new Error("Invalid router address");
     }
     console.log(args);

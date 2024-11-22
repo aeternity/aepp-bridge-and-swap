@@ -117,17 +117,17 @@ function App() {
     }
 
     const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
-
-    // Waiting for bridge to complete
-    setActiveStep(1);
-
+    console.log("Skip", SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
     if (!SKIP_ETH) {
       await BridgeService.bridgeEthToAe(
         parseFloat(ethAmount),
         aeternityAddress,
       );
-      // Bridge completed successfully
+    }
+    // Waiting for bridge to complete
+    setActiveStep(1);
 
+    if (!SKIP_ETH) {
       // Wait for a moment to let the bridge finalize
       await WebsocketService.waitForBridgeToComplete(
         amountInWei,
