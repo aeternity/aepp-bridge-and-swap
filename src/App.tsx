@@ -124,7 +124,7 @@ function App() {
         aeternityAddress,
       );
     }
-    // Waiting for bridge to complete
+
     setActiveStep(1);
 
     if (!SKIP_ETH) {
@@ -290,9 +290,6 @@ function App() {
                   <Typography textAlign={"left"} mb={2}>
                     <CircularProgress size={16} /> Waiting for bridge to
                     complete...
-                    <br />
-                    <br />
-                    Please confirm the transaction in your Ethereum wallet
                   </Typography>
                 </StepContent>
               </Step>
