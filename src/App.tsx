@@ -27,6 +27,7 @@ const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 function App() {
   const effectRan = useRef(false);
   const [ethAmount, setEthAmount] = useState("");
+  const [error, setError] = useState("");
   const [ethBalance, setEthBalance] = useState(0);
   const [ethereumAddress, setEthereumAddress] = useState("");
   const [aeternityAddress, setAeternityAddress] = useState("");
@@ -71,7 +72,7 @@ function App() {
     } catch (error) {
       console.error(error);
       setAeternityAddress(
-        "Error connecting wallet, check that you have your wallet installed and accept the connection.",
+        "Error connecting wallet, check that you have your wallet installed and accept the connection. Reload to try again.",
       );
       setIsAeternityConnecting(false);
     }
@@ -88,7 +89,7 @@ function App() {
     } catch (error) {
       console.error(error);
       setEthereumAddress(
-        "Error connecting wallet, check that you have your wallet installed and accept the connection.",
+        "Error connecting wallet, check that you have your wallet installed and accept the connection. Reload to try again.",
       );
       setIsEthereumConnecting(false);
     }
@@ -112,46 +113,53 @@ function App() {
   }, [activeStep]);
 
   const handleBridgeClick = useCallback(async () => {
-    if (!ethAmount) {
-      return;
-    }
+    try {
+      if (!ethAmount) {
+        return;
+      }
 
-    const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
-    console.log("Skip", SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
-    if (!SKIP_ETH) {
-      await BridgeService.bridgeEthToAe(
-        parseFloat(ethAmount),
-        aeternityAddress,
-      );
-    }
+      const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
+      console.log("Skip", SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
+      if (!SKIP_ETH) {
+        await BridgeService.bridgeEthToAe(
+          parseFloat(ethAmount),
+          aeternityAddress,
+        );
+      }
 
-    setActiveStep(1);
+      setActiveStep(1);
 
-    if (!SKIP_ETH) {
-      // Wait for a moment to let the bridge finalize
-      await WebsocketService.waitForBridgeToComplete(
+      if (!SKIP_ETH) {
+        // Wait for a moment to let the bridge finalize
+        await WebsocketService.waitForBridgeToComplete(
+          amountInWei,
+          aeternityAddress,
+        );
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      setActiveStep(2);
+
+      // Change allowance
+      await DexService.changeAllowance(amountInWei);
+
+      setActiveStep(3);
+
+      // Then we can swap AE tokens
+      const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
         amountInWei,
         aeternityAddress,
       );
-    } else {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setSwapResult({ aeOut: aeOut, aeEthIn: aeEthIn });
+
+      setActiveStep(4);
+    } catch (error) {
+      let message = "Unknown Error";
+      if (error instanceof Error) message = error.message;
+      console.error(error);
+      setError("Error during bridge process: " + message);
     }
-
-    setActiveStep(2);
-
-    // Change allowance
-    await DexService.changeAllowance(amountInWei);
-
-    setActiveStep(3);
-
-    // Then we can swap AE tokens
-    const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
-      amountInWei,
-      aeternityAddress,
-    );
-    setSwapResult({ aeOut: aeOut, aeEthIn: aeEthIn });
-
-    setActiveStep(4);
   }, [ethAmount, aeternityAddress]);
 
   // 1. step: Bridge
@@ -167,6 +175,11 @@ function App() {
           <Typography textAlign={"center"} variant="h2">
             Buy AE with ETH
           </Typography>
+          {error && (
+            <Typography textAlign={"center"} variant="h6" color="error">
+              {error}
+            </Typography>
+          )}
           <Divider sx={{ background: "white", marginY: 3 }} />
           <Typography textAlign={"center"} variant="h6" mb={3}>
             This process will bridge your ETH to AE chain using Acurast bridge
@@ -332,7 +345,7 @@ function App() {
           <Grid size={12}>
             <Divider sx={{ background: "white", marginY: 3 }} />
             <Typography textAlign={"center"} variant="h6">
-              You swapped {ethAmount} ETH to ~
+              You swapped {ethAmount} ETH to
               {exchangeRatio ? Number(swapResult.aeOut) / 10 ** 18 : 0} AE
               tokens successfully!
               <br />
