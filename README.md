@@ -111,15 +111,13 @@ Run the test suite using the following command:
 ❯ yarn test
 ```
 
-
 ---
 ##  Configuration
 
 ### Environment Variables
 
 - `NEXT_PUBLIC_SKIP_ETH`: Skip the Ethereum-related bridge operations. This a development setting as transaction on the Ethereum Network can be expensive. If the flag is present with any value, the operations will be skipped.
-
-### Configuration Variables
+- `AE_PRIVATE_KEY`: Private key for the Aeternity account used for paying for the dex swap transactions. This account should be funded with some AE. 1 AE is enough for around 1500 bridge & swap calls.
 
 ### Configuration Variables
 
@@ -153,7 +151,7 @@ Ensure they are correctly configured in your environment before deploying the ap
 1. **Fork the Repository**: Start by forking the project repository to your github.com account.
 2. **Clone Locally**: Clone the forked repository to your local machine using a git client.
    ```sh
-   git clone https://github.com/aeternity/aepp-bridge-and-swap-poc.git
+   git clone https://github.com/your-fork/aepp-bridge-and-swap-poc.git
    ```
 3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
    ```sh
