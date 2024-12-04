@@ -173,7 +173,7 @@ function App() {
       <Grid container>
         <Grid size={12}>
           <Typography textAlign={"center"} variant="h2">
-            Buy AE with ETH
+            ChainFusion: Buy AE with ETH
           </Typography>
           {error && (
             <Typography textAlign={"center"} variant="h6" color="error">

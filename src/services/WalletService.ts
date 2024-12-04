@@ -8,7 +8,7 @@ import {
 import { AE_NODE_URL } from "../constants";
 
 export const aeSdk = new AeSdkAepp({
-  name: "Bridge and Swap App",
+  name: "ChainFusion",
   nodes: [
     {
       name: "mainnet",
