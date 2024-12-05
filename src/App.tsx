@@ -12,6 +12,7 @@ import {
   Typography,
   Grid2 as Grid,
   CircularProgress,
+  Link,
 } from "@mui/material";
 
 import BridgeService from "./services/BridgeService";
@@ -173,7 +174,7 @@ function App() {
       <Grid container>
         <Grid size={12}>
           <Typography textAlign={"center"} variant="h2">
-            ChainFusion: Buy AE with ETH
+            ChainFusion
           </Typography>
           {error && (
             <Typography textAlign={"center"} variant="h6" color="error">
@@ -182,8 +183,15 @@ function App() {
           )}
           <Divider sx={{ background: "white", marginY: 3 }} />
           <Typography textAlign={"center"} variant="h6" mb={3}>
-            This process will bridge your ETH to AE chain using Acurast bridge
-            and then swap it to AE tokens.
+            This process will bridge your ETH to AE chain using{" "}
+            <Link href="https://ae-bridge.com/" target="_blank">
+              ae bridge
+            </Link>
+            . and then swap it to AE tokens using the{" "}
+            <Link href="https://aepp.dex.superhero.com" target="_blank">
+              Superhero DEX
+            </Link>
+            .
           </Typography>
         </Grid>
         <Grid size={6}>
