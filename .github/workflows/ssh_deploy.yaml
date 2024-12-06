@@ -36,7 +36,7 @@ jobs:
         env:
           VERSION: "${{ inputs.VERSION }}"
           SHA: "${{ github.sha }}"
-          AE_NETWORK_ID: "${{ secrets.AE_NETWORK_ID }}"
+          AE_PRIVATE_KEY: "${{ secrets.AE_PRIVATE_KEY }}"
           HOST_DATA_DIR: "./${{ inputs.CONTAINER_NAME }}"
           HOST_PORT: "${{ secrets.HOST_PORT }}"
         with:
@@ -45,6 +45,7 @@ jobs:
           key: "${{ secrets.DEPLOY_KEY }}"
           envs: >
             HOST_DATA_DIR,
+            AE_PRIVATE_KEY,
             SHA
           script: |
             echo $SHA > $HOST_DATA_DIR/REVISION || true
