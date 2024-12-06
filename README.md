@@ -50,18 +50,18 @@ Before getting started with chain-fusion-poc, ensure your runtime environment me
 
 ###  Installation
 
-Install aepp-bridge-and-swap-poc using one of the following methods:
+Install aepp-bridge-and-swap using one of the following methods:
 
 **Build from source:**
 
-1. Clone the aepp-bridge-and-swap-poc repository:
+1. Clone the aepp-bridge-and-swap repository:
 ```shx
-❯ git clone https://github.com/aeternity/aepp-bridge-and-swap-poc.git
+❯ git clone https://github.com/aeternity/aepp-bridge-and-swap.git
 ```
 
 2. Navigate to the project directory:
 ```sh
-❯ cd aepp-bridge-and-swap-poc
+❯ cd aepp-bridge-and-swap
 ```
 
 3. Install the project dependencies:
@@ -76,14 +76,14 @@ Install aepp-bridge-and-swap-poc using one of the following methods:
 **Using `docker`** &nbsp; [<img align="center" src="https://img.shields.io/badge/Docker-2CA5E0.svg?style={badge_style}&logo=docker&logoColor=white" />](https://www.docker.com/)
 
 ```sh
-❯ docker build -t aeternity/aepp-bridge-and-swap-poc .
+❯ docker build -t aeternity/aepp-bridge-and-swap .
 ```
 
 
 
 
 ###  Usage
-Run aepp-bridge-and-swap-poc using the following command:
+Run aepp-bridge-and-swap using the following command:
 
 
 **Using `yarn`** &nbsp; [<img align="center" src="https://img.shields.io/badge/yarn-117cad.svg?style={badge_style}&logo=yarn&logoColor=white" />](https://www.yarnpkg.com/)
@@ -96,7 +96,7 @@ Run aepp-bridge-and-swap-poc using the following command:
 **Using `docker`** &nbsp; [<img align="center" src="https://img.shields.io/badge/Docker-2CA5E0.svg?style={badge_style}&logo=docker&logoColor=white" />](https://www.docker.com/)
 
 ```sh
-❯ docker run -it aeternity/aepp-bridge-and-swap-poc
+❯ docker run -it aeternity/aepp-bridge-and-swap
 ```
 
 
@@ -157,9 +157,8 @@ yarn dev
 
 ##  Contributing
 
-- **💬 [Join the Discussions](https://github.com/aeternity/aepp-bridge-and-swap-poc/discussions)**: Share your insights, provide feedback, or ask questions.
-- **🐛 [Report Issues](https://github.com/aeternity/aepp-bridge-and-swap-poc/issues)**: Submit bugs found or log feature requests for the `aepp-bridge-and-swap-poc` project.
-- **💡 [Submit Pull Requests](https://github.com/aeternity/aepp-bridge-and-swap-poc/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
+- **💬 [Join the Discussions](https://github.com/aeternity/aepp-bridge-and-swap/discussions)**: Share your insights, provide feedback, or ask questions.
+- **🐛 [Report Issues](https://github.com/aeternity/aepp-bridge-and-swap/issues)**: Submit bugs found or log feature requests for the `aepp-bridge-and-swap` project.
 
 <details closed>
 <summary>Contributing Guidelines</summary>
@@ -167,7 +166,7 @@ yarn dev
 1. **Fork the Repository**: Start by forking the project repository to your github.com account.
 2. **Clone Locally**: Clone the forked repository to your local machine using a git client.
    ```sh
-   git clone https://github.com/your-fork/aepp-bridge-and-swap-poc.git
+   git clone https://github.com/your-fork/aepp-bridge-and-swap.git
    ```
 3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
    ```sh
