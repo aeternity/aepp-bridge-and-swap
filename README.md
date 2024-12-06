@@ -21,13 +21,14 @@
 
 ##  Table of Contents
 
-- [ Overview](#-overview)
-- [ Getting Started](#-getting-started)
-  - [ Prerequisites](#-prerequisites)
-  - [ Installation](#-installation)
-  - [ Usage](#-usage)
-    - [ Testing](#-testing)
-- [ Contributing](#-contributing)
+- [ Overview](#overview)
+- [ Getting Started](#getting-started)
+  - [ Prerequisites](#prerequisites)
+  - [ Installation](#installation)
+  - [ Usage](#usage)
+    - [ Testing](#testing)
+- [ Development](#development)
+- [ Contributing](#contributing)
 
 
 ---
@@ -160,8 +161,7 @@ yarn dev
 - **💬 [Join the Discussions](https://github.com/aeternity/aepp-bridge-and-swap/discussions)**: Share your insights, provide feedback, or ask questions.
 - **🐛 [Report Issues](https://github.com/aeternity/aepp-bridge-and-swap/issues)**: Submit bugs found or log feature requests for the `aepp-bridge-and-swap` project.
 
-<details closed>
-<summary>Contributing Guidelines</summary>
+### Contributing Guidelines
 
 1. **Fork the Repository**: Start by forking the project repository to your github.com account.
 2. **Clone Locally**: Clone the forked repository to your local machine using a git client.
@@ -183,4 +183,3 @@ yarn dev
    ```
 7. **Submit a Pull Request**: Create a PR against the original project repository. Clearly describe the changes and their motivations.
 8. **Review**: Once your PR is reviewed and approved, it will be merged into the main branch. Congratulations on your contribution!
-</details>
