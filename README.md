@@ -117,7 +117,7 @@ Run the test suite using the following command:
 ### Environment Variables
 
 - `NEXT_PUBLIC_SKIP_ETH`: Skip the Ethereum-related bridge operations. This a development setting as transaction on the Ethereum Network can be expensive. If the flag is present with any value, the operations will be skipped.
-- `AE_PRIVATE_KEY`: Private key for the Aeternity account used for paying for the dex swap transactions. This account should be funded with some AE. 1 AE is enough for around 1500 bridge & swap calls.
+- `AE_PRIVATE_KEY`: Private key for the Aeternity account used for paying for the dex swap transactions. This account should be funded with some AE. 1 AE is enough for around 1500 bridge & swap calls. It needs to be in hex format similar to `4d60aca4542c2...c3676a7c1ccf`. Use the [sdk](https://docs.aeternity.com/aepp-sdk-js/v13.3.3/quick-start/) to generate a new account.
 
 ### Configuration Variables
 
