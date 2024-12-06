@@ -139,6 +139,22 @@ Ensure they are correctly configured in your environment before deploying the ap
 
 ---
 
+## Development
+
+There are a few scripts within the `/scripts` folder that can be used to help with development:
+
+- `callDEX.js`: Swaps AE for tokens using the AE DEX; requires a mnemonic private key as the `MNEMONIC` environment variable.
+- `deployTestnetBridge.js`: Deploys and configures bridge and token contracts on AE testnet; requires `MNEMONIC`.
+- `fakeBridgeIn.js`: Simulates a bridge_in transaction on the AE testnet bridge contract; requires `MNEMONIC`.
+
+In general there is no setup required for development, just run the application and start developing:
+
+```sh
+yarn dev
+```
+
+---
+
 ##  Contributing
 
 - **💬 [Join the Discussions](https://github.com/aeternity/aepp-bridge-and-swap-poc/discussions)**: Share your insights, provide feedback, or ask questions.

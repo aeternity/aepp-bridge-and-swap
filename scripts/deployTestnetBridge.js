@@ -17,11 +17,6 @@ const AE_TESTNET_WRAPPED_AE_ADDRESS =
 This maps from mainnet eth to testnet ae
  */
 
-/*
-Bridge contract address: ct_2wP1RMbbEdCTdystsvYx4ZDXMsqFrH72RRrBqbd5JBoi9EFjN2
-Token contract address: ct_mZPohW4DSd4EDQDoYesyo4Nd5Kbok76oV4EepKm45XLyBoQgL
- */
-
 const node = new Node("https://testnet.aeternity.io"); // ideally host your own node
 const factory = new AccountMnemonicFactory(process.env.MNEMONIC);
 const accounts = await factory.discover(node);
