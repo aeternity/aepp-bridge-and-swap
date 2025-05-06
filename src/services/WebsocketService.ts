@@ -1,7 +1,5 @@
 import {
-  AE_BRIDGE_ADDRESS,
-  AE_WEB_SOCKET_URL,
-  ETH_NATIVE_ETH_PLACEHOLDER_ADDRESS,
+  Constants
 } from "../constants";
 
 export default class WebsocketService {
@@ -21,7 +19,7 @@ export default class WebsocketService {
           if (
             data.payload.tx.arguments.length === 1 &&
             data.payload.tx.arguments[0].value[1]?.value ===
-              ETH_NATIVE_ETH_PLACEHOLDER_ADDRESS &&
+              Constants.eth_native_eth_placeholder_address &&
             data.payload.tx.arguments[0].value[2]?.value === aeAddress &&
             data.payload.tx.arguments[0].value[3]?.value?.toString() ===
               amountWei.toString()
@@ -39,7 +37,7 @@ export default class WebsocketService {
       if (this.client) {
         return;
       }
-      this.client = new WebSocket(AE_WEB_SOCKET_URL);
+      this.client = new WebSocket(Constants.ae_web_socket_url);
       this.client.addEventListener("open", () => {
         console.log("websocket connected");
 
@@ -47,7 +45,7 @@ export default class WebsocketService {
           JSON.stringify({
             op: "Subscribe",
             payload: "Object",
-            target: AE_BRIDGE_ADDRESS,
+            target: Constants.ae_bridge_address,
           }),
         );
         resolve();

@@ -2,8 +2,7 @@ import { ethers } from 'ethers';
 import {
   BRIDGE_ABI,
   BRIDGE_ETH_ACTION_TYPE,
-  ETH_BRIDGE_ADDRESS,
-  ETH_MOCK_ADDRESS,
+  Constants
 } from "../constants";
 
 class BridgeService {
@@ -11,7 +10,7 @@ class BridgeService {
     const provider = new ethers.BrowserProvider(window.ethereum!);
     const signer = await provider.getSigner();
     const bridgeContract = new ethers.Contract(
-      ETH_BRIDGE_ADDRESS,
+      Constants.eth_bridge_address,
       BRIDGE_ABI,
       signer,
     );
@@ -19,7 +18,7 @@ class BridgeService {
     const amountInWei = BigInt(amount * 1e18);
 
     return await bridgeContract.bridge_out(
-      ETH_MOCK_ADDRESS,
+      Constants.eth_mock_address,
       aeAddress,
       amountInWei.toString(),
       BRIDGE_ETH_ACTION_TYPE,

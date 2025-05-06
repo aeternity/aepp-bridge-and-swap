@@ -5,14 +5,14 @@ import {
   SUBSCRIPTION_TYPES,
   walletDetector,
 } from "@aeternity/aepp-sdk";
-import { AE_NODE_URL } from "../constants";
+import { Constants } from "../constants";
 
 export const aeSdk = new AeSdkAepp({
   name: "ChainFusion",
   nodes: [
     {
-      name: "mainnet",
-      instance: new Node(AE_NODE_URL),
+      name: Constants.name,
+      instance: new Node(Constants.ae_node_url),
     },
   ],
   onNetworkChange: async ({ networkId }) => {
@@ -53,7 +53,11 @@ export default class WalletService {
     return balance ? parseInt(balance) / 1e18 : 0;
   }
 
-  static async connectSuperHero(): Promise<string> {
+  static getAeBalance(address: `ak_${string}`): Promise<string> {
+    return aeSdk.getBalance(address).catch((error) => {console.info(error); return '0';});
+  }
+
+  static connectSuperHero(): Promise<string> {
     return new Promise((resolve, reject) => {
       const handleWallets = async ({ wallets, newWallet }: any) => {
         try {
