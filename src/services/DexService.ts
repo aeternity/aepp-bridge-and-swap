@@ -44,6 +44,20 @@ class DexService {
     await payForTx(signedContractCallTx);
   }
 
+  static async getAeWethBalance(): Promise<bigint> {
+    const tokenInstance = await aeSdk.initializeContract({
+      aci: aex9ACI,
+      address: AE_WETH_ADDRESS,
+    });
+    try {
+      // { onAccount: undefined } option is added, because current sdk version will fail
+      // to get balance, in case account was never used before
+      return BigInt((await tokenInstance.balance(aeSdk.address, { onAccount: undefined })).decodedResult ?? 0);
+    } catch(e: any) {
+      return BigInt(0);
+    }
+  }
+
   static async swapAeEthToAE(
     amountWei: bigint,
     aeAddress: string,
