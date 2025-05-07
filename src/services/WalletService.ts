@@ -53,8 +53,10 @@ export default class WalletService {
     return balance ? parseInt(balance) / 1e18 : 0;
   }
 
-  static getAeBalance(address: `ak_${string}`): Promise<string> {
-    return aeSdk.getBalance(address).catch((error) => {console.info(error); return '0';});
+  static getAeBalance(address: `ak_${string}`): Promise<BigInt> {
+    return aeSdk.getBalance(address)
+      .then((balance) => BigInt(balance))
+      .catch((error) => {console.info(error); return 0n;})
   }
 
   static connectSuperHero(): Promise<string> {

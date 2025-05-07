@@ -1,9 +1,5 @@
-import { ethers } from 'ethers';
-import {
-  BRIDGE_ABI,
-  BRIDGE_ETH_ACTION_TYPE,
-  Constants
-} from "../constants";
+import { ethers } from "ethers";
+import { BRIDGE_ABI, Constants } from "../constants";
 
 class BridgeService {
   static async bridgeEthToAe(amount: number, aeAddress: string): Promise<void> {
@@ -21,7 +17,7 @@ class BridgeService {
       Constants.eth_mock_address,
       aeAddress,
       amountInWei.toString(),
-      BRIDGE_ETH_ACTION_TYPE,
+      Constants.bridge_eth_action_type,
       {
         value: amountInWei,
       },

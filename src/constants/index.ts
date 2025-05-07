@@ -1,6 +1,3 @@
-export const BRIDGE_ETH_ACTION_TYPE = 1;
-export const AE_BALANCE_THRESHOLD = 1000000000000000000n;
-
 const bridgeDexSwapConfig = {
     mainnet: {
       chain_id: '0x1',
@@ -32,10 +29,12 @@ const bridgeDexSwapConfig = {
     },
 };
 
-const isMainnet = process.env.MAINNET ? process.env.MAINNET : false;
+const isMainnet = !!process.env.MAINNET;
 
 export const Constants = {
   isMainnet,
+  bridge_eth_action_type: 1,
+  ae_balance_threshold: 10000000000000000n,
   name: isMainnet ? 'mainnet' : 'testnet', 
   chain_id: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].chain_id,
   ae_network_id: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_network_id,
