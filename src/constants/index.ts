@@ -35,6 +35,7 @@ export const Constants = {
   isMainnet,
   bridge_eth_action_type: 1,
   ae_balance_threshold: 10000000000000000n,
+  allowance_slippage: 10n, // 10% allowance slippage
   name: isMainnet ? 'mainnet' : 'testnet', 
   chain_id: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].chain_id,
   ae_network_id: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_network_id,

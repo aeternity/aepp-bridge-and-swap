@@ -43,7 +43,7 @@ class DexService {
         "create_allowance",
         [
           Constants.ae_dex_router_address.replace("ct_", "ak_"),
-          amountWei.toString(),
+          amountWei + (amountWei * Constants.allowance_slippage) / 100n,
         ],
       );
 
@@ -66,13 +66,14 @@ class DexService {
         await payForTx(signedContractCallTx);
     } else {
       console.info("Changing allowance.");
-      if (allowance < amountWei) {
+      let amount_with_allowance_slippage = amountWei + (amountWei * Constants.allowance_slippage) / 100n;
+      if (allowance < amount_with_allowance_slippage) {
         const calldata = tokenContract._calldata.encode(
           "FungibleTokenFull",
           "change_allowance",
           [
             Constants.ae_dex_router_address.replace("ct_", "ak_"),
-            (amountWei - allowance).toString(),
+            (amount_with_allowance_slippage - allowance).toString(),
           ],
         );
 
@@ -86,9 +87,9 @@ class DexService {
           callData: calldata,
         });
 
-        const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, {
-          innerTx: true,
-        });
+        const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, 
+          isUserHaveEnoughCoins ? {} : { innerTx: true },
+        );
 
         isUserHaveEnoughCoins ?
           await aeSdk.api.postTransaction({ tx: signedContractCallTx}) :
@@ -157,9 +158,9 @@ class DexService {
       callData: calldata,
     });
 
-    const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, {
-      innerTx: true,
-    });
+    const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, 
+      isUserHaveEnoughCoins ? {} : { innerTx: true },      
+    );
 
     const result = isUserHaveEnoughCoins ?
       await aeSdk.api.postTransaction({ tx: signedContractCallTx}).then((result) => ({ hash: result.txHash })) :
