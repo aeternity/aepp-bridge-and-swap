@@ -30,9 +30,11 @@ function App() {
   const [ethAmount, setEthAmount] = useState("");
   const [error, setError] = useState("");
   const [ethBalance, setEthBalance] = useState(0);
+  const [wethBalance, setWethBalance] = useState(0n);
   const [ethereumAddress, setEthereumAddress] = useState("");
   const [aeternityAddress, setAeternityAddress] = useState("");
   const [isEthereumConnecting, setIsEthereumConnecting] = useState(false);
+  const [isOnlySwap, setIsOnlySwap] = useState(false);
   const [isAeternityConnecting, setIsAeternityConnecting] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [swapResult, setSwapResult] = useState({
@@ -69,6 +71,7 @@ function App() {
       setIsAeternityConnecting(true);
       const address = await WalletService.connectSuperHero();
       setAeternityAddress(address);
+      setWethBalance(await DexService.getAeWethBalance());
       setIsAeternityConnecting(false);
     } catch (error) {
       console.error(error);
@@ -115,31 +118,33 @@ function App() {
 
   const handleBridgeClick = useCallback(async () => {
     try {
+      const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
       if (!ethAmount) {
         return;
       }
 
-      const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
-      console.log("Skip", SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
-      if (!SKIP_ETH) {
-        await BridgeService.bridgeEthToAe(
-          parseFloat(ethAmount),
-          aeternityAddress,
-        );
+      if (!isOnlySwap) {
+        console.log("Skip", SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
+        if (!SKIP_ETH) {
+          console.log("Bridging ETH to AE", parseFloat(ethAmount));
+          await BridgeService.bridgeEthToAe(
+            parseFloat(ethAmount),
+            aeternityAddress,
+          );
+        }
+    
+        setActiveStep(1);
+    
+        if (!SKIP_ETH) {
+          // Wait for a moment to let the bridge finalize
+          await WebsocketService.waitForBridgeToComplete(
+            amountInWei,
+            aeternityAddress,
+          );
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
       }
-
-      setActiveStep(1);
-
-      if (!SKIP_ETH) {
-        // Wait for a moment to let the bridge finalize
-        await WebsocketService.waitForBridgeToComplete(
-          amountInWei,
-          aeternityAddress,
-        );
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-
       setActiveStep(2);
 
       // Change allowance
@@ -161,7 +166,7 @@ function App() {
       console.error(error);
       setError("Error during bridge process: " + message);
     }
-  }, [ethAmount, aeternityAddress]);
+  }, [ethAmount, aeternityAddress, isOnlySwap]);
 
   // 1. step: Bridge
   // 2. step: Waiting for bridge to complete
@@ -241,6 +246,18 @@ function App() {
                     Enter Amount
                   </Typography>
                 </StepLabel>
+                { !!wethBalance && (<StepContent>
+                  <Typography textAlign={"left"} mb={2}>
+                    You have WETH already on your aeternity account
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{ mb: 2 }}
+                    onClick={() => setIsOnlySwap(!isOnlySwap)}
+                  >
+                    { isOnlySwap ? 'Swap ETH' : 'Swap WETH' }
+                  </Button>
+                </StepContent>)}
                 <StepContent>
                   <Box
                     display="flex"
@@ -248,7 +265,7 @@ function App() {
                     alignItems={"left"}
                   >
                     <Typography textAlign={"left"} mb={2}>
-                      Enter the amount of ETH you want to bridge:
+                      {`Enter the amount of ${isOnlySwap ? 'WETH' : 'ETH'} you want to ${isOnlySwap ? 'swap' : 'bridge'}`}:
                     </Typography>
                     <TextInput
                       sx={{ width: "375px" }}
@@ -257,7 +274,7 @@ function App() {
                       label="Enter Amount"
                       type="number"
                       slotProps={{
-                        htmlInput: { min: 0, max: ethBalance, step: 0.0001 },
+                        htmlInput: { min: 0, max: isOnlySwap ? wethBalance: ethBalance, step: 0.0001 },
                         input: {
                           sx: { color: "white" },
                           endAdornment: (
@@ -265,7 +282,7 @@ function App() {
                               sx={{ color: "white" }}
                               position="end"
                             >
-                              ETH
+                              { isOnlySwap ? 'WETH' : 'ETH' }
                             </InputAdornment>
                           ),
                         },
@@ -293,7 +310,7 @@ function App() {
                           sx={{ mt: 2 }}
                           onClick={handleBridgeClick}
                         >
-                          Bridge
+                          { isOnlySwap ? 'Swap' : 'Bridge' }
                         </Button>
                       </>
                     )}
@@ -304,7 +321,7 @@ function App() {
               <Step>
                 <StepLabel>
                   <Typography variant="h5" color="white">
-                    Bridge Tokens
+                    { `Bridge Tokens ${isOnlySwap ? '(skip)' : ''}`}
                   </Typography>
                 </StepLabel>
                 <StepContent>
