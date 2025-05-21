@@ -46,14 +46,16 @@ export async function payForTx(singedTx: Encoded.Transaction) {
     ) as [string, [string, bigint]];
 
     // hash of the change_allowance or create_allowance functions
-    if (Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70=" && Buffer.from(args[0]).toString("base64") !== "77+977+9WO+/vQ==" ) { 
+    if (Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70=" && Buffer.from(args[0]).toString("base64") !== "78xY4Q==" ) { 
       throw new Error("Invalid function: " + Buffer.from(args[0]).toString("base64"));
     }
     // check for router address
     if (args[1][0] !== Constants.ae_dex_router_address.replace("ct_", "ak_")) {
       throw new Error("Invalid router address");
     }
-    return aeSdk.payForTransaction(singedTx);
+    // If the account was never used, upon transaction verifying sdk will throw an error: Account not found
+    // this is a known issue from sdk
+    return aeSdk.payForTransaction(singedTx, { verify: false });
   }
 
   // check for swap
@@ -74,8 +76,10 @@ export async function payForTx(singedTx: Encoded.Transaction) {
     ) {
       throw new Error("Invalid router address");
     }
-    console.log(args);
-    return aeSdk.payForTransaction(singedTx);
+
+    // If the account was never used, upon transaction verifying sdk will throw an error: Account not found
+    // this is a known issue from sdk
+    return aeSdk.payForTransaction(singedTx, { verify: false });
   }
 
   throw Error("Could not determine contract");

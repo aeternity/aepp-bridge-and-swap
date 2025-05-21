@@ -4,7 +4,7 @@ import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
 import WalletService from "./WalletService";
 import { aeSdk } from "./WalletService";
 import { payForTx } from "../app/actions/payForTx";
-import { Contract, Tag } from "@aeternity/aepp-sdk";
+import { Contract, Tag, getExecutionCost } from "@aeternity/aepp-sdk";
 import { Constants } from "../constants";
 
 class DexService {
@@ -12,12 +12,12 @@ class DexService {
     return WalletService
       .getAeBalance(aeSdk.address)
       .then((balance) => 
-        this.changeAllowanceInternal(amountWei, balance > Constants.ae_balance_threshold)
+        this.changeAllowanceInternal(amountWei, balance)
       );
   }
 
-  static async changeAllowanceInternal(amountWei: bigint, isUserHaveEnoughCoins: boolean): Promise<void> {
-    console.log('Internal wallet pays for Dex transaction!');
+  static async changeAllowanceInternal(amountWei: bigint, userBalance: bigint): Promise<void> {
+    console.log(`Change allowance, user balance:${userBalance}!`);
     const tokenContract = await aeSdk.initializeContract({
       aci: aex9ACI,
       address: Constants.ae_weth_address,
@@ -34,7 +34,8 @@ class DexService {
         { from_account: aeSdk.address,
           for_account: Constants.ae_dex_router_address.replace("ct_", "ak_")},
         { callStatic: true }
-      );
+      )
+      .catch((error) => {console.info(error); return {decodedResult: undefined};}); // catches account not found, assumes no allowance exist for an empty address
 
     if (allowance === undefined) {
       console.info('Creating allowance.');
@@ -57,9 +58,11 @@ class DexService {
         callData: calldata,
       });
 
-      const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, {
-        innerTx: true,
-      });
+      let cost = getExecutionCost(contractCallTx)
+      let isUserHaveEnoughCoins = userBalance > cost + Constants.ae_balance_threshold;          
+      const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, 
+        isUserHaveEnoughCoins ? {} : { innerTx: true },
+      );
 
       isUserHaveEnoughCoins ?
         await aeSdk.api.postTransaction({ tx: signedContractCallTx}) :
@@ -86,6 +89,9 @@ class DexService {
           gasPrice: 1500000000,
           callData: calldata,
         });
+
+        let cost = getExecutionCost(contractCallTx)
+        let isUserHaveEnoughCoins = userBalance > cost + Constants.ae_balance_threshold;
 
         const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, 
           isUserHaveEnoughCoins ? {} : { innerTx: true },
@@ -119,16 +125,16 @@ class DexService {
     return WalletService
       .getAeBalance(aeSdk.address)
       .then((balance) => 
-        this.swapAeEthToAEInternal(amountWei, aeAddress, balance > Constants.ae_balance_threshold)
+        this.swapAeEthToAEInternal(amountWei, aeAddress, balance)
       )
   }
 
   static async swapAeEthToAEInternal(
     amountWei: bigint,
     aeAddress: string,
-    isUserHaveEnoughCoins: boolean
+    userBalance: bigint
   ): Promise<[bigint, bigint]> {
-    console.log('Dex transaction is paid from internal wallet!');
+    console.log('Swap aeEth to AE');
     const routerContract = await aeSdk.initializeContract({
       aci: routerACI,
       address: Constants.ae_dex_router_address,
@@ -157,7 +163,9 @@ class DexService {
       gasPrice: 1500000000,
       callData: calldata,
     });
-
+    let cost = getExecutionCost(contractCallTx);
+    let isUserHaveEnoughCoins = userBalance > cost + Constants.ae_balance_threshold;    
+    
     const signedContractCallTx = await aeSdk.signTransaction(contractCallTx, 
       isUserHaveEnoughCoins ? {} : { innerTx: true },      
     );
