@@ -40,9 +40,11 @@ function App() {
   const [wethBalance, setWethBalance] = useState(0n);
   const [ethereumAddress, setEthereumAddress] = useState("");
   const [aeternityAddress, setAeternityAddress] = useState("");
+  const [asset, setAsset] = useState("");
   const [isEthereumConnecting, setIsEthereumConnecting] = useState(false);
   const [isOnlySwap, setIsOnlySwap] = useState(false);
   const [isAeternityConnecting, setIsAeternityConnecting] = useState(false);
+  const [isSwapFromAe, setIsSwapFromAe] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [swapResult, setSwapResult] = useState({
     aeEthIn: BigInt(0),
@@ -76,6 +78,16 @@ function App() {
         .catch(() => setIsEthereumConnecting(false))
     }
   }, [isConnected, ethereumAddressFromProvider]);
+
+  useEffect(() => {
+    if (isOnlySwap) {
+      setAsset('WETH');
+    } else if (isSwapFromAe) {
+      setAsset('AE');
+    } else {
+      setAsset('ETH');
+    }
+  }, [isSwapFromAe, isOnlySwap])
 
   const connectEthereumWallet = useCallback(async () => {
       setIsEthereumConnecting(true);
@@ -153,6 +165,18 @@ function App() {
 
   const handleBridgeClick = useCallback(async () => {
     try {
+
+      if (isSwapFromAe) {
+        if (!isOnlySwap) {
+          setActiveStep(3);
+          const amountInAettos = BigInt(parseFloat(ethAmount) * 10 ** 18);
+          const amountOut = exchangeRatio ? BigInt(Math.trunc(Number(amountInAettos) / exchangeRatio)) : BigInt(0);
+          await DexService.swapAetoAeEth(amountInAettos, amountOut, aeternityAddress);
+        }
+        setActiveStep(1);
+        await BridgeService.bridgeAeToEth(+ethAmount, aeternityAddress, ethereumAddress);
+        return;
+      }
       const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
       if (!ethAmount) {
         return;
@@ -236,6 +260,13 @@ function App() {
             </Typography>
           </Grid>
           <Grid size={6}>
+            <Button
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={() => setIsSwapFromAe(!isSwapFromAe)}
+            >
+              {`Swap from ${isSwapFromAe ? 'AE': 'ETH'}`}
+            </Button>
             <Typography fontWeight={"normal"} variant="h5">
               Aeternity:
             </Typography>
@@ -291,7 +322,7 @@ function App() {
                       sx={{ mb: 2 }}
                       onClick={() => setIsOnlySwap(!isOnlySwap)}
                     >
-                      { isOnlySwap ? 'Swap ETH' : 'Swap WETH' }
+                      { `Swap ${asset}` }
                     </Button>
                   </StepContent>)}
                   <StepContent>
@@ -318,7 +349,7 @@ function App() {
                                 sx={{ color: "white" }}
                                 position="end"
                               >
-                                { isOnlySwap ? 'WETH' : 'ETH' }
+                                { asset }
                               </InputAdornment>
                             ),
                           },

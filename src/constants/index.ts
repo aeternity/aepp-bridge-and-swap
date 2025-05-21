@@ -51,6 +51,7 @@ export const Constants = {
   ae_middleware_url: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_middleware_url,
 };
 
+export const ETH_MAINNET_WAE_ADDRESS = '0xAbaE76F98A84D1DC3E0af8ed68465631165d33B2';
 export const BRIDGE_ABI = [
   {
     type: "error",
@@ -698,4 +699,969 @@ export const BRIDGE_ABI = [
       },
     ],
   },
+];
+
+export const BRIDGE_ACI = [
+  {
+    "namespace": {
+      "name": "Option",
+      "typedefs": [
+        
+      ]
+    }
+  },
+  {
+    "namespace": {
+      "name": "ListInternal",
+      "typedefs": [
+        
+      ]
+    }
+  },
+  {
+    "namespace": {
+      "name": "List",
+      "typedefs": [
+        
+      ]
+    }
+  },
+  {
+    "namespace": {
+      "name": "String",
+      "typedefs": [
+        
+      ]
+    }
+  },
+  {
+    "namespace": {
+      "name": "Pair",
+      "typedefs": [
+        
+      ]
+    }
+  },
+  {
+    "contract": {
+      "functions": [
+        {
+          "arguments": [
+            
+          ],
+          "name": "aex9_extensions",
+          "payable": false,
+          "returns": {
+            "list": [
+              "string"
+            ]
+          },
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "total_supply",
+          "payable": false,
+          "returns": "int",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "owner",
+          "payable": false,
+          "returns": "address",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "balances",
+          "payable": false,
+          "returns": {
+            "map": [
+              "address",
+              "int"
+            ]
+          },
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            }
+          ],
+          "name": "balance",
+          "payable": false,
+          "returns": {
+            "option": [
+              "int"
+            ]
+          },
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            },
+            {
+              "name": "_2",
+              "type": "int"
+            }
+          ],
+          "name": "transfer",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            }
+          ],
+          "name": "allowance_for_caller",
+          "payable": false,
+          "returns": {
+            "option": [
+              "int"
+            ]
+          },
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            },
+            {
+              "name": "_2",
+              "type": "address"
+            },
+            {
+              "name": "_3",
+              "type": "int"
+            }
+          ],
+          "name": "transfer_allowance",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            },
+            {
+              "name": "_2",
+              "type": "int"
+            }
+          ],
+          "name": "create_allowance",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            },
+            {
+              "name": "_2",
+              "type": "int"
+            }
+          ],
+          "name": "change_allowance",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            }
+          ],
+          "name": "reset_allowance",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "int"
+            }
+          ],
+          "name": "burn",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            },
+            {
+              "name": "_2",
+              "type": "int"
+            }
+          ],
+          "name": "mint",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "swap",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            }
+          ],
+          "name": "change_owner",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "confirm_new_owner",
+          "payable": false,
+          "returns": "unit",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_1",
+              "type": "address"
+            }
+          ],
+          "name": "check_swap",
+          "payable": false,
+          "returns": "int",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "swapped",
+          "payable": false,
+          "returns": {
+            "map": [
+              "address",
+              "int"
+            ]
+          },
+          "stateful": false
+        }
+      ],
+      "kind": "contract_interface",
+      "name": "FungibleTokenFullInterface",
+      "payable": false,
+      "typedefs": [
+        
+      ]
+    }
+  },
+  {
+    "contract": {
+      "functions": [
+        {
+          "arguments": [
+            {
+              "name": "assets",
+              "type": {
+                "map": [
+                  "string",
+                  "FungibleTokenFullInterface"
+                ]
+              }
+            },
+            {
+              "name": "native_ae",
+              "type": "Bridge.native_asset"
+            },
+            {
+              "name": "native_eth",
+              "type": "Bridge.native_asset"
+            },
+            {
+              "name": "owner",
+              "type": {
+                "option": [
+                  "address"
+                ]
+              }
+            }
+          ],
+          "name": "init",
+          "payable": false,
+          "returns": "Bridge.state",
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "threshold",
+              "type": "int"
+            }
+          ],
+          "name": "set_processors_threshold",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "processor",
+              "type": "address"
+            }
+          ],
+          "name": "add_processor",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "processor",
+              "type": "address"
+            }
+          ],
+          "name": "remove_processor",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "change_owner",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "confirm_new_owner",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "x#1",
+              "type": {
+                "tuple": [
+                  "string",
+                  "address"
+                ]
+              }
+            }
+          ],
+          "name": "change_asset_owner",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_asset",
+              "type": "string"
+            }
+          ],
+          "name": "confirm_asset_owner",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "x#1",
+              "type": {
+                "tuple": [
+                  "string",
+                  "FungibleTokenFullInterface"
+                ]
+              }
+            }
+          ],
+          "name": "update_native_ae",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "x#1",
+              "type": {
+                "tuple": [
+                  "string",
+                  "FungibleTokenFullInterface"
+                ]
+              }
+            }
+          ],
+          "name": "update_native_eth",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "_ethAsset",
+              "type": "string"
+            },
+            {
+              "name": "asset",
+              "type": "FungibleTokenFullInterface"
+            }
+          ],
+          "name": "add_asset",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "ethAsset",
+              "type": "string"
+            }
+          ],
+          "name": "remove_asset",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "disable",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "enable",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "x#1",
+              "type": {
+                "tuple": [
+                  "string",
+                  "string",
+                  "int",
+                  "int"
+                ]
+              }
+            }
+          ],
+          "name": "bridge_out",
+          "payable": true,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            {
+              "name": "x#1",
+              "type": {
+                "tuple": [
+                  "int",
+                  "string",
+                  "address",
+                  "int",
+                  "int"
+                ]
+              }
+            }
+          ],
+          "name": "bridge_in",
+          "payable": false,
+          "returns": {
+            "tuple": [
+              
+            ]
+          },
+          "stateful": true
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "owner",
+          "payable": false,
+          "returns": "address",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "movement_asset",
+          "payable": false,
+          "returns": "string",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "movement_sender",
+          "payable": false,
+          "returns": "address",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "movement_destination",
+          "payable": false,
+          "returns": "string",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "movement_amount",
+          "payable": false,
+          "returns": "int",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "movement_action_type",
+          "payable": false,
+          "returns": "int",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "movement_nonce",
+          "payable": false,
+          "returns": "int",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "assets",
+          "payable": false,
+          "returns": {
+            "map": [
+              "string",
+              "FungibleTokenFullInterface"
+            ]
+          },
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "native_eth",
+          "payable": false,
+          "returns": "FungibleTokenFullInterface",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "native_ae",
+          "payable": false,
+          "returns": "FungibleTokenFullInterface",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "eth_address",
+              "type": "string"
+            }
+          ],
+          "name": "asset",
+          "payable": false,
+          "returns": "FungibleTokenFullInterface",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "movements_out",
+          "payable": false,
+          "returns": {
+            "map": [
+              "int",
+              "Bridge.bridge_action"
+            ]
+          },
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "in_action_status",
+          "payable": false,
+          "returns": "Bridge.status",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ],
+          "name": "in_action_submitted",
+          "payable": false,
+          "returns": "bool",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "is_enabled",
+          "payable": false,
+          "returns": "bool",
+          "stateful": false
+        },
+        {
+          "arguments": [
+            
+          ],
+          "name": "out_counter",
+          "payable": false,
+          "returns": "int",
+          "stateful": false
+        }
+      ],
+      "kind": "contract_main",
+      "name": "Bridge",
+      "payable": false,
+      "state": {
+        "record": [
+          {
+            "name": "assets",
+            "type": {
+              "map": [
+                "string",
+                "FungibleTokenFullInterface"
+              ]
+            }
+          },
+          {
+            "name": "native_eth",
+            "type": "Bridge.native_asset"
+          },
+          {
+            "name": "native_ae",
+            "type": "Bridge.native_asset"
+          },
+          {
+            "name": "out_actions",
+            "type": {
+              "map": [
+                "int",
+                "Bridge.bridge_action"
+              ]
+            }
+          },
+          {
+            "name": "out_counter",
+            "type": "int"
+          },
+          {
+            "name": "in_actions",
+            "type": {
+              "map": [
+                "int",
+                "Bridge.in_bridge_action"
+              ]
+            }
+          },
+          {
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "name": "pending_owner",
+            "type": {
+              "option": [
+                "address"
+              ]
+            }
+          },
+          {
+            "name": "is_enabled",
+            "type": "bool"
+          },
+          {
+            "name": "processors_threshold",
+            "type": "int"
+          },
+          {
+            "name": "processors",
+            "type": {
+              "list": [
+                "address"
+              ]
+            }
+          }
+        ]
+      },
+      "typedefs": [
+        {
+          "name": "status",
+          "typedef": {
+            "variant": [
+              {
+                "InProgress": [
+                  
+                ]
+              },
+              {
+                "Processed": [
+                  
+                ]
+              },
+              {
+                "Failed": [
+                  
+                ]
+              }
+            ]
+          },
+          "vars": [
+            
+          ]
+        },
+        {
+          "name": "native_asset",
+          "typedef": {
+            "record": [
+              {
+                "name": "eth_addr",
+                "type": "string"
+              },
+              {
+                "name": "underlying_token",
+                "type": "FungibleTokenFullInterface"
+              }
+            ]
+          },
+          "vars": [
+            
+          ]
+        },
+        {
+          "name": "bridge_action",
+          "typedef": {
+            "record": [
+              {
+                "name": "asset",
+                "type": "string"
+              },
+              {
+                "name": "sender",
+                "type": "address"
+              },
+              {
+                "name": "destination",
+                "type": "string"
+              },
+              {
+                "name": "amount",
+                "type": "int"
+              },
+              {
+                "name": "action_type",
+                "type": "int"
+              },
+              {
+                "name": "nonce",
+                "type": "int"
+              }
+            ]
+          },
+          "vars": [
+            
+          ]
+        },
+        {
+          "name": "in_bridge_action",
+          "typedef": {
+            "record": [
+              {
+                "name": "processors",
+                "type": {
+                  "list": [
+                    "address"
+                  ]
+                }
+              },
+              {
+                "name": "submissions",
+                "type": {
+                  "map": [
+                    "hash",
+                    "int"
+                  ]
+                }
+              },
+              {
+                "name": "status",
+                "type": "Bridge.status"
+              }
+            ]
+          },
+          "vars": [
+            
+          ]
+        }
+      ]
+    }
+  }
 ];
