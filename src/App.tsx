@@ -15,6 +15,10 @@ import {
   Link,
 } from "@mui/material";
 
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+
+import { AppKitProvider } from './context/AppKitProvider';
+
 import BridgeService from "./services/BridgeService";
 import DexService from "./services/DexService";
 import WebsocketService from "./services/WebsocketService";
@@ -26,6 +30,9 @@ import Stepper from "@mui/material/Stepper";
 const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
 function App() {
+  // For some reason Web3 depends on the process api
+  global.process = require('process');
+
   const effectRan = useRef(false);
   const [ethAmount, setEthAmount] = useState("");
   const [error, setError] = useState("");
@@ -41,6 +48,39 @@ function App() {
     aeEthIn: BigInt(0),
     aeOut: BigInt(0),
   });
+  
+  const { open } = useAppKit();
+  const { address: ethereumAddressFromProvider, isConnected } = useAppKitAccount();
+  const isEthWalletDetectionEnded = useRef<boolean>(false);
+  const ethereumWalletDetected = useRef<boolean>(false);
+
+  useEffect(() => {
+  (async function () {
+      const ethereumClient = (window as any).ethereum;
+
+      ethereumWalletDetected.current = !!ethereumClient;
+      isEthWalletDetectionEnded.current = true;
+  })();
+  }, []);
+
+
+  useEffect(() => {
+    if (isConnected && ethereumAddressFromProvider) {
+      setEthereumAddress(ethereumAddressFromProvider);
+
+      WalletService.getEthBalance(ethereumAddressFromProvider)
+        .then((balance) => {
+          setEthBalance(balance);
+          setIsEthereumConnecting(false);
+        })
+        .catch(() => setIsEthereumConnecting(false))
+    }
+  }, [isConnected, ethereumAddressFromProvider]);
+
+  const connectEthereumWallet = useCallback(async () => {
+      setIsEthereumConnecting(true);
+      await open({ view: 'Connect' });
+  }, []);
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
@@ -84,12 +124,7 @@ function App() {
 
   const connectMetamask = async () => {
     try {
-      setIsEthereumConnecting(true);
-      const address = await WalletService.connectMetamask();
-      const balance = await WalletService.getEthBalance(address);
-      setEthBalance(balance);
-      setEthereumAddress(address);
-      setIsEthereumConnecting(false);
+      await connectEthereumWallet();
     } catch (error) {
       console.error(error);
       setEthereumAddress(
@@ -175,211 +210,213 @@ function App() {
   // 5. step: Done
 
   return (
-    <Container sx={{ padding: 2 }}>
-      <Grid container>
-        <Grid size={12}>
-          <Typography textAlign={"center"} variant="h2">
-            ChainFusion
-          </Typography>
-          {error && (
-            <Typography textAlign={"center"} variant="h6" color="error">
-              {error}
-            </Typography>
-          )}
-          <Divider sx={{ background: "white", marginY: 3 }} />
-          <Typography textAlign={"center"} variant="h6" mb={3}>
-            This process will bridge your ETH to AE chain using{" "}
-            <Link href="https://ae-bridge.com/" target="_blank">
-              ae bridge
-            </Link>
-            . and then swap it to AE tokens using the{" "}
-            <Link href="https://aepp.dex.superhero.com" target="_blank">
-              Superhero DEX
-            </Link>
-            .
-          </Typography>
-        </Grid>
-        <Grid size={6}>
-          <Typography fontWeight={"normal"} variant="h5">
-            Aeternity:
-          </Typography>
-          {!isAeternityConnecting && !aeternityAddress ? (
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={connectSuperhero}
-            >
-              Connect Superhero Wallet
-            </Button>
-          ) : (
-            aeternityAddress || "Waiting for wallet connection..."
-          )}
-          <br />
-          <br />
-          <Typography fontWeight={"normal"} variant="h5">
-            Ethereum:
-          </Typography>
-          {!isEthereumConnecting && !ethereumAddress ? (
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={connectMetamask}
-            >
-              Connect Metamask Wallet
-            </Button>
-          ) : (
-            ethereumAddress || "Waiting for wallet connection..."
-          )}
-          <br />
-          {ethereumAddress && (
-            <Typography fontWeight={"normal"}>
-              Balance: {ethBalance} ETH
-            </Typography>
-          )}
-        </Grid>
-        <Grid size={6}>
-          {areWalletsConnected && (
-            <Stepper activeStep={activeStep} orientation="vertical">
-              <Step>
-                <StepLabel>
-                  <Typography variant="h5" color="white">
-                    Enter Amount
-                  </Typography>
-                </StepLabel>
-                { !!wethBalance && (<StepContent>
-                  <Typography textAlign={"left"} mb={2}>
-                    You have WETH already on your aeternity account
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    sx={{ mb: 2 }}
-                    onClick={() => setIsOnlySwap(!isOnlySwap)}
-                  >
-                    { isOnlySwap ? 'Swap ETH' : 'Swap WETH' }
-                  </Button>
-                </StepContent>)}
-                <StepContent>
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems={"left"}
-                  >
-                    <Typography textAlign={"left"} mb={2}>
-                      {`Enter the amount of ${isOnlySwap ? 'WETH' : 'ETH'} you want to ${isOnlySwap ? 'swap' : 'bridge'}`}:
-                    </Typography>
-                    <TextInput
-                      sx={{ width: "375px" }}
-                      value={ethAmount || ""}
-                      onChange={handleAmountChange}
-                      label="Enter Amount"
-                      type="number"
-                      slotProps={{
-                        htmlInput: { min: 0, max: isOnlySwap ? wethBalance: ethBalance, step: 0.0001 },
-                        input: {
-                          sx: { color: "white" },
-                          endAdornment: (
-                            <InputAdornment
-                              sx={{ color: "white" }}
-                              position="end"
-                            >
-                              { isOnlySwap ? 'WETH' : 'ETH' }
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                    <Typography textAlign={"left"} mt={1}>
-                      Approximate exchange rate:
-                      <br />1 ETH(@{prices?.ETH} USD) ={" "}
-                      {exchangeRatio?.toFixed(0)} AE(@
-                      {prices?.AE} USD)
-                    </Typography>
-
-                    {!!parseFloat(ethAmount) && (
-                      <>
-                        <Typography textAlign={"center"} mt={5} variant="h5">
-                          You will receive: ~
-                          {exchangeRatio
-                            ? (parseFloat(ethAmount) * exchangeRatio).toFixed(0)
-                            : 0}{" "}
-                          AE
-                        </Typography>
-
-                        <Button
-                          variant="contained"
-                          sx={{ mt: 2 }}
-                          onClick={handleBridgeClick}
-                        >
-                          { isOnlySwap ? 'Swap' : 'Bridge' }
-                        </Button>
-                      </>
-                    )}
-                  </Box>
-                </StepContent>
-              </Step>
-
-              <Step>
-                <StepLabel>
-                  <Typography variant="h5" color="white">
-                    { `Bridge Tokens ${isOnlySwap ? '(skip)' : ''}`}
-                  </Typography>
-                </StepLabel>
-                <StepContent>
-                  <Typography textAlign={"left"} mb={2}>
-                    <CircularProgress size={16} /> Waiting for bridge to
-                    complete...
-                  </Typography>
-                </StepContent>
-              </Step>
-
-              <Step>
-                <StepLabel>
-                  <Typography variant="h5" color="white">
-                    Change Allowance
-                  </Typography>
-                </StepLabel>
-                <StepContent>
-                  <Typography textAlign={"left"} mb={2}>
-                    <CircularProgress size={16} /> Waiting for allowance
-                    change...
-                    <br />
-                    <br />
-                    Please confirm the transaction in your Aeternity wallet
-                  </Typography>
-                </StepContent>
-              </Step>
-              <Step>
-                <StepLabel>
-                  <Typography variant="h5" color="white">
-                    Swap Tokens
-                  </Typography>
-                </StepLabel>
-                <StepContent>
-                  <Typography textAlign={"left"} mb={2}>
-                    <CircularProgress size={16} /> Swapping AE tokens...
-                    <br />
-                    <br />
-                    Please confirm the transaction in your Aeternity wallet
-                  </Typography>
-                </StepContent>
-              </Step>
-            </Stepper>
-          )}
-        </Grid>
-        {activeStep === 4 && (
+    <AppKitProvider>
+      <Container sx={{ padding: 2 }}>
+        <Grid container>
           <Grid size={12}>
+            <Typography textAlign={"center"} variant="h2">
+              ChainFusion
+            </Typography>
+            {error && (
+              <Typography textAlign={"center"} variant="h6" color="error">
+                {error}
+              </Typography>
+            )}
             <Divider sx={{ background: "white", marginY: 3 }} />
-            <Typography textAlign={"center"} variant="h6">
-              You swapped {ethAmount} ETH to
-              {exchangeRatio ? Number(swapResult.aeOut) / 10 ** 18 : 0} AE
-              tokens successfully!
-              <br />
-              <Button onClick={() => setActiveStep(0)}>Swap again</Button>
+            <Typography textAlign={"center"} variant="h6" mb={3}>
+              This process will bridge your ETH to AE chain using{" "}
+              <Link href="https://ae-bridge.com/" target="_blank">
+                ae bridge
+              </Link>
+              . and then swap it to AE tokens using the{" "}
+              <Link href="https://aepp.dex.superhero.com" target="_blank">
+                Superhero DEX
+              </Link>
+              .
             </Typography>
           </Grid>
-        )}
-      </Grid>
-    </Container>
+          <Grid size={6}>
+            <Typography fontWeight={"normal"} variant="h5">
+              Aeternity:
+            </Typography>
+            {!isAeternityConnecting && !aeternityAddress ? (
+              <Button
+                variant="contained"
+                sx={{ mt: 2 }}
+                onClick={connectSuperhero}
+              >
+                Connect Superhero Wallet
+              </Button>
+            ) : (
+              aeternityAddress || "Waiting for wallet connection..."
+            )}
+            <br />
+            <br />
+            <Typography fontWeight={"normal"} variant="h5">
+              Ethereum:
+            </Typography>
+            {!isEthereumConnecting && !ethereumAddress ? (
+              <Button
+                variant="contained"
+                sx={{ mt: 2 }}
+                onClick={connectMetamask}
+              >
+                Connect Metamask Wallet
+              </Button>
+            ) : (
+              ethereumAddress || "Waiting for wallet connection..."
+            )}
+            <br />
+            {ethereumAddress && (
+              <Typography fontWeight={"normal"}>
+                Balance: {ethBalance} ETH
+              </Typography>
+            )}
+          </Grid>
+          <Grid size={6}>
+            {areWalletsConnected && (
+              <Stepper activeStep={activeStep} orientation="vertical">
+                <Step>
+                  <StepLabel>
+                    <Typography variant="h5" color="white">
+                      Enter Amount
+                    </Typography>
+                  </StepLabel>
+                  { !!wethBalance && (<StepContent>
+                    <Typography textAlign={"left"} mb={2}>
+                      You have WETH already on your aeternity account
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      sx={{ mb: 2 }}
+                      onClick={() => setIsOnlySwap(!isOnlySwap)}
+                    >
+                      { isOnlySwap ? 'Swap ETH' : 'Swap WETH' }
+                    </Button>
+                  </StepContent>)}
+                  <StepContent>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems={"left"}
+                    >
+                      <Typography textAlign={"left"} mb={2}>
+                        {`Enter the amount of ${isOnlySwap ? 'WETH' : 'ETH'} you want to ${isOnlySwap ? 'swap' : 'bridge'}`}:
+                      </Typography>
+                      <TextInput
+                        sx={{ width: "375px" }}
+                        value={ethAmount || ""}
+                        onChange={handleAmountChange}
+                        label="Enter Amount"
+                        type="number"
+                        slotProps={{
+                          htmlInput: { min: 0, max: isOnlySwap ? wethBalance: ethBalance, step: 0.0001 },
+                          input: {
+                            sx: { color: "white" },
+                            endAdornment: (
+                              <InputAdornment
+                                sx={{ color: "white" }}
+                                position="end"
+                              >
+                                { isOnlySwap ? 'WETH' : 'ETH' }
+                              </InputAdornment>
+                            ),
+                          },
+                        }}
+                      />
+                      <Typography textAlign={"left"} mt={1}>
+                        Approximate exchange rate:
+                        <br />1 ETH(@{prices?.ETH} USD) ={" "}
+                        {exchangeRatio?.toFixed(0)} AE(@
+                        {prices?.AE} USD)
+                      </Typography>
+
+                      {!!parseFloat(ethAmount) && (
+                        <>
+                          <Typography textAlign={"center"} mt={5} variant="h5">
+                            You will receive: ~
+                            {exchangeRatio
+                              ? (parseFloat(ethAmount) * exchangeRatio).toFixed(0)
+                              : 0}{" "}
+                            AE
+                          </Typography>
+
+                          <Button
+                            variant="contained"
+                            sx={{ mt: 2 }}
+                            onClick={handleBridgeClick}
+                          >
+                            { isOnlySwap ? 'Swap' : 'Bridge' }
+                          </Button>
+                        </>
+                      )}
+                    </Box>
+                  </StepContent>
+                </Step>
+
+                <Step>
+                  <StepLabel>
+                    <Typography variant="h5" color="white">
+                      { `Bridge Tokens ${isOnlySwap ? '(skip)' : ''}`}
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <Typography textAlign={"left"} mb={2}>
+                      <CircularProgress size={16} /> Waiting for bridge to
+                      complete...
+                    </Typography>
+                  </StepContent>
+                </Step>
+
+                <Step>
+                  <StepLabel>
+                    <Typography variant="h5" color="white">
+                      Change Allowance
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <Typography textAlign={"left"} mb={2}>
+                      <CircularProgress size={16} /> Waiting for allowance
+                      change...
+                      <br />
+                      <br />
+                      Please confirm the transaction in your Aeternity wallet
+                    </Typography>
+                  </StepContent>
+                </Step>
+                <Step>
+                  <StepLabel>
+                    <Typography variant="h5" color="white">
+                      Swap Tokens
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <Typography textAlign={"left"} mb={2}>
+                      <CircularProgress size={16} /> Swapping AE tokens...
+                      <br />
+                      <br />
+                      Please confirm the transaction in your Aeternity wallet
+                    </Typography>
+                  </StepContent>
+                </Step>
+              </Stepper>
+            )}
+          </Grid>
+          {activeStep === 4 && (
+            <Grid size={12}>
+              <Divider sx={{ background: "white", marginY: 3 }} />
+              <Typography textAlign={"center"} variant="h6">
+                You swapped {ethAmount} ETH to
+                {exchangeRatio ? Number(swapResult.aeOut) / 10 ** 18 : 0} AE
+                tokens successfully!
+                <br />
+                <Button onClick={() => setActiveStep(0)}>Swap again</Button>
+              </Typography>
+            </Grid>
+          )}
+        </Grid>
+      </Container>
+    </AppKitProvider>
   );
 }
 
