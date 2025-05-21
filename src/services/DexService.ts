@@ -29,13 +29,25 @@ class DexService {
       address: Constants.ae_weth_address,
     });
 
+    let newAccount = false;
+
     let { decodedResult: allowance } = await tokenContractWallet
       .allowance(
         { from_account: aeSdk.address,
           for_account: Constants.ae_dex_router_address.replace("ct_", "ak_")},
         { callStatic: true }
       )
-      .catch((error) => {console.info(error); return {decodedResult: undefined};}); // catches account not found, assumes no allowance exist for an empty address
+      .catch((error) => {
+        console.info(error);
+        if (error?.statusCode === 404) {
+          newAccount = true;
+        }
+
+        return {
+          decodedResult: undefined
+        };
+      }); // catches account not found, assumes no allowance exist for an empty address
+
 
     if (allowance === undefined) {
       console.info('Creating allowance.');
@@ -56,6 +68,7 @@ class DexService {
         gasLimit: 1000000,
         gasPrice: 1500000000,
         callData: calldata,
+        ...newAccount ? { nonce: 1} : {},
       });
 
       let cost = getExecutionCost(contractCallTx)
