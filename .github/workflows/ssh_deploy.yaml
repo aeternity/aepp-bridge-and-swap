@@ -26,6 +26,9 @@ on:
       HOST_PORT:
         description: "Host port to expose"
         required: true
+      AE_PRIVATE_KEY:
+        description: "AE_PRIVATE_KEY"
+        required: true
 jobs:
   deploy:
     name: Deploy via ssh
@@ -56,5 +59,6 @@ jobs:
               --restart=always \
               -p ${{ secrets.HOST_PORT }}:3000 \
               -e APP_PORT="3000" \
+              -e AE_PRIVATE_KEY="${{ secrets.AE_PRIVATE_KEY }}" \
               -e NODE_ENV=production \
               aeternity/aepp-bridge-and-swap:${{ inputs.VERSION }}
