@@ -26,8 +26,8 @@ on:
       HOST_PORT:
         description: "Host port to expose"
         required: true
-      AE_PRIVATE_KEY:
-        description: "AE_PRIVATE_KEY"
+      NEXT_PUBLIC_AE_PRIVATE_KEY:
+        description: "NEXT_PUBLIC_AE_PRIVATE_KEY"
         required: true
 jobs:
   deploy:
@@ -39,7 +39,7 @@ jobs:
         env:
           VERSION: "${{ inputs.VERSION }}"
           SHA: "${{ github.sha }}"
-          AE_PRIVATE_KEY: "${{ secrets.AE_PRIVATE_KEY }}"
+          NEXT_PUBLIC_AE_PRIVATE_KEY: "${{ secrets.AE_PRIVATE_KEY }}"
           HOST_DATA_DIR: "./${{ inputs.CONTAINER_NAME }}"
           HOST_PORT: "${{ secrets.HOST_PORT }}"
         with:
@@ -48,7 +48,7 @@ jobs:
           key: "${{ secrets.DEPLOY_KEY }}"
           envs: >
             HOST_DATA_DIR,
-            AE_PRIVATE_KEY,
+            NEXT_PUBLIC_AE_PRIVATE_KEY,
             SHA
           script: |
             echo $SHA > $HOST_DATA_DIR/REVISION || true
@@ -59,6 +59,6 @@ jobs:
               --restart=always \
               -p ${{ secrets.HOST_PORT }}:3000 \
               -e APP_PORT="3000" \
-              -e AE_PRIVATE_KEY="${{ secrets.AE_PRIVATE_KEY }}" \
+              -e NEXT_PUBLIC_AE_PRIVATE_KEY="${{ secrets.AE_PRIVATE_KEY }}" \
               -e NODE_ENV=production \
               aeternity/aepp-bridge-and-swap:${{ inputs.VERSION }}

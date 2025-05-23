@@ -29,7 +29,7 @@ const bridgeDexSwapConfig = {
     },
 };
 
-const isMainnet = !!process.env.MAINNET;
+const isMainnet = !!process.env.NEXT_PUBLIC_MAINNET;
 
 export const Constants = {
   isMainnet,
