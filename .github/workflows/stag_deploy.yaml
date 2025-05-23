@@ -33,7 +33,7 @@ jobs:
       CONTAINER_NAME: "${{ inputs.CONTAINER_NAME }}-testnet"
     secrets:
       HOST_PORT: "3100"
-      AE_PRIVATE_KEY: "${{ secrets.STAG_AE_PRIVATE_KEY }}"
+      NEXT_PUBLIC_AE_PRIVATE_KEY: "${{ secrets.NEXT_PUBLIC_AE_PRIVATE_KEY }}"
       DEPLOY_HOST: "${{ secrets.STAG_DEPLOY_HOST }}"
       DEPLOY_USERNAME: "${{ secrets.STAG_DEPLOY_USERNAME }}"
       DEPLOY_KEY: "${{ secrets.STAG_DEPLOY_KEY }}"

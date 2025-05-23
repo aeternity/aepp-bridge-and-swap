@@ -58,6 +58,28 @@ class DexService {
     }
   }
 
+  static async swapAetoAeEth(
+    amountinAettos: bigint,
+    amountOut: bigint,
+    aeAddress: string,
+  ) {
+    const routerContract = await aeSdk.initializeContract({
+      aci: routerACI,
+      address: AE_DEX_ROUTER_ADDRESS,
+    });
+
+    const aHourFromNow = Date.now() + 60 * 60 * 1000;
+
+    return routerContract.swap_exact_ae_for_tokens(
+        (amountOut / 100n) * 95n,
+        [AE_WAE_ADDRESS, AE_WETH_ADDRESS],
+        aeAddress,
+        aHourFromNow,
+        undefined,
+        { amount: amountinAettos.toString() },
+    )
+  }
+
   static async swapAeEthToAE(
     amountWei: bigint,
     aeAddress: string,
