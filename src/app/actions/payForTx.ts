@@ -18,11 +18,11 @@ import {
   AE_WETH_ADDRESS,
 } from "../../constants";
 
-if (!process.env.AE_PRIVATE_KEY) {
-  throw new Error("AE_PRIVATE_KEY is required");
+if (!process.env.NEXT_PUBLIC_AE_PRIVATE_KEY) {
+  throw new Error("NEXT_PUBLIC_AE_PRIVATE_KEY is required");
 }
 
-const payerAccount = new MemoryAccount(process.env.AE_PRIVATE_KEY!);
+const payerAccount = new MemoryAccount(process.env.NEXT_PUBLIC_AE_PRIVATE_KEY!);
 
 const node = new Node(AE_NODE_URL);
 const aeSdk = new AeSdk({
