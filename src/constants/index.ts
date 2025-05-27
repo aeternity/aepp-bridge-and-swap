@@ -1,20 +1,55 @@
-export const BRIDGE_ETH_ACTION_TYPE = 1;
-export const ETH_MOCK_ADDRESS = "0xAbaE76F98A84D1DC3E0af8ed68465631165d33B2";
-export const ETH_BRIDGE_ADDRESS = "0xd099E3Ab65d6294d1d2D1Ad92897Cc29286F8cA5";
-export const AE_BRIDGE_ADDRESS =
-  "ct_2Xdym95f2i998W9Zoh1NgAB7pVuQ34ztEsema7u4XwSoq5VKUJ";
-export const AE_WAE_ADDRESS =
-  "ct_J3zBY8xxjsRr3QojETNw48Eb38fjvEuJKkQ6KzECvubvEcvCa";
-export const AE_DEX_ROUTER_ADDRESS =
-  "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3";
-export const AE_WETH_ADDRESS =
-  "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh";
-export const ETH_NATIVE_ETH_PLACEHOLDER_ADDRESS =
-  "0xabae76f98a84d1dc3e0af8ed68465631165d33b2"; // needs to be lowercase!
-export const AE_WEB_SOCKET_URL = "wss://mainnet.aeternity.io/mdw/v2/websocket";
-export const AE_NODE_URL = "https://mainnet.aeternity.io";
-export const AE_NETWORK_ID = "ae_mainnet";
-export const AE_MIDDLEWARE_URL = "https://mainnet.aeternity.io/mdw/v3";
+const bridgeDexSwapConfig = {
+    mainnet: {
+      chain_id: '0x1',
+      eth_mock_address: '0xAbaE76F98A84D1DC3E0af8ed68465631165d33B2',
+      eth_bridge_address: '0xd099E3Ab65d6294d1d2D1Ad92897Cc29286F8cA5',
+      ae_bridge_address: 'ct_2Xdym95f2i998W9Zoh1NgAB7pVuQ34ztEsema7u4XwSoq5VKUJ' as `ct_${string}`,
+      ae_wae_address: 'ct_J3zBY8xxjsRr3QojETNw48Eb38fjvEuJKkQ6KzECvubvEcvCa' as `ct_${string}`,
+      ae_dex_router_address: 'ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3' as `ct_${string}`,
+      ae_weth_address: 'ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh' as `ct_${string}`,
+      eth_native_eth_placeholder_address : '0xabae76f98a84d1dc3e0af8ed68465631165d33b2',
+      ae_web_socket_url: 'wss://mainnet.aeternity.io/mdw/v2/websocket',
+      ae_node_url: 'https://mainnet.aeternity.io',
+      ae_network_id: 'ae_mainnet',      
+      ae_middleware_url: 'https://mainnet.aeternity.io/mdw/v3',      
+    },
+  testnet: {
+    chain_id: '0xaa36a7',
+    eth_mock_address: '',
+    eth_bridge_address: '0xa2E1f5E1f2721Ae935ac7b0799BC108963276dBA',
+    ae_bridge_address: 'ct_2C5nHYyzUMiqU9HE32XNLN47pFEDL2bNpVTAsG5XmZNigvM4Fv' as `ct_${string}`,
+    ae_wae_address: 'ct_JDp175ruWd7mQggeHewSLS1PFXt9AzThCDaFedxon8mF8xTRF' as `ct_${string}`,
+    ae_dex_router_address: 'ct_MLXQEP12MBn99HL6WDaiTqDbG4bJQ3Q9Bzr57oLfvEkghvpFb' as `ct_${string}`,
+    ae_weth_address: 'ct_WVqAvLQpvZCgBg4faZLXA1YBj43Fxj91D33Z8K7pFsY8YCofv' as `ct_${string}`,
+    eth_native_eth_placeholder_address: '0xd57aafdc9615835e1f75bcdbde1c7b1aa6e4cb10',
+    ae_web_socket_url: 'wss://testnet.aeternity.io/mdw/v2/websocket',
+    ae_node_url: 'https://testnet.aeternity.io',
+    ae_network_id: 'ae_uat',    
+    ae_middleware_url: 'https://testnet.aeternity.io/mdw/v3',
+    },
+};
+
+const isMainnet = !!process.env.MAINNET;
+
+export const Constants = {
+  isMainnet,
+  bridge_eth_action_type: 1,
+  ae_balance_threshold: 1000000000n,
+  allowance_slippage: 10n, // 10% allowance slippage
+  name: isMainnet ? 'mainnet' : 'testnet', 
+  chain_id: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].chain_id,
+  ae_network_id: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_network_id,
+  eth_mock_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].eth_mock_address,
+  eth_bridge_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].eth_bridge_address,
+  ae_bridge_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_bridge_address,
+  ae_wae_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_wae_address,
+  ae_dex_router_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_dex_router_address,
+  ae_weth_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_weth_address,
+  eth_native_eth_placeholder_address: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].eth_native_eth_placeholder_address,
+  ae_web_socket_url: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_web_socket_url,
+  ae_node_url: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_node_url,
+  ae_middleware_url: bridgeDexSwapConfig[isMainnet ? 'mainnet' : 'testnet'].ae_middleware_url,
+};
 
 export const BRIDGE_ABI = [
   {
