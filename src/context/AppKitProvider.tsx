@@ -14,7 +14,7 @@ createAppKit({
     adapters: [new EthersAdapter()],
     networks,
     metadata,
-    projectId: process.env.WALLET_CONNECT_PROJECT_ID!,
+    projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
     themeVariables: {
         '--w3m-color-mix': '#f5274e',
         '--w3m-color-mix-strength': 10,

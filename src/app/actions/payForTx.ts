@@ -12,11 +12,11 @@ import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
 import routerACI from "dex-contracts-v2/build/AedexV2Router.aci.json";
 import { Constants } from "../../constants";
 
-if (!process.env.AE_PRIVATE_KEY) {
-  throw new Error("AE_PRIVATE_KEY is required");
+if (!process.env.NEXT_PUBLIC_AE_PRIVATE_KEY) {
+  throw new Error("NEXT_PUBLIC_AE_PRIVATE_KEY is required");
 }
 
-const payerAccount = new MemoryAccount(process.env.AE_PRIVATE_KEY!);
+const payerAccount = new MemoryAccount(process.env.NEXT_PUBLIC_AE_PRIVATE_KEY!);
 
 const node = new Node(Constants.ae_node_url);
 const aeSdk = new AeSdk({
