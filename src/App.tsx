@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import TextInput from "./components/TextInput";
-import WalletService from "./services/WalletService";
-import TokenPriceService from "./services/TokenPriceService";
+import TextInput from './components/TextInput';
+import WalletService from './services/WalletService';
+import TokenPriceService from './services/TokenPriceService';
 import {
   Box,
   Button,
@@ -13,19 +13,19 @@ import {
   Grid2 as Grid,
   CircularProgress,
   Link,
-} from "@mui/material";
+} from '@mui/material';
 
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 
 import { AppKitProvider } from './context/AppKitProvider';
 
-import BridgeService from "./services/BridgeService";
-import DexService from "./services/DexService";
-import WebsocketService from "./services/WebsocketService";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import StepContent from "@mui/material/StepContent";
-import Stepper from "@mui/material/Stepper";
+import BridgeService from './services/BridgeService';
+import DexService from './services/DexService';
+import WebsocketService from './services/WebsocketService';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import Stepper from '@mui/material/Stepper';
 
 const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
@@ -34,13 +34,13 @@ function App() {
   global.process = require('process');
 
   const effectRan = useRef(false);
-  const [ethAmount, setEthAmount] = useState("");
-  const [error, setError] = useState("");
+  const [ethAmount, setEthAmount] = useState('');
+  const [error, setError] = useState('');
   const [ethBalance, setEthBalance] = useState(0);
   const [wethBalance, setWethBalance] = useState(0n);
-  const [ethereumAddress, setEthereumAddress] = useState("");
-  const [aeternityAddress, setAeternityAddress] = useState("");
-  const [asset, setAsset] = useState("");
+  const [ethereumAddress, setEthereumAddress] = useState('');
+  const [aeternityAddress, setAeternityAddress] = useState('');
+  const [asset, setAsset] = useState('');
   const [isEthereumConnecting, setIsEthereumConnecting] = useState(false);
   const [isOnlySwap, setIsOnlySwap] = useState(false);
   const [isAeternityConnecting, setIsAeternityConnecting] = useState(false);
@@ -50,21 +50,21 @@ function App() {
     aeEthIn: BigInt(0),
     aeOut: BigInt(0),
   });
-  
+
   const { open } = useAppKit();
-  const { address: ethereumAddressFromProvider, isConnected } = useAppKitAccount();
+  const { address: ethereumAddressFromProvider, isConnected } =
+    useAppKitAccount();
   const isEthWalletDetectionEnded = useRef<boolean>(false);
   const ethereumWalletDetected = useRef<boolean>(false);
 
   useEffect(() => {
-  (async function () {
+    (async function () {
       const ethereumClient = (window as any).ethereum;
 
       ethereumWalletDetected.current = !!ethereumClient;
       isEthWalletDetectionEnded.current = true;
-  })();
+    })();
   }, []);
-
 
   useEffect(() => {
     if (isConnected && ethereumAddressFromProvider) {
@@ -75,7 +75,7 @@ function App() {
           setEthBalance(balance);
           setIsEthereumConnecting(false);
         })
-        .catch(() => setIsEthereumConnecting(false))
+        .catch(() => setIsEthereumConnecting(false));
     }
   }, [isConnected, ethereumAddressFromProvider]);
 
@@ -87,11 +87,11 @@ function App() {
     } else {
       setAsset('ETH');
     }
-  }, [isSwapFromAe, isOnlySwap])
+  }, [isSwapFromAe, isOnlySwap]);
 
   const connectEthereumWallet = useCallback(async () => {
-      setIsEthereumConnecting(true);
-      await open({ view: 'Connect' });
+    setIsEthereumConnecting(true);
+    await open({ view: 'Connect' });
   }, []);
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
@@ -128,7 +128,7 @@ function App() {
     } catch (error) {
       console.error(error);
       setAeternityAddress(
-        "Error connecting wallet, check that you have your wallet installed and accept the connection. Reload to try again.",
+        'Error connecting wallet, check that you have your wallet installed and accept the connection. Reload to try again.',
       );
       setIsAeternityConnecting(false);
     }
@@ -140,7 +140,7 @@ function App() {
     } catch (error) {
       console.error(error);
       setEthereumAddress(
-        "Error connecting wallet, check that you have your wallet installed and accept the connection. Reload to try again.",
+        'Error connecting wallet, check that you have your wallet installed and accept the connection. Reload to try again.',
       );
       setIsEthereumConnecting(false);
     }
@@ -153,28 +153,37 @@ function App() {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue =
-        "Buying AE with ETH is currently in progress. If you leave the funds will not be lost but the process will be interrupted and can currently not be picked up again.";
+        'Buying AE with ETH is currently in progress. If you leave the funds will not be lost but the process will be interrupted and can currently not be picked up again.';
     };
 
     if (activeStep > 0 && activeStep < 4) {
-      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener('beforeunload', handleBeforeUnload);
     }
 
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [activeStep]);
 
   const handleBridgeClick = useCallback(async () => {
     try {
-
       if (isSwapFromAe) {
         if (!isOnlySwap) {
           setActiveStep(3);
           const amountInAettos = BigInt(parseFloat(ethAmount) * 10 ** 18);
-          const amountOut = exchangeRatio ? BigInt(Math.trunc(Number(amountInAettos) / exchangeRatio)) : BigInt(0);
-          await DexService.swapAetoAeEth(amountInAettos, amountOut, aeternityAddress);
+          const amountOut = exchangeRatio
+            ? BigInt(Math.trunc(Number(amountInAettos) / exchangeRatio))
+            : BigInt(0);
+          await DexService.swapAetoAeEth(
+            amountInAettos,
+            amountOut,
+            aeternityAddress,
+          );
         }
         setActiveStep(1);
-        await BridgeService.bridgeAeToEth(+ethAmount, aeternityAddress, ethereumAddress);
+        await BridgeService.bridgeAeToEth(
+          +ethAmount,
+          aeternityAddress,
+          ethereumAddress,
+        );
         return;
       }
       const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
@@ -183,17 +192,17 @@ function App() {
       }
 
       if (!isOnlySwap) {
-        console.log("Skip", SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
+        console.log('Skip', SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
         if (!SKIP_ETH) {
-          console.log("Bridging ETH to AE", parseFloat(ethAmount));
+          console.log('Bridging ETH to AE', parseFloat(ethAmount));
           await BridgeService.bridgeEthToAe(
             parseFloat(ethAmount),
             aeternityAddress,
           );
         }
-    
+
         setActiveStep(1);
-    
+
         if (!SKIP_ETH) {
           // Wait for a moment to let the bridge finalize
           await WebsocketService.waitForBridgeToComplete(
@@ -220,10 +229,10 @@ function App() {
 
       setActiveStep(4);
     } catch (error) {
-      let message = "Unknown Error";
+      let message = 'Unknown Error';
       if (error instanceof Error) message = error.message;
       console.error(error);
-      setError("Error during bridge process: " + message);
+      setError('Error during bridge process: ' + message);
     }
   }, [ethAmount, aeternityAddress, isOnlySwap]);
 
@@ -238,21 +247,21 @@ function App() {
       <Container sx={{ padding: 2 }}>
         <Grid container>
           <Grid size={12}>
-            <Typography textAlign={"center"} variant="h2">
+            <Typography textAlign={'center'} variant="h2">
               ChainFusion
             </Typography>
             {error && (
-              <Typography textAlign={"center"} variant="h6" color="error">
+              <Typography textAlign={'center'} variant="h6" color="error">
                 {error}
               </Typography>
             )}
-            <Divider sx={{ background: "white", marginY: 3 }} />
-            <Typography textAlign={"center"} variant="h6" mb={3}>
-              This process will bridge your ETH to AE chain using{" "}
+            <Divider sx={{ background: 'white', marginY: 3 }} />
+            <Typography textAlign={'center'} variant="h6" mb={3}>
+              This process will bridge your ETH to AE chain using{' '}
               <Link href="https://ae-bridge.com/" target="_blank">
                 ae bridge
               </Link>
-              . and then swap it to AE tokens using the{" "}
+              . and then swap it to AE tokens using the{' '}
               <Link href="https://aepp.dex.superhero.com" target="_blank">
                 Superhero DEX
               </Link>
@@ -265,9 +274,9 @@ function App() {
               sx={{ mt: 2 }}
               onClick={() => setIsSwapFromAe(!isSwapFromAe)}
             >
-              {`Swap from ${isSwapFromAe ? 'AE': 'ETH'}`}
+              {`Swap from ${isSwapFromAe ? 'AE' : 'ETH'}`}
             </Button>
-            <Typography fontWeight={"normal"} variant="h5">
+            <Typography fontWeight={'normal'} variant="h5">
               Aeternity:
             </Typography>
             {!isAeternityConnecting && !aeternityAddress ? (
@@ -279,11 +288,11 @@ function App() {
                 Connect Superhero Wallet
               </Button>
             ) : (
-              aeternityAddress || "Waiting for wallet connection..."
+              aeternityAddress || 'Waiting for wallet connection...'
             )}
             <br />
             <br />
-            <Typography fontWeight={"normal"} variant="h5">
+            <Typography fontWeight={'normal'} variant="h5">
               Ethereum:
             </Typography>
             {!isEthereumConnecting && !ethereumAddress ? (
@@ -295,11 +304,11 @@ function App() {
                 Connect Metamask Wallet
               </Button>
             ) : (
-              ethereumAddress || "Waiting for wallet connection..."
+              ethereumAddress || 'Waiting for wallet connection...'
             )}
             <br />
             {ethereumAddress && (
-              <Typography fontWeight={"normal"}>
+              <Typography fontWeight={'normal'}>
                 Balance: {ethBalance} ETH
               </Typography>
             )}
@@ -313,62 +322,71 @@ function App() {
                       Enter Amount
                     </Typography>
                   </StepLabel>
-                  { !!wethBalance && (<StepContent>
-                    <Typography textAlign={"left"} mb={2}>
-                      You have WETH already on your aeternity account
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{ mb: 2 }}
-                      onClick={() => setIsOnlySwap(!isOnlySwap)}
-                    >
-                      { `Swap ${asset}` }
-                    </Button>
-                  </StepContent>)}
+                  {!!wethBalance && (
+                    <StepContent>
+                      <Typography textAlign={'left'} mb={2}>
+                        You have WETH already on your aeternity account
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        sx={{ mb: 2 }}
+                        onClick={() => setIsOnlySwap(!isOnlySwap)}
+                      >
+                        {`Swap ${asset}`}
+                      </Button>
+                    </StepContent>
+                  )}
                   <StepContent>
                     <Box
                       display="flex"
                       flexDirection="column"
-                      alignItems={"left"}
+                      alignItems={'left'}
                     >
-                      <Typography textAlign={"left"} mb={2}>
-                        {`Enter the amount of ${isOnlySwap ? 'WETH' : 'ETH'} you want to ${isOnlySwap ? 'swap' : 'bridge'}`}:
+                      <Typography textAlign={'left'} mb={2}>
+                        {`Enter the amount of ${isOnlySwap ? 'WETH' : 'ETH'} you want to ${isOnlySwap ? 'swap' : 'bridge'}`}
+                        :
                       </Typography>
                       <TextInput
-                        sx={{ width: "375px" }}
-                        value={ethAmount || ""}
+                        sx={{ width: '375px' }}
+                        value={ethAmount || ''}
                         onChange={handleAmountChange}
                         label="Enter Amount"
                         type="number"
                         slotProps={{
-                          htmlInput: { min: 0, max: isOnlySwap ? wethBalance: ethBalance, step: 0.0001 },
+                          htmlInput: {
+                            min: 0,
+                            max: isOnlySwap ? wethBalance : ethBalance,
+                            step: 0.0001,
+                          },
                           input: {
-                            sx: { color: "white" },
+                            sx: { color: 'white' },
                             endAdornment: (
                               <InputAdornment
-                                sx={{ color: "white" }}
+                                sx={{ color: 'white' }}
                                 position="end"
                               >
-                                { asset }
+                                {asset}
                               </InputAdornment>
                             ),
                           },
                         }}
                       />
-                      <Typography textAlign={"left"} mt={1}>
+                      <Typography textAlign={'left'} mt={1}>
                         Approximate exchange rate:
-                        <br />1 ETH(@{prices?.ETH} USD) ={" "}
+                        <br />1 ETH(@{prices?.ETH} USD) ={' '}
                         {exchangeRatio?.toFixed(0)} AE(@
                         {prices?.AE} USD)
                       </Typography>
 
                       {!!parseFloat(ethAmount) && (
                         <>
-                          <Typography textAlign={"center"} mt={5} variant="h5">
+                          <Typography textAlign={'center'} mt={5} variant="h5">
                             You will receive: ~
                             {exchangeRatio
-                              ? (parseFloat(ethAmount) * exchangeRatio).toFixed(0)
-                              : 0}{" "}
+                              ? (parseFloat(ethAmount) * exchangeRatio).toFixed(
+                                  0,
+                                )
+                              : 0}{' '}
                             AE
                           </Typography>
 
@@ -377,7 +395,7 @@ function App() {
                             sx={{ mt: 2 }}
                             onClick={handleBridgeClick}
                           >
-                            { isOnlySwap ? 'Swap' : 'Bridge' }
+                            {isOnlySwap ? 'Swap' : 'Bridge'}
                           </Button>
                         </>
                       )}
@@ -388,11 +406,11 @@ function App() {
                 <Step>
                   <StepLabel>
                     <Typography variant="h5" color="white">
-                      { `Bridge Tokens ${isOnlySwap ? '(skip)' : ''}`}
+                      {`Bridge Tokens ${isOnlySwap ? '(skip)' : ''}`}
                     </Typography>
                   </StepLabel>
                   <StepContent>
-                    <Typography textAlign={"left"} mb={2}>
+                    <Typography textAlign={'left'} mb={2}>
                       <CircularProgress size={16} /> Waiting for bridge to
                       complete...
                     </Typography>
@@ -406,7 +424,7 @@ function App() {
                     </Typography>
                   </StepLabel>
                   <StepContent>
-                    <Typography textAlign={"left"} mb={2}>
+                    <Typography textAlign={'left'} mb={2}>
                       <CircularProgress size={16} /> Waiting for allowance
                       change...
                       <br />
@@ -422,7 +440,7 @@ function App() {
                     </Typography>
                   </StepLabel>
                   <StepContent>
-                    <Typography textAlign={"left"} mb={2}>
+                    <Typography textAlign={'left'} mb={2}>
                       <CircularProgress size={16} /> Swapping AE tokens...
                       <br />
                       <br />
@@ -435,8 +453,8 @@ function App() {
           </Grid>
           {activeStep === 4 && (
             <Grid size={12}>
-              <Divider sx={{ background: "white", marginY: 3 }} />
-              <Typography textAlign={"center"} variant="h6">
+              <Divider sx={{ background: 'white', marginY: 3 }} />
+              <Typography textAlign={'center'} variant="h6">
                 You swapped {ethAmount} ETH to
                 {exchangeRatio ? Number(swapResult.aeOut) / 10 ** 18 : 0} AE
                 tokens successfully!

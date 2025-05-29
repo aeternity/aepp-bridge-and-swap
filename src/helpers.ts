@@ -1,0 +1,28 @@
+import { DEFAULT_LOCALE } from './constants';
+
+export function splitAddress(address: string | null | undefined): string {
+  return address
+    ? address.match(/.{1,3}/g)!.reduce((acc, current) => `${acc} ${current}`)
+    : '';
+}
+
+export function formatNumber(
+  value: number,
+  options: Intl.NumberFormatOptions = {},
+) {
+  return new Intl.NumberFormat(DEFAULT_LOCALE, options).format(value);
+}
+
+export function formatCurrency(value: number): string {
+  let result = '';
+  if (value < 0.01 && value > 0) {
+    result += '<';
+    value = 0.01;
+  }
+  result += new Intl.NumberFormat(DEFAULT_LOCALE, {
+    style: 'currency',
+    currencyDisplay: 'code',
+    currency: 'usd',
+  }).format(value);
+  return result;
+}

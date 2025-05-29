@@ -4,11 +4,11 @@ import {
   Node,
   SUBSCRIPTION_TYPES,
   walletDetector,
-} from "@aeternity/aepp-sdk";
-import { Constants } from "../constants";
+} from '@aeternity/aepp-sdk';
+import { Constants } from '../constants';
 
 export const aeSdk = new AeSdkAepp({
-  name: "ChainFusion",
+  name: 'ChainFusion',
   nodes: [
     {
       name: Constants.name,
@@ -29,34 +29,38 @@ export const aeSdk = new AeSdkAepp({
 
     const [{ name }] = currentNetwork;
     aeSdk.selectNode(name);
-    console.log("setNetworkId", networkId);
+    console.log('setNetworkId', networkId);
   },
   onAddressChange: ({ current }) => console.log(Object.keys(current)[0]),
-  onDisconnect: () => console.log("Aepp is disconnected"),
+  onDisconnect: () => console.log('Aepp is disconnected'),
 });
 
 // TODO rewrite this to use the new SDK https://github.com/aeternity/aepp-sdk-js/blob/2d6ec8138af448204271b10c7517ede96f0ef998/examples/browser/aepp/src/components/ConnectFrame.vue#L61
 export default class WalletService {
   static async connectMetamask() {
     const accounts = await window.ethereum?.request({
-      method: "eth_requestAccounts",
+      method: 'eth_requestAccounts',
     });
     return accounts[0];
   }
 
   static async getEthBalance(address: string): Promise<number> {
     const balance = await window.ethereum?.request({
-      method: "eth_getBalance",
-      params: [address, "latest"],
+      method: 'eth_getBalance',
+      params: [address, 'latest'],
     });
 
     return balance ? parseInt(balance) / 1e18 : 0;
   }
 
   static getAeBalance(address: `ak_${string}`): Promise<BigInt> {
-    return aeSdk.getBalance(address)
+    return aeSdk
+      .getBalance(address)
       .then((balance) => BigInt(balance))
-      .catch((error) => {console.info(error); return 0n;})
+      .catch((error) => {
+        console.info(error);
+        return 0n;
+      });
   }
 
   static connectSuperHero(): Promise<string> {
@@ -71,8 +75,8 @@ export default class WalletService {
             const {
               address: { current },
             } = await aeSdk.subscribeAddress(
-              "subscribe" as SUBSCRIPTION_TYPES,
-              "connected",
+              'subscribe' as SUBSCRIPTION_TYPES,
+              'connected',
             );
             const address = Object.keys(current)[0];
             console.log(walletInfo, current);
@@ -88,5 +92,9 @@ export default class WalletService {
       const scannerConnection = new BrowserWindowMessageConnection();
       const stopScan = walletDetector(scannerConnection, handleWallets);
     });
+  }
+
+  static disconnectWallet() {
+    aeSdk.disconnectWallet();
   }
 }

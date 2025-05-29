@@ -6,8 +6,8 @@
     "@aeternity/aepp-sdk": "^13.3.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.6",
-    "@mui/material": "^6.1.1",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
     "@reown/appkit": "^1.7.4",
     "@reown/appkit-adapter-ethers": "^1.7.4",
     "@testing-library/jest-dom": "^5.17.0",
@@ -18,12 +18,15 @@
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "dex-contracts-v2": "github:aeternity/dex-contracts-v2",
+    "bignumber.js": "^9.3.0",
     "ethers": "^6.13.2",
     "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.8.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-scripts": "5.0.1",
+    "zustand": "^5.0.4"
   },
   "scripts": {
     "dev": "next dev",
@@ -51,6 +54,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@svgr/webpack": "^8.1.0",
     "prettier": "^3.3.3"
   }
 }
