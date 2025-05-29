@@ -29,6 +29,12 @@ on:
       NEXT_PUBLIC_AE_PRIVATE_KEY:
         description: "NEXT_PUBLIC_AE_PRIVATE_KEY"
         required: true
+      NEXT_PUBLIC_MAINNET:
+        description: "NEXT_PUBLIC_MAINNET"
+        required: true
+      NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
+        description: "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID"
+        required: true
 jobs:
   deploy:
     name: Deploy via ssh
@@ -39,7 +45,9 @@ jobs:
         env:
           VERSION: "${{ inputs.VERSION }}"
           SHA: "${{ github.sha }}"
-          NEXT_PUBLIC_AE_PRIVATE_KEY: "${{ secrets.AE_PRIVATE_KEY }}"
+          NEXT_PUBLIC_AE_PRIVATE_KEY: "${{ secrets.NEXT_PUBLIC_AE_PRIVATE_KEY }}"
+          NEXT_PUBLIC_MAINNET: "${{ secrets.NEXT_PUBLIC_MAINNET }}"
+          NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: "${{ secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}"
           HOST_DATA_DIR: "./${{ inputs.CONTAINER_NAME }}"
           HOST_PORT: "${{ secrets.HOST_PORT }}"
         with:
@@ -49,6 +57,8 @@ jobs:
           envs: >
             HOST_DATA_DIR,
             NEXT_PUBLIC_AE_PRIVATE_KEY,
+            NEXT_PUBLIC_MAINNET,
+            NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
             SHA
           script: |
             echo $SHA > $HOST_DATA_DIR/REVISION || true
@@ -59,6 +69,8 @@ jobs:
               --restart=always \
               -p ${{ secrets.HOST_PORT }}:3000 \
               -e APP_PORT="3000" \
-              -e NEXT_PUBLIC_AE_PRIVATE_KEY="${{ secrets.AE_PRIVATE_KEY }}" \
+              -e NEXT_PUBLIC_AE_PRIVATE_KEY="${{ secrets.NEXT_PUBLIC_AE_PRIVATE_KEY }}" \
+              -e NEXT_PUBLIC_MAINNET="${{ secrets.NEXT_PUBLIC_MAINNET }}" \
+              -e NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID="${{ secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}" \
               -e NODE_ENV=production \
               aeternity/aepp-bridge-and-swap:${{ inputs.VERSION }}

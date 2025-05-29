@@ -11,7 +11,7 @@ class DexService {
   static async changeAllowance(amountWei: bigint): Promise<void> {
     return WalletService
       .getAeBalance(aeSdk.address)
-      .then((balance) => 
+      .then((balance: bigint) => 
         this.changeAllowanceInternal(amountWei, balance)
       );
   }
@@ -159,7 +159,7 @@ class DexService {
   ):  Promise<[bigint, bigint]> {
     return WalletService
       .getAeBalance(aeSdk.address)
-      .then((balance) => 
+      .then((balance: bigint) => 
         this.swapAeEthToAEInternal(amountWei, aeAddress, balance)
       )
   }
