@@ -6,15 +6,13 @@ import { useFormStore } from '../../../stores/formStore';
 import styled from '@emotion/styled';
 import Link from 'next/link';
 import ExternalIcon from '../../../assets/ExternalIcon';
-import EthLogo from '../../../assets/EthLogo';
-import BridgeService from '../../../services/BridgeService';
 import { useWalletStore } from '../../../stores/walletStore';
-import WebsocketService from '../../../services/WebsocketService';
 import { formatNumber } from '../../../helpers';
+import { BigNumber } from 'bignumber.js';
 import AeEthAvatar from '../../../assets/AeEthAvatar';
+import AeLogo from '../../../assets/AeLogo';
+import DexService from '../../../services/DexService';
 import { StepProps } from '../../../types';
-
-const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
 const Separator = styled(Box)<StepProps>(({ completed }) => ({
   position: 'relative',
@@ -89,14 +87,18 @@ enum Status {
   COMPLETED,
 }
 
-const EthToAeStep3 = () => {
+const AeEthToAeStep3 = () => {
   const { aeAccount } = useWalletStore();
   const { fromAmount, toAmount } = useFormStore();
   const [status, setStatus] = useState(Status.PENDING);
-  const [ranBridge, setRanBridge] = useState(false);
+  const [swapResult, setSwapResult] = useState({
+    aeEthIn: BigNumber(0),
+    aeOut: BigNumber(0),
+  });
+  const [ranSwap, setRanSwap] = useState(false);
 
   useEffect(() => {
-    const Bridge = async () => {
+    const Swap = async () => {
       const ethAmount = fromAmount?.toString();
 
       if (!ethAmount || !aeAccount?.address) {
@@ -106,33 +108,27 @@ const EthToAeStep3 = () => {
       const amountInWei = BigInt(
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
       );
-      console.log('Skip', SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
-      if (!SKIP_ETH) {
-        await BridgeService.bridgeEthToAe(
-          parseFloat(ethAmount),
-          aeAccount.address,
-        );
-      }
+
+      await DexService.changeAllowance(amountInWei);
 
       setStatus(Status.CONFIRMED);
 
-      if (!SKIP_ETH) {
-        // Wait for a moment to let the bridge finalize
-        await WebsocketService.waitForBridgeToComplete(
-          amountInWei,
-          aeAccount.address,
-        );
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+      const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
+        amountInWei,
+        aeAccount.address,
+      );
+      setSwapResult({
+        aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
+        aeEthIn: BigNumber(aeEthIn),
+      });
 
       setStatus(Status.COMPLETED);
     };
-    if (aeAccount?.address && fromAmount && !ranBridge) {
-      Bridge();
-      setRanBridge(true);
+    if (aeAccount?.address && fromAmount && !ranSwap) {
+      Swap();
+      setRanSwap(true);
     }
-  }, [aeAccount?.address, fromAmount, ranBridge]);
+  }, [aeAccount?.address, fromAmount, ranSwap]);
 
   const getMessageBoxContent = () => {
     switch (status) {
@@ -140,31 +136,33 @@ const EthToAeStep3 = () => {
         return (
           <>
             You are about to swap{' '}
-            <span style={{ fontWeight: 500 }}>{fromAmount} AE</span> for{' '}
+            <span style={{ fontWeight: 500 }}>{fromAmount} æETH</span> for{' '}
             <span style={{ fontWeight: 500 }}>
-              ≈{Number(toAmount).toFixed(2)} æETH.
+              ≈{Number(toAmount).toFixed(2)} AE.
             </span>{' '}
-            You will receive the æETH tokens in your æternity account connected
-            to this app.
+            You will receive the AE tokens in your æternity wallet account
+            connected to this app.
           </>
         );
       case Status.CONFIRMED:
         return (
           <>
-            Swapping <span style={{ fontWeight: 500 }}>AE</span> for{' '}
-            <span style={{ fontWeight: 500 }}>æETH</span> is in progress.
+            Swapping <span style={{ fontWeight: 500 }}>æETH</span> for{' '}
+            <span style={{ fontWeight: 500 }}>AE</span> is in progress.
             <br />
             Usually it takes about 1-2 minutes to receive the{' '}
-            <span style={{ fontWeight: 500 }}>æETH</span> tokens in your
-            æternity wallet account.
+            <span style={{ fontWeight: 500 }}>AE</span> tokens in your æternity
+            wallet account.
           </>
         );
       case Status.COMPLETED:
         return (
           <>
             You have successfully received{' '}
-            <span style={{ fontWeight: 500 }}>{fromAmount} æETH</span> to your
-            connected æternity account.
+            <span style={{ fontWeight: 500 }}>
+              {swapResult?.aeOut.toString()} AE
+            </span>{' '}
+            to æternity account.
           </>
         );
     }
@@ -177,7 +175,7 @@ const EthToAeStep3 = () => {
           <>
             Please confirm the transaction
             <br />
-            in your Ethereum wallet to proceed.
+            in your æternity wallet to proceed.
           </>
         );
       case Status.CONFIRMED:
@@ -209,11 +207,9 @@ const EthToAeStep3 = () => {
       case Status.COMPLETED:
         return (
           <>
-            Click on <span style={{ fontWeight: 500 }}>Next</span> to proceed to
-            bridge.
+            Click on the button below
             <br />
-            You will receive{' '}
-            <span style={{ fontWeight: 500 }}>≈{toAmount} AE</span>
+            to relaunch exchange wizard.
           </>
         );
     }
@@ -222,8 +218,8 @@ const EthToAeStep3 = () => {
   return (
     <>
       <WizardFlowContainer
-        title={'Bridge ETH to æETH'}
-        buttonLabel="Next"
+        title={'Swap æETH to AE'}
+        buttonLabel={status !== Status.COMPLETED ? 'Next' : 'Go To Dashboard'}
         buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={false}
         header={
@@ -244,7 +240,7 @@ const EthToAeStep3 = () => {
                   width={'48px'}
                   height={'48px'}
                 >
-                  <EthLogo width={'100%'} height={'100%'} />
+                  <AeEthAvatar width={'100%'} height={'100%'} />
                 </Box>
                 <AmountBox>
                   <AmountTypography>
@@ -252,7 +248,7 @@ const EthToAeStep3 = () => {
                       maximumFractionDigits: 8,
                     })}
                   </AmountTypography>
-                  <TokenTypography>ETH</TokenTypography>
+                  <TokenTypography>æETH</TokenTypography>
                 </AmountBox>
               </Box>
               <Separator completed={status === Status.COMPLETED} />
@@ -263,15 +259,15 @@ const EthToAeStep3 = () => {
                   width={'48px'}
                   height={'48px'}
                 >
-                  <AeEthAvatar />
+                  <AeLogo width={'100%'} height={'100%'} />
                 </Box>
                 <AmountBox>
                   <AmountTypography>
-                    {formatNumber(Number(fromAmount), {
+                    {formatNumber(Number(toAmount), {
                       maximumFractionDigits: 8,
                     })}
                   </AmountTypography>
-                  <TokenTypography>æETH</TokenTypography>
+                  <TokenTypography>AE</TokenTypography>
                 </AmountBox>
               </Box>
             </BridgeBox>
@@ -285,4 +281,4 @@ const EthToAeStep3 = () => {
   );
 };
 
-export default EthToAeStep3;
+export default AeEthToAeStep3;

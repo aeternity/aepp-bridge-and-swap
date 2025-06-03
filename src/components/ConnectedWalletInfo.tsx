@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useWalletStore } from '../stores/walletStore';
 import { formatNumber } from '../helpers';
-import EthLogo from '../assets/EthLogo';
-import AeLogoWhite from '../assets/AeLogoWhite';
 import Avatar from './Avatar';
 
 type Protocol = 'ETH' | 'AE';
@@ -29,12 +27,10 @@ const ConnectedWalletInfo = ({ protocol }: Props) => {
     return `${start}...${end}`;
   };
 
-  const { icon, label, address, balance, coinLabel } = useMemo(() => {
+  const { address, balance, coinLabel } = useMemo(() => {
     switch (protocol) {
       case 'ETH':
         return {
-          icon: <EthLogo />,
-          label: 'Ethereum',
           coinLabel: 'ETH',
           address: ethAccount?.address,
           balance: formatNumber(Number(ethAccount?.balance), {
@@ -43,8 +39,6 @@ const ConnectedWalletInfo = ({ protocol }: Props) => {
         };
       case 'AE':
         return {
-          icon: <AeLogoWhite />,
-          label: 'æternity',
           coinLabel: 'AE',
           address: aeAccount?.address,
           balance: formatNumber(

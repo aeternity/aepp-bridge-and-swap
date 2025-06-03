@@ -7,7 +7,7 @@ interface Props {
   onClick?: () => void;
 }
 
-const SwapArrowButton = ({ disabled, onClick }: Props) => {
+const SwapArrowButton = ({ disabled }: Props) => {
   return (
     <ButtonBase
       disabled={disabled}

@@ -29,7 +29,7 @@ const bridgeDexSwapConfig = {
     ae_dex_router_address:
       'ct_MLXQEP12MBn99HL6WDaiTqDbG4bJQ3Q9Bzr57oLfvEkghvpFb' as `ct_${string}`,
     ae_weth_address:
-      'ct_WVqAvLQpvZCgBg4faZLXA1YBj43Fxj91D33Z8K7pFsY8YCofv' as `ct_${string}`,
+      'ct_2nDHnXqyKbRzK3DXJ6zVhQGsbxRsXDBqSGyzeYrwp2V5iCeTL3' as `ct_${string}`,
     eth_native_eth_placeholder_address:
       '0xd57aafdc9615835e1f75bcdbde1c7b1aa6e4cb10',
     ae_web_socket_url: 'wss://testnet.aeternity.io/mdw/v2/websocket',

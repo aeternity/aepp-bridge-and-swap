@@ -22,7 +22,7 @@ interface WalletState {
   reset: () => void;
 }
 
-export const useWalletStore = create<WalletState>((set, get) => ({
+export const useWalletStore = create<WalletState>((set) => ({
   ethAccount: null,
   aeAccount: null,
 

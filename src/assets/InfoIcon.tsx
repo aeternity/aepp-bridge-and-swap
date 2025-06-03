@@ -1,5 +1,4 @@
-import * as React from 'react';
-const InfoIcon = (props: any) => (
+const InfoIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={25}

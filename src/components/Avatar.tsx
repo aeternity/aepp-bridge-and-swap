@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { AE_AVATAR_URL } from '../constants';
 
 interface Type {

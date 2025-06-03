@@ -11,11 +11,11 @@ import { AE_AVATAR_URL } from '../../../constants';
 
 const EthToAeStep2 = () => {
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { ethAccount } = useWalletStore();
+  const { aeAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
-  const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
+  const avatarUrl = AE_AVATAR_URL + aeAccount?.address;
 
   useEffect(() => {
     TokenPriceService.getPrices().then(setPrices);
@@ -90,7 +90,7 @@ const EthToAeStep2 = () => {
               <Typography
                 sx={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
               >
-                {ethAccount?.address}
+                {aeAccount?.address}
               </Typography>
             </Box>
           </>

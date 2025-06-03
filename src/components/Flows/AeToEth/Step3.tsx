@@ -9,9 +9,13 @@ import Link from 'next/link';
 import ExternalIcon from '../../../assets/ExternalIcon';
 import AeEthAvatar from '../../../assets/AeEthAvatar';
 import { formatNumber } from '../../../helpers';
-import { BigNumber } from 'bignumber.js';
+import { useWalletStore } from '../../../stores/walletStore';
+import DexService from '../../../services/DexService';
+import TokenPriceService from '../../../services/TokenPriceService';
+import WebsocketService from '../../../services/WebsocketService';
+import { StepProps } from '../../../types';
 
-const Separator = styled(Box)(({ completed }) => ({
+const Separator = styled(Box)<StepProps>(({ completed }) => ({
   position: 'relative',
   height: '1px',
   width: '100%',
@@ -45,7 +49,7 @@ const Separator = styled(Box)(({ completed }) => ({
   },
 }));
 
-const BridgeBox = styled(Box)(({ theme }) => ({
+const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
   display: 'flex',
   padding: '0px 17px',
   alignItems: 'center',
@@ -54,7 +58,7 @@ const BridgeBox = styled(Box)(({ theme }) => ({
     padding: '0px 52px',
   },
 }));
-const AmountBox = styled(Box)(({ theme }) => ({
+const AmountBox = styled(Box)(({}) => ({
   backgroundColor: 'rgba(142, 152, 186, 0.15)',
   padding: '3px 12px',
   borderRadius: '20px',
@@ -66,13 +70,13 @@ const AmountBox = styled(Box)(({ theme }) => ({
   transform: 'translate(-50%)',
   bottom: '-28px',
 }));
-const AmountTypography = styled(Typography)(({ theme }) => ({
+const AmountTypography = styled(Typography)(() => ({
   fontSize: '18px',
   opacity: '60%',
   lineHeight: '28px',
   fontWeight: 500,
 }));
-const TokenTypography = styled(Typography)(({ theme }) => ({
+const TokenTypography = styled(Typography)(() => ({
   fontSize: '14px',
   lineHeight: '24px',
   fontWeight: 500,
@@ -85,17 +89,45 @@ enum Status {
 }
 
 const AeToEthStep3 = () => {
+  const { aeAccount } = useWalletStore();
   const { fromAmount, toAmount } = useFormStore();
   const [status, setStatus] = useState(Status.PENDING);
+  const [ranSwap, setRanSwap] = useState(false);
+  const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
+
+  const exchangeRatio = prices ? prices.ETH / prices.AE : null;
 
   useEffect(() => {
-    setTimeout(() => {
+    const Swap = async () => {
+      const aeAmount = fromAmount?.toString();
+
+      if (!aeAmount || !aeAccount?.address) {
+        return;
+      }
+
+      const amountInAettos = BigInt(parseFloat(aeAmount) * 10 ** 18);
+
+      await DexService.changeAllowance(amountInAettos);
+
       setStatus(Status.CONFIRMED);
-      setTimeout(() => {
-        setStatus(Status.COMPLETED);
-      }, 3000);
-    }, 3000);
-  }, []);
+
+      const amountOut = exchangeRatio
+        ? BigInt(Math.trunc(Number(amountInAettos) / exchangeRatio))
+        : BigInt(0);
+
+      await DexService.swapAetoAeEth(
+        amountInAettos,
+        amountOut,
+        aeAccount.address,
+      );
+
+      setStatus(Status.COMPLETED);
+    };
+    if (aeAccount?.address && fromAmount && !ranSwap && exchangeRatio) {
+      Swap();
+      setRanSwap(true);
+    }
+  }, [aeAccount?.address, fromAmount, ranSwap, exchangeRatio]);
 
   const getMessageBoxContent = () => {
     switch (status) {
@@ -105,7 +137,7 @@ const AeToEthStep3 = () => {
             You are about to bridge{' '}
             <span style={{ fontWeight: 500 }}>{fromAmount} ETH</span> to{' '}
             <span style={{ fontWeight: 500 }}>
-              ≈{toAmount?.toFixed(2)} æETH.
+              ≈{Number(toAmount).toFixed(4)} æETH.
             </span>{' '}
             You will receive the æETH tokens in your æternity account connected
             to this app.
@@ -182,10 +214,15 @@ const AeToEthStep3 = () => {
     }
   };
 
+  useEffect(() => {
+    TokenPriceService.getPrices().then(setPrices);
+    WebsocketService.init();
+  }, []);
+
   return (
     <>
       <WizardFlowContainer
-        title={'Bridge ETH to æETH'}
+        title={'Swap AE for æETH'}
         buttonLabel="Next"
         buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={false}
@@ -211,7 +248,7 @@ const AeToEthStep3 = () => {
                 </Box>
                 <AmountBox>
                   <AmountTypography>
-                    {formatNumber(Number(BigNumber(fromAmount ?? 0)), {
+                    {formatNumber(Number(fromAmount), {
                       maximumFractionDigits: 8,
                     })}
                   </AmountTypography>
@@ -230,7 +267,7 @@ const AeToEthStep3 = () => {
                 </Box>
                 <AmountBox>
                   <AmountTypography>
-                    {formatNumber(Number(BigNumber(toAmount ?? 0)), {
+                    {formatNumber(Number(toAmount), {
                       maximumFractionDigits: 8,
                     })}
                   </AmountTypography>

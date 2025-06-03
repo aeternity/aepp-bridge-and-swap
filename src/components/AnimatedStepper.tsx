@@ -8,8 +8,15 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { useExchangeStore } from '../stores/exchangeStore';
+import { Theme } from '@emotion/react';
 
-const StepperBox = styled(Box)(({ theme }) => ({
+type StyledProps = {
+  theme?: Theme;
+  active?: boolean;
+  done?: boolean;
+};
+
+const StepperBox = styled(Box)<StyledProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   height: '100%',
@@ -21,7 +28,7 @@ const StepperBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const Separator = styled(Box)(({ theme }) => ({
+const Separator = styled(Box)<StyledProps>(({ theme }) => ({
   position: 'relative',
   height: '2px',
   width: '100%',
@@ -60,7 +67,7 @@ const Separator = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StyledStepIcon = styled('div')(({ theme, active, done }) => ({
+const StyledStepIcon = styled('div')<StyledProps>(({ active, done }) => ({
   width: 24,
   height: 24,
   borderRadius: '50%',
@@ -73,38 +80,42 @@ const StyledStepIcon = styled('div')(({ theme, active, done }) => ({
   outline: done ? '3px solid' : 'none',
 }));
 
-const StyledStepButton = styled(ButtonBase)(({ theme, active, done }) => ({
-  boxSizing: 'border-box',
-  display: 'flex',
-  alignItems: 'center',
-  padding: active ? '8px' : '0px',
-  borderRadius: 999,
-  outline: active ? '1px solid #00D3A1' : 'none',
-  backgroundColor: active ? '#0b2d2d' : 'transparent',
-  transition: 'outline 0.3s ease, backgroundColor 0.3s ease',
-  fontSize: '14px',
-  justifyContent: 'left',
+const StyledStepButton = styled(ButtonBase)<StyledProps>(
+  ({ theme, active }) => ({
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    padding: active ? '8px' : '0px',
+    borderRadius: 999,
+    outline: active ? '1px solid #00D3A1' : 'none',
+    backgroundColor: active ? '#0b2d2d' : 'transparent',
+    transition: 'outline 0.3s ease, backgroundColor 0.3s ease',
+    fontSize: '14px',
+    justifyContent: 'left',
 
-  [theme.breakpoints.up('sm')]: {
-    width: '100%',
-    padding: '10px 16px',
-    outline: '1px solid',
-    outlineColor: active ? '#14f195' : '#404350',
-  },
-}));
+    [theme.breakpoints.up('sm')]: {
+      width: '100%',
+      padding: '10px 16px',
+      outline: '1px solid',
+      outlineColor: active ? '#14f195' : '#404350',
+    },
+  }),
+);
 
-const StyledCollapse = styled(Collapse)(({ theme, active, done }) => ({
+const StyledCollapse = styled(Collapse)(() => ({
   overflow: 'hidden',
 }));
 
-const StyledTypography = styled(Typography)(({ theme, active, done }) => ({
-  fontSize: '14px',
-  marginLeft: '8px',
-  textWrap: 'nowrap',
-  color: active ? '#00D3A1' : 'white',
-  fontWeight: active ? 600 : 500,
-  opacity: active || done ? 1 : 0.8,
-}));
+const StyledTypography = styled(Typography)<StyledProps>(
+  ({ active, done }) => ({
+    fontSize: '14px',
+    marginLeft: '8px',
+    textWrap: 'nowrap',
+    color: active ? '#00D3A1' : 'white',
+    fontWeight: active ? 600 : 500,
+    opacity: active || done ? 1 : 0.8,
+  }),
+);
 
 const AnimatedStepper = () => {
   const { currentStep, setStep, steps } = useExchangeStore();

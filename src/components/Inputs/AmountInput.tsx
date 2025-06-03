@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, InputBase, TextField, Typography } from '@mui/material';
+import { Box, InputBase, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import TokenPriceService from '../../services/TokenPriceService';
 import WebsocketService from '../../services/WebsocketService';
@@ -9,8 +9,9 @@ type Protocol = 'ETH' | 'AE';
 
 interface Props {
   protocol: Protocol;
-  onChange: (amount: Number | null) => void;
+  onChange: (amount: string | null) => void;
   value: string | number | null;
+  label?: string;
 }
 
 const TextInput = styled(InputBase)({
@@ -21,7 +22,7 @@ const TextInput = styled(InputBase)({
   },
 });
 
-const AmountInput = ({ protocol, onChange, value }: Props) => {
+const AmountInput = ({ protocol, onChange, value, label }: Props) => {
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const AmountInput = ({ protocol, onChange, value }: Props) => {
     WebsocketService.init();
   }, []);
 
-  const onInputChange = (e: any) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };
 
@@ -48,7 +49,7 @@ const AmountInput = ({ protocol, onChange, value }: Props) => {
         fontWeight: 500,
       }}
     >
-      <Typography fontSize={'18px'}>{protocol}</Typography>
+      <Typography fontSize={'18px'}>{label || protocol}</Typography>
       <Box display={'flex'} flexDirection={'column'} alignItems={'end'}>
         <TextInput
           fullWidth

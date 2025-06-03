@@ -186,7 +186,7 @@ function App() {
         );
         return;
       }
-      const amountInWei = BigInt(parseFloat(ethAmount) * 10 ** 18);
+      const amountInWei = BigInt(Math.trunc(parseFloat(ethAmount) * 10 ** 18));
       if (!ethAmount) {
         return;
       }

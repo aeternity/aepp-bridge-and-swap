@@ -12,10 +12,9 @@ import { formatNumber, splitAddress } from '../../../helpers';
 import DexService from '../../../services/DexService';
 import { BigNumber } from 'bignumber.js';
 import AeEthAvatar from '../../../assets/AeEthAvatar';
+import { StepProps } from '../../../types';
 
-const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
-
-const Separator = styled(Box)(({ completed }) => ({
+const Separator = styled(Box)<StepProps>(({ completed }) => ({
   position: 'relative',
   height: '1px',
   width: '100%',
@@ -49,7 +48,7 @@ const Separator = styled(Box)(({ completed }) => ({
   },
 }));
 
-const BridgeBox = styled(Box)(({ theme }) => ({
+const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
   display: 'flex',
   padding: '0px 17px',
   alignItems: 'center',
@@ -58,7 +57,7 @@ const BridgeBox = styled(Box)(({ theme }) => ({
     padding: '0px 52px',
   },
 }));
-const AmountBox = styled(Box)(({ theme }) => ({
+const AmountBox = styled(Box)(({}) => ({
   backgroundColor: 'rgba(142, 152, 186, 0.15)',
   padding: '3px 12px',
   borderRadius: '20px',
@@ -70,13 +69,13 @@ const AmountBox = styled(Box)(({ theme }) => ({
   transform: 'translate(-50%)',
   bottom: '-28px',
 }));
-const AmountTypography = styled(Typography)(({ theme }) => ({
+const AmountTypography = styled(Typography)(() => ({
   fontSize: '18px',
   opacity: '60%',
   lineHeight: '28px',
   fontWeight: 500,
 }));
-const TokenTypography = styled(Typography)(({ theme }) => ({
+const TokenTypography = styled(Typography)(() => ({
   fontSize: '14px',
   lineHeight: '24px',
   fontWeight: 500,
@@ -92,10 +91,9 @@ const EthToAeStep4 = () => {
   const { aeAccount } = useWalletStore();
   const { fromAmount, toAmount } = useFormStore();
   const [status, setStatus] = useState(Status.PENDING);
-  const [actualAmount, setActualAmount] = useState(BigInt(0));
   const [swapResult, setSwapResult] = useState({
-    aeEthIn: BigInt(0),
-    aeOut: BigInt(0),
+    aeEthIn: BigNumber(0),
+    aeOut: BigNumber(0),
   });
   const [ranSwap, setRanSwap] = useState(false);
 
@@ -107,7 +105,9 @@ const EthToAeStep4 = () => {
         return;
       }
 
-      const amountInWei = BigInt(parseFloat(ethAmount.toString()) * 10 ** 18);
+      const amountInWei = BigInt(
+        Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
+      );
 
       await DexService.changeAllowance(amountInWei);
 
@@ -117,8 +117,10 @@ const EthToAeStep4 = () => {
         amountInWei,
         aeAccount.address,
       );
-      setSwapResult({ aeOut: aeOut, aeEthIn: aeEthIn });
-      setActualAmount(aeOut ?? 0);
+      setSwapResult({
+        aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
+        aeEthIn: BigNumber(aeEthIn),
+      });
 
       setStatus(Status.COMPLETED);
     };
@@ -157,8 +159,10 @@ const EthToAeStep4 = () => {
       case Status.COMPLETED:
         return (
           <>
-            <span style={{ fontWeight: 500 }}>{actualAmount} AE</span> have been
-            successfully received by æternity account:
+            <span style={{ fontWeight: 500 }}>
+              {swapResult?.aeOut.toString()} AE
+            </span>{' '}
+            have been successfully received by æternity account:
             <br />
             <span style={{ fontWeight: 500, fontFamily: 'monospace' }}>
               {splitAddress(aeAccount?.address)}
@@ -244,7 +248,7 @@ const EthToAeStep4 = () => {
                 </Box>
                 <AmountBox>
                   <AmountTypography>
-                    {formatNumber(Number(BigNumber(fromAmount ?? 0)), {
+                    {formatNumber(Number(fromAmount), {
                       maximumFractionDigits: 8,
                     })}
                   </AmountTypography>
@@ -263,7 +267,7 @@ const EthToAeStep4 = () => {
                 </Box>
                 <AmountBox>
                   <AmountTypography>
-                    {formatNumber(Number(BigNumber(toAmount ?? 0)), {
+                    {formatNumber(Number(toAmount), {
                       maximumFractionDigits: 8,
                     })}
                   </AmountTypography>

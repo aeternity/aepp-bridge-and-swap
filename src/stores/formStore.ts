@@ -10,7 +10,7 @@ interface FormState {
   reset: () => void;
 }
 
-export const useFormStore = create<FormState>((set, get) => ({
+export const useFormStore = create<FormState>((set) => ({
   fromAmount: null,
   toAmount: null,
 

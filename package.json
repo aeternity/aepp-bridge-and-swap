@@ -23,10 +23,13 @@
     "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
     "typescript": "^5.8.3",
     "web-vitals": "^2.1.4",
-    "react-scripts": "5.0.1",
     "zustand": "^5.0.4"
+  },
+  "overrides": {
+    "typescript": "^5.8.3"
   },
   "scripts": {
     "dev": "next dev",
@@ -54,7 +57,12 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@svgr/webpack": "^8.1.0",
-    "prettier": "^3.3.3"
+    "@eslint/js": "^9.28.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^16.2.0",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.33.1"
   }
 }

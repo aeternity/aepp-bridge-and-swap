@@ -1,35 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
 import AmountInput from '../../Inputs/AmountInput';
-import TokenPriceService from '../../../services/TokenPriceService';
-import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import { AE_AVATAR_URL } from '../../../constants';
 
-const AeToEthStep2 = () => {
+const AeEthToEthStep2 = () => {
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
   const { ethAccount } = useWalletStore();
 
-  const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
-
   const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
 
-  useEffect(() => {
-    TokenPriceService.getPrices().then(setPrices);
-    WebsocketService.init();
-  }, []);
-
-  const onEthChange = (value: number) => {
+  const onChange = (value: number) => {
     setToAmount(value);
-    setFromAmount(value * (prices ? prices.ETH / prices.AE : 0));
-  };
-
-  const onAeChange = (value: number) => {
     setFromAmount(value);
-    setToAmount(value * (prices ? prices.AE / prices.ETH : 0));
   };
 
   return (
@@ -49,9 +35,10 @@ const AeToEthStep2 = () => {
               position={'relative'}
             >
               <AmountInput
-                protocol="AE"
-                onChange={onAeChange}
-                value={fromAmount}
+                protocol="ETH"
+                label="æETH"
+                onChange={onChange}
+                value={toAmount}
               />
               <Box
                 position={'absolute'}
@@ -65,7 +52,7 @@ const AeToEthStep2 = () => {
               </Box>
               <AmountInput
                 protocol="ETH"
-                onChange={onEthChange}
+                onChange={onChange}
                 value={toAmount}
               />
             </Box>
@@ -100,4 +87,4 @@ const AeToEthStep2 = () => {
   );
 };
 
-export default AeToEthStep2;
+export default AeEthToEthStep2;

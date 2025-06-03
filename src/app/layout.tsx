@@ -11,7 +11,8 @@ const ibmPlexSans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: 'ChainFusion: Buy AE with ETH',
-  description: 'A website which can be used to buy Aeternity coins with native Ethereum',
+  description:
+    'A website which can be used to buy Aeternity coins with native Ethereum',
 };
 
 export default function RootLayout({

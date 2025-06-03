@@ -9,13 +9,13 @@ import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import { AE_AVATAR_URL } from '../../../constants';
 
-const AeToEthStep2 = () => {
+const AeEthToAeStep2 = () => {
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { ethAccount } = useWalletStore();
+  const { aeAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
-  const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
+  const avatarUrl = AE_AVATAR_URL + aeAccount?.address;
 
   useEffect(() => {
     TokenPriceService.getPrices().then(setPrices);
@@ -23,13 +23,13 @@ const AeToEthStep2 = () => {
   }, []);
 
   const onEthChange = (value: number) => {
-    setToAmount(value);
-    setFromAmount(value * (prices ? prices.ETH / prices.AE : 0));
+    setFromAmount(value);
+    setToAmount(value * (prices ? prices.ETH / prices.AE : 0));
   };
 
   const onAeChange = (value: number) => {
-    setFromAmount(value);
-    setToAmount(value * (prices ? prices.AE / prices.ETH : 0));
+    setToAmount(value);
+    setFromAmount(value * (prices ? prices.AE / prices.ETH : 0));
   };
 
   return (
@@ -49,8 +49,9 @@ const AeToEthStep2 = () => {
               position={'relative'}
             >
               <AmountInput
-                protocol="AE"
-                onChange={onAeChange}
+                protocol="ETH"
+                label="æETH"
+                onChange={onEthChange}
                 value={fromAmount}
               />
               <Box
@@ -64,13 +65,13 @@ const AeToEthStep2 = () => {
                 <SwapArrowButton disabled />
               </Box>
               <AmountInput
-                protocol="ETH"
-                onChange={onEthChange}
+                protocol="AE"
+                onChange={onAeChange}
                 value={toAmount}
               />
             </Box>
             <Typography fontSize="16px" fontWeight={600} sx={{ opacity: 0.8 }}>
-              Receiving Ethereum account
+              Receiving æternity account
             </Typography>
             <Box
               display={'flex'}
@@ -90,7 +91,7 @@ const AeToEthStep2 = () => {
               <Typography
                 sx={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
               >
-                {ethAccount?.address}
+                {aeAccount?.address}
               </Typography>
             </Box>
           </>
@@ -100,4 +101,4 @@ const AeToEthStep2 = () => {
   );
 };
 
-export default AeToEthStep2;
+export default AeEthToAeStep2;
