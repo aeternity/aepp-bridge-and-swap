@@ -20,7 +20,7 @@ const AeEthToAeStep1 = () => {
             <MessageBox
               message={
                 <>
-                  Please connect both your aeternity wallet in order to exchange{' '}
+                  Please connect your aeternity wallet in order to exchange{' '}
                   <span style={{ fontWeight: 500 }}>æETH</span> to{' '}
                   <span style={{ fontWeight: 500 }}>AE</span> coins.
                 </>
