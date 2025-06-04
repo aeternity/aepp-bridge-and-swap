@@ -36,7 +36,7 @@ jobs:
           flavor: |
             latest=auto
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -45,6 +45,10 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
             "GITHUB_TOKEN=${{ secrets.BOT_GITHUB_TOKEN }}"
+          build-args: |
+            NEXT_PUBLIC_MAINNET=${{ secrets.NEXT_PUBLIC_MAINNET }}
+            NEXT_PUBLIC_AE_PRIVATE_KEY=${{ secrets.NEXT_PUBLIC_AE_PRIVATE_KEY }}
+            NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=${{ secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
   deploy_main:
     if: github.ref_name == 'main'
     name: Deploy via ssh (staging)

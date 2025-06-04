@@ -1,6 +1,9 @@
 # syntax=docker.io/docker/dockerfile:1
 
 FROM node:18-alpine AS base
+ARG NEXT_PUBLIC_MAINNET
+ARG NEXT_PUBLIC_AE_PRIVATE_KEY
+ARG NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID
 
 # Install dependencies only when needed
 FROM base AS deps
