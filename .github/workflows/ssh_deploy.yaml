@@ -62,6 +62,8 @@ jobs:
             SHA
           script: |
             echo $SHA > $HOST_DATA_DIR/REVISION || true
+            echo "I am $NEXT_PUBLIC_MAINNET"
+            echo "${{ secrets.NEXT_PUBLIC_AE_PRIVATE_KEY }}"
             docker pull "aeternity/aepp-bridge-and-swap:${{ inputs.VERSION }}" || true
             docker stop ${{ inputs.CONTAINER_NAME }} || true
             docker rm ${{ inputs.CONTAINER_NAME }} || true
@@ -69,8 +71,6 @@ jobs:
               --restart=always \
               -p ${{ secrets.HOST_PORT }}:3000 \
               -e APP_PORT="3000" \
-              -e NEXT_PUBLIC_AE_PRIVATE_KEY="${{ secrets.NEXT_PUBLIC_AE_PRIVATE_KEY }}" \
-              -e NEXT_PUBLIC_MAINNET="${{ secrets.NEXT_PUBLIC_MAINNET }}" \
-              -e NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID="${{ secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}" \
+              -e NEXT_PUBLIC_MAINNET=true \
               -e NODE_ENV=production \
               aeternity/aepp-bridge-and-swap:${{ inputs.VERSION }}

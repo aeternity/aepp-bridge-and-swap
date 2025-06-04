@@ -46,7 +46,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           lineHeight: '72px',
         }}
       >
-        Welcome To <span style={{ color: '#00D3A1' }}>DEX</span>Bridge Exchange
+        Welcome To <span style={{ color: '#00D3A1' }}>DEX</span>Bridge Exchange!!!
       </Typography>
 
       <Container sx={{ maxWidth: '472px' }} maxWidth={false} disableGutters>

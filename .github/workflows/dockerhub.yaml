@@ -3,7 +3,7 @@ on:
   workflow_dispatch: {}
   push:
     tags: [v*]
-    branches: [main, staging, develop]
+    branches: [main, staging, develop, feature/adjust-deployment]
 concurrency: ${{ github.workflow }}-${{ github.ref_name }}
 jobs:
   buildx:
@@ -46,7 +46,6 @@ jobs:
           secrets: |
             "GITHUB_TOKEN=${{ secrets.BOT_GITHUB_TOKEN }}"
   deploy_main:
-    if: github.ref_name == 'main'
     name: Deploy via ssh (staging)
     uses: ./.github/workflows/stag_deploy.yaml
     secrets: inherit
