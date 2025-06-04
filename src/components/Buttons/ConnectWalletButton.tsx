@@ -43,7 +43,9 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     try {
       setIsConnecting(true);
       const address = await WalletService.connectSuperHero();
-      const balance = await WalletService.getAeBalance(address);
+      const balance = await WalletService.getAeBalance(
+        address as `ak_${string}`,
+      );
       connectAe(address);
       updateAeBalance(BigNumber(balance.toString()));
     } catch (error) {

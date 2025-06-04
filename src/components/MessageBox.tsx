@@ -7,7 +7,7 @@ import CrossCircleIcon from '../assets/CrossCircleIcon';
 interface MessageProps {
   icon?: React.ReactNode;
   message: React.ReactNode;
-  type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
+  type?: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
 }
 
 const MessageBox = ({ icon, message, type = 'INFO' }: MessageProps) => {

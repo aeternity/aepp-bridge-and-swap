@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Typography, Container, Tabs, Tab } from '@mui/material';
-import { darkTheme } from '../../app/theme';
 import LightbulbCircleIcon from '../../assets/LightbulbCircleIcon';
 import ExchangeCoins from './ExchangeCoins';
 import ExchangeExistingCoins from './ExchangeExistingCoins';
@@ -11,6 +10,7 @@ const tabs = ['Exchange coins', 'Already have æETH?'];
 const DEXBridgeExchange = () => {
   const [tab, setTab] = useState(0);
 
+  // @ts-ignore
   const handleChange = (event, newValue) => {
     setTab(newValue);
   };
@@ -57,10 +57,7 @@ const DEXBridgeExchange = () => {
                     fontSize: '20px',
                     height: '100%',
                     width: '100%',
-                    bgcolor:
-                      tab === index
-                        ? darkTheme.palette.common.tabs.active
-                        : darkTheme.palette.common.tabs.inactive,
+                    bgcolor: tab === index ? '#1B1D26' : '#232631',
                     fontWeight: tab === index ? 600 : 500,
                     borderTopLeftRadius: 0,
                     borderTopRightRadius: 0,

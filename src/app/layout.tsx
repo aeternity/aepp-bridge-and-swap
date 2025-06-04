@@ -10,7 +10,7 @@ const ibmPlexSans = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'ChainFusion: Buy AE with ETH',
+  title: 'DEXBridge',
   description:
     'A website which can be used to buy Aeternity coins with native Ethereum',
 };

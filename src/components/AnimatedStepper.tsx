@@ -102,7 +102,7 @@ const StyledStepButton = styled(ButtonBase)<StyledProps>(
   }),
 );
 
-const StyledCollapse = styled(Collapse)(() => ({
+const StyledCollapse = styled(Collapse)<StyledProps>(() => ({
   overflow: 'hidden',
 }));
 

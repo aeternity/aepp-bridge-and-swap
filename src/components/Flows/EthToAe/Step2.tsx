@@ -22,14 +22,14 @@ const EthToAeStep2 = () => {
     WebsocketService.init();
   }, []);
 
-  const onEthChange = (value: number) => {
-    setFromAmount(value);
-    setToAmount(value * (prices ? prices.ETH / prices.AE : 0));
+  const onEthChange = (value: string) => {
+    setFromAmount(Number(value));
+    setToAmount(Number(value) * (prices ? prices.ETH / prices.AE : 0));
   };
 
-  const onAeChange = (value: number) => {
-    setToAmount(value);
-    setFromAmount(value * (prices ? prices.AE / prices.ETH : 0));
+  const onAeChange = (value: string) => {
+    setToAmount(Number(value));
+    setFromAmount(Number(value) * (prices ? prices.AE / prices.ETH : 0));
   };
 
   return (

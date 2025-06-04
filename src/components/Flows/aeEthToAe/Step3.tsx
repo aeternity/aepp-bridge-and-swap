@@ -240,7 +240,7 @@ const AeEthToAeStep3 = () => {
                   width={'48px'}
                   height={'48px'}
                 >
-                  <AeEthAvatar width={'100%'} height={'100%'} />
+                  <AeEthAvatar />
                 </Box>
                 <AmountBox>
                   <AmountTypography>

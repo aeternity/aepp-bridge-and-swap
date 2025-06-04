@@ -10,7 +10,7 @@ import {
   Divider,
   InputAdornment,
   Typography,
-  Grid2 as Grid,
+  Grid,
   CircularProgress,
   Link,
 } from '@mui/material';

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { ThemeProvider, CssBaseline } from '@mui/material';
 
-import { lightTheme, darkTheme } from './app/theme';
+import { darkTheme } from './app/theme';
 
 import Header from './components/Header';
 import DEXBridgeExchange from './components/Home/DEXBridgeExchange';
@@ -12,16 +12,16 @@ import { AppKitProvider } from './context/AppKitProvider';
 
 function App() {
   const { flow } = useExchangeStore();
-  const [light] = useState(false);
+  // const [light] = useState(false);
 
   return (
-    <AppKitProvider>
-      <ThemeProvider theme={light ? lightTheme : darkTheme}>
+    <ThemeProvider theme={darkTheme}>
+      <AppKitProvider>
         <CssBaseline />
         <Header />
         {flow ? <ExchangeFlow /> : <DEXBridgeExchange />}
-      </ThemeProvider>
-    </AppKitProvider>
+      </AppKitProvider>
+    </ThemeProvider>
   );
 }
 

@@ -13,9 +13,9 @@ const AeEthToEthStep2 = () => {
 
   const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
 
-  const onChange = (value: number) => {
-    setToAmount(value);
-    setFromAmount(value);
+  const onChange = (value: string) => {
+    setToAmount(Number(value));
+    setFromAmount(Number(value));
   };
 
   return (
