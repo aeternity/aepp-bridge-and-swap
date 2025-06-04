@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import Logo from '../assets/Logo';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useExchangeStore } from '../stores/exchangeStore';
-import ConnectedWalletInfo from './ConnectedWalletinfo';
+import ConnectedWalletInfo from './ConnectedWalletInfo';
 
 const Header = () => {
   const { reset } = useExchangeStore();
