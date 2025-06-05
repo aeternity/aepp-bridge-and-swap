@@ -20,6 +20,13 @@ const TextInput = styled(InputBase)({
     fontSize: '24px',
     padding: 0,
   },
+  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
+    "WebkitAppearance": "none",
+    "margin": 0
+  },
+  "input[type=number]": {
+    "MozAppearance": "textfield"
+  }
 });
 
 const AmountInput = ({ protocol, onChange, value, label }: Props) => {
@@ -55,6 +62,7 @@ const AmountInput = ({ protocol, onChange, value, label }: Props) => {
           fullWidth
           placeholder="0.00"
           onChange={onInputChange}
+          type='number'
           value={value}
         />
         <Typography fontSize="12px">
