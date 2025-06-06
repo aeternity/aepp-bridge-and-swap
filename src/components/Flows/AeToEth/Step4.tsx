@@ -109,7 +109,7 @@ const AeToEthStep4 = () => {
       console.log('Skip', SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
       if (!SKIP_ETH) {
         await BridgeService.bridgeAeToEth(
-          parseFloat(ethAmount),
+          amountInWei,
           aeAccount.address,
           ethAccount.address,
         );

@@ -166,9 +166,11 @@ function App() {
   const handleBridgeClick = useCallback(async () => {
     try {
       if (isSwapFromAe) {
+        const amountInAettos = BigInt(Math.trunc(parseFloat(ethAmount) * 10 ** 18));
+
         if (!isOnlySwap) {
           setActiveStep(3);
-          const amountInAettos = BigInt(parseFloat(ethAmount) * 10 ** 18);
+
           const amountOut = exchangeRatio
             ? BigInt(Math.trunc(Number(amountInAettos) / exchangeRatio))
             : BigInt(0);
@@ -180,7 +182,7 @@ function App() {
         }
         setActiveStep(1);
         await BridgeService.bridgeAeToEth(
-          +ethAmount,
+          amountInAettos,
           aeternityAddress,
           ethereumAddress,
         );
@@ -196,7 +198,7 @@ function App() {
         if (!SKIP_ETH) {
           console.log('Bridging ETH to AE', parseFloat(ethAmount));
           await BridgeService.bridgeEthToAe(
-            parseFloat(ethAmount),
+            amountInWei,
             aeternityAddress,
           );
         }

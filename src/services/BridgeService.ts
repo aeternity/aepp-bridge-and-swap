@@ -5,7 +5,7 @@ import { BRIDGE_ABI, BRIDGE_ACI, Constants } from "../constants";
 import { aeSdk } from "./WalletService";
 
 class BridgeService {
-  static async bridgeEthToAe(amount: number, aeAddress: string): Promise<void> {
+  static async bridgeEthToAe(amountInWei: bigint, aeAddress: string): Promise<void> {
     const provider = new ethers.BrowserProvider(window.ethereum!);
     const signer = await provider.getSigner();
     const bridgeContract = new ethers.Contract(
@@ -13,8 +13,6 @@ class BridgeService {
       BRIDGE_ABI,
       signer,
     );
-
-    const amountInWei = BigInt(amount * 1e18);
 
     return bridgeContract.bridge_out(
       Constants.eth_mock_address,
@@ -27,9 +25,7 @@ class BridgeService {
     );
   }
 
-  static async bridgeAeToEth(amount: number, aeternityAddress: string, ethereumAddress: string) {
-    const amountInWei = BigInt(amount * 1e18);
-
+  static async bridgeAeToEth(amountInWei: bigint, aeternityAddress: string, ethereumAddress: string) {
       const asset_contract = await aeSdk.initializeContract({
         aci: aex9ACI,
         address: Constants.ae_weth_address,
