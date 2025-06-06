@@ -19,6 +19,7 @@ const WizardFlowContainer = ({
   buttonLabel,
   buttonLoading,
   buttonDisabled,
+   error,
   ...props
 }: {
   title: string;
@@ -27,6 +28,7 @@ const WizardFlowContainer = ({
   buttonLabel: string;
   buttonLoading: boolean;
   buttonDisabled: boolean;
+  error?: string;
 }) => {
   const { nextStep } = useExchangeStore();
 
@@ -54,6 +56,10 @@ const WizardFlowContainer = ({
           >
             {content}
           </Box>
+          {error && (<Typography fontSize="16px" fontWeight={600} sx={{ opacity: 0.8, color: 'red' }}>
+            {error}
+          </Typography>
+          )}
           <Button
             disabled={buttonDisabled}
             loading={buttonLoading}
