@@ -11,7 +11,7 @@ import { AE_AVATAR_URL } from '../../../constants';
 
 const EthToAeStep2 = () => {
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { aeAccount } = useWalletStore();
+  const { aeAccount, ethAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
@@ -38,7 +38,12 @@ const EthToAeStep2 = () => {
         title={'Set amount'}
         buttonLabel="Next"
         buttonLoading={false}
-        buttonDisabled={!fromAmount || !toAmount}
+        buttonDisabled={!fromAmount || !toAmount || !ethAccount?.balance || fromAmount > Number(ethAccount?.balance)}
+        error={
+          !!fromAmount && fromAmount > Number(ethAccount?.balance || 0)
+            ? `Amount exceeds maximum available: ${Number(ethAccount?.balance)} ETH`
+            : ''
+        }
         header={<></>}
         content={
           <>
