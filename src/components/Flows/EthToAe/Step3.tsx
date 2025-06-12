@@ -54,10 +54,7 @@ const EthToAeStep3 = () => {
         try {
           if (!SKIP_ETH) {
             if (isCancelled) return;
-            await BridgeService.bridgeEthToAe(
-              parseFloat(ethAmount),
-              aeAccount.address,
-            );
+            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address);
             if (isCancelled) return;
           }
           setStatus(Status.CONFIRMED);

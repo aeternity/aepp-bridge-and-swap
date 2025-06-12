@@ -26,3 +26,13 @@ export function formatCurrency(value: number): string {
   }).format(value);
   return result;
 }
+
+export function powerAndTruncFloat(value: string | number | bigint, power: number): bigint {
+  return BigInt(Math.trunc(parseFloat(value.toString()) * 10 ** power));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function executeAndSetInterval(handler: () => any, timeout: number) {
+  handler();
+  return setInterval(handler, timeout);
+}

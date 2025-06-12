@@ -6,7 +6,7 @@ import { useWalletStore } from '../../stores/walletStore';
 import DisconnectIcon from '../../assets/DisconnectIcon';
 import WalletService from '../../services/WalletService';
 import { BigNumber } from 'bignumber.js';
-import { formatNumber } from '../../helpers';
+import { executeAndSetInterval, formatNumber } from '../../helpers';
 import Avatar from '../Avatar';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 
@@ -17,6 +17,9 @@ interface Props {
 }
 
 const ConnectWalletButton = ({ protocol }: Props) => {
+  let pollAeBalanceInterval: NodeJS.Timer;
+  let pollEthBalanceInterval: NodeJS.Timer;
+
   const {
     connectEth,
     connectAe,
@@ -44,11 +47,17 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     try {
       setIsConnecting(true);
       const address = await WalletService.connectSuperHero();
-      const balance = await WalletService.getAeBalance(
-        address as `ak_${string}`,
-      );
       connectAe(address);
-      updateAeBalance(BigNumber(balance.toString()));
+      if (!pollAeBalanceInterval) {
+        pollAeBalanceInterval = executeAndSetInterval(async () => {
+          console.log('hey');
+          const balance = await WalletService.getAeBalance(
+            address as `ak_${string}`,
+          );
+          updateAeBalance(BigNumber(balance.toString()));
+        }, 5000)
+      }
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -71,11 +80,17 @@ const ConnectWalletButton = ({ protocol }: Props) => {
   const disconnectAeternity = useCallback(() => {
     WalletService.disconnectWallet();
     disconnectAe();
+    if (pollAeBalanceInterval) {
+      clearInterval(pollAeBalanceInterval);
+    }
   }, [disconnectAe]);
 
   const disconnectEthereum = useCallback(() => {
     WalletService.disconnectWallet();
     disconnectEth();
+    if (pollEthBalanceInterval) {
+      clearInterval(pollEthBalanceInterval);
+    }
   }, [disconnectEth]);
 
   const { label, connect, disconnect, address, balance, coinLabel } =
@@ -132,12 +147,17 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     if (isAppKitConnected && ethereumAddressFromProvider) {
       connectEth(ethereumAddressFromProvider);
 
-      WalletService.getEthBalance(ethereumAddressFromProvider)
-        .then((balance) => {
-          updateEthBalance(BigNumber(balance.toString()));
-          setIsConnecting(false);
-        })
-        .catch(() => setIsConnecting(false));
+      if (!pollEthBalanceInterval) {
+        pollEthBalanceInterval = executeAndSetInterval(() => {
+          WalletService.getEthBalance(ethereumAddressFromProvider)
+            .then((balance) => {
+              updateEthBalance(BigNumber(balance.toString()));
+              setIsConnecting(false);
+            })
+            .catch(() => setIsConnecting(false));
+          }, 5000)
+      }
+      
     }
   }, [isAppKitConnected, ethereumAddressFromProvider]);
 

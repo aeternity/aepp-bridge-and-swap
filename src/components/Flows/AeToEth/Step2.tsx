@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -8,16 +8,15 @@ import TokenPriceService from '../../../services/TokenPriceService';
 import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import { AE_AVATAR_URL } from '../../../constants';
+import { powerAndTruncFloat } from '../../../helpers';
 
 const AeToEthStep2 = () => {
   const theme = useTheme();
 
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { ethAccount } = useWalletStore();
+  const { aeAccount, ethAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
-
-  const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
 
   useEffect(() => {
     TokenPriceService.getPrices().then(setPrices);
@@ -39,9 +38,18 @@ const AeToEthStep2 = () => {
       <WizardFlowContainer
         title={'Set amount'}
         subtitle={'How much do you want to swap?'}
-        buttonLabel="Next"
         buttonLoading={false}
-        buttonDisabled={!fromAmount || !toAmount}
+        buttonDisabled={
+          !fromAmount ||
+          !toAmount ||
+          powerAndTruncFloat(fromAmount, 18) > Number(aeAccount?.balance || 0)
+        }
+        error={
+          !!fromAmount &&
+          powerAndTruncFloat(fromAmount, 18) > Number(aeAccount?.balance || 0)
+            ? `Amount exceeds maximum available: ${Number(aeAccount?.balance || 0) * 10 ** -18} AE`
+            : ''
+        }
         content={
           <>
             <Box

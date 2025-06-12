@@ -1,19 +1,22 @@
-import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
 import AmountInput from '../../Inputs/AmountInput';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
-import { AE_AVATAR_URL } from '../../../constants';
+import DexService from '../../../services/DexService';
+import { powerAndTruncFloat } from '../../../helpers';
 
 const AeEthToEthStep2 = () => {
   const theme = useTheme();
 
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { ethAccount } = useWalletStore();
+  const [amountAeEth, setAmountAeEth] = useState(0n);
 
-  const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
+  useEffect(() => {
+    DexService.getAeWethBalance().then(setAmountAeEth);
+  }, []);
 
   const onChange = (value: string) => {
     setToAmount(Number(value));
@@ -25,9 +28,17 @@ const AeEthToEthStep2 = () => {
       <WizardFlowContainer
         title={'Set amount'}
         subtitle={'How much do you want to swap?'}
-        buttonLabel="Next"
         buttonLoading={false}
-        buttonDisabled={!fromAmount || !toAmount}
+        buttonDisabled={
+          !fromAmount ||
+          !toAmount ||
+          powerAndTruncFloat(fromAmount, 18) > amountAeEth
+        }
+        error={
+          !!fromAmount && powerAndTruncFloat(fromAmount, 18) > amountAeEth
+            ? `Amount exceeds maximum available: ${Number(amountAeEth) * 10 ** -18} æETH`
+            : ''
+        }
         content={
           <>
             <Box

@@ -13,11 +13,9 @@ const EthToAeStep2 = () => {
   const theme = useTheme();
 
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { aeAccount } = useWalletStore();
+  const { ethAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
-
-  const avatarUrl = AE_AVATAR_URL + aeAccount?.address;
 
   useEffect(() => {
     TokenPriceService.getPrices().then(setPrices);
@@ -39,9 +37,18 @@ const EthToAeStep2 = () => {
       <WizardFlowContainer
         title={'Set amount'}
         subtitle={'How much do you want to swap?'}
-        buttonLabel="Next"
         buttonLoading={false}
-        buttonDisabled={!fromAmount || !toAmount}
+        buttonDisabled={
+          !fromAmount ||
+          !toAmount ||
+          !ethAccount?.balance ||
+          fromAmount > Number(ethAccount?.balance)
+        }
+        error={
+          !!fromAmount && fromAmount > Number(ethAccount?.balance || 0)
+            ? `Amount exceeds maximum available: ${Number(ethAccount?.balance)} ETH`
+            : ''
+        }
         content={
           <>
             <Box
