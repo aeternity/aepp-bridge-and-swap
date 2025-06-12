@@ -17,7 +17,6 @@ const EthToAeStep1 = () => {
             Just hit connect!
           </>
         }
-        buttonLabel="Next"
         buttonDisabled={!aeAccount || !ethAccount}
         content={
           <>
