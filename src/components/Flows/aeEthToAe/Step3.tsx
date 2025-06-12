@@ -22,6 +22,7 @@ import {
 } from '../../shared';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
+let isCancelled = false;
 const AeEthToAeStep3 = () => {
   const theme = useTheme();
 
@@ -33,9 +34,14 @@ const AeEthToAeStep3 = () => {
     aeOut: BigNumber(0),
   });
   const [ranSwap, setRanSwap] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setStatus(Status.PENDING);
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -50,22 +56,51 @@ const AeEthToAeStep3 = () => {
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
       );
 
-      await DexService.changeAllowance(amountInWei);
+      const attemptChangeAllowance = async () => {
+        try {
+          if (isCancelled) return;
+          await DexService.changeAllowance(amountInWei);
+          if (isCancelled) return;
+          setStatus(Status.CONFIRMED);
+          setError('');
+        } catch (e: any) {
+          setStatus(Status.PENDING);
+          setError(e?.message ?? 'Something went wrong.');
+          await attemptChangeAllowance();
+        }
+      };
 
-      setStatus(Status.CONFIRMED);
+      const attemptSwapAeEthToAe = async () => {
+        try {
+          setStatus(Status.PENDING);
+          if (isCancelled) return;
+          const txHash = await DexService.swapAeEthToAE(
+            amountInWei,
+            aeAccount.address,
+          );
+          console.log(txHash);
+          if (isCancelled) return;
+          setStatus(Status.CONFIRMED);
+          const [aeEthIn, aeOut] = await DexService.pollSwapAeEthToAE(txHash);
+          setSwapResult({
+            aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
+            aeEthIn: BigNumber(aeEthIn),
+          });
 
-      const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
-        amountInWei,
-        aeAccount.address,
-      );
-      setSwapResult({
-        aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
-        aeEthIn: BigNumber(aeEthIn),
-      });
+          setStatus(Status.COMPLETED);
+          setError('');
+        } catch (e: any) {
+          setStatus(Status.PENDING);
+          setError(e?.message ?? 'Something went wrong.');
+          await attemptSwapAeEthToAe();
+        }
+      };
 
-      setStatus(Status.COMPLETED);
+      await attemptChangeAllowance();
+      await attemptSwapAeEthToAe();
     };
     if (aeAccount?.address && fromAmount && !ranSwap) {
+      isCancelled = false;
       Swap();
       setRanSwap(true);
     }

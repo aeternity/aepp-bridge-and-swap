@@ -67,12 +67,16 @@ const EthToAeStep4 = () => {
 
       const attemptSwapAeEthToAe = async () => {
         try {
+          setStatus(Status.PENDING);
           if (isCancelled) return;
-          const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
+          const txHash = await DexService.swapAeEthToAE(
             amountInWei,
             aeAccount.address,
           );
+          console.log(txHash);
           if (isCancelled) return;
+          setStatus(Status.CONFIRMED);
+          const [aeEthIn, aeOut] = await DexService.pollSwapAeEthToAE(txHash);
           setSwapResult({
             aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
             aeEthIn: BigNumber(aeEthIn),
@@ -81,7 +85,7 @@ const EthToAeStep4 = () => {
           setStatus(Status.COMPLETED);
           setError('');
         } catch (e: any) {
-          setStatus(Status.CONFIRMED);
+          setStatus(Status.PENDING);
           setError(e?.message ?? 'Something went wrong.');
           await attemptSwapAeEthToAe();
         }
@@ -104,7 +108,7 @@ const EthToAeStep4 = () => {
           <>
             You are about to bridge{' '}
             <span style={{ fontWeight: 500 }}>{fromAmount} æETH</span> to{' '}
-            <span style={{ fontWeight: 500 }}>≈{toAmount} ETH.</span> Coins will
+            <span style={{ fontWeight: 500 }}>≈{toAmount} AE.</span> Coins will
             be received by your connected æternity account.
           </>
         );
