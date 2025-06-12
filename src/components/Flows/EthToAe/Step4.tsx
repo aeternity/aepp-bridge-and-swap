@@ -17,6 +17,7 @@ import {
 } from '../../shared';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
+let isCancelled = false;
 const EthToAeStep4 = () => {
   const theme = useTheme();
 
@@ -32,6 +33,10 @@ const EthToAeStep4 = () => {
 
   useEffect(() => {
     setStatus(Status.PENDING);
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -48,7 +53,9 @@ const EthToAeStep4 = () => {
 
       const attemptChangeAllowance = async () => {
         try {
+          if (isCancelled) return;
           await DexService.changeAllowance(amountInWei);
+          if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
         } catch (e: any) {
@@ -60,10 +67,12 @@ const EthToAeStep4 = () => {
 
       const attemptSwapAeEthToAe = async () => {
         try {
+          if (isCancelled) return;
           const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
             amountInWei,
             aeAccount.address,
           );
+          if (isCancelled) return;
           setSwapResult({
             aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
             aeEthIn: BigNumber(aeEthIn),
@@ -82,6 +91,7 @@ const EthToAeStep4 = () => {
       await attemptSwapAeEthToAe();
     };
     if (aeAccount?.address && fromAmount && !ranSwap) {
+      isCancelled = false;
       Swap();
       setRanSwap(true);
     }

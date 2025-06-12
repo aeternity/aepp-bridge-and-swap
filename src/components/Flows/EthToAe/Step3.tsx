@@ -19,6 +19,7 @@ import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
 const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
+let isCancelled = false;
 const EthToAeStep3 = () => {
   const theme = useTheme();
 
@@ -30,6 +31,10 @@ const EthToAeStep3 = () => {
 
   useEffect(() => {
     setStatus(Status.PENDING);
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -48,10 +53,12 @@ const EthToAeStep3 = () => {
       const attemptBridge = async () => {
         try {
           if (!SKIP_ETH) {
+            if (isCancelled) return;
             await BridgeService.bridgeEthToAe(
               parseFloat(ethAmount),
               aeAccount.address,
             );
+            if (isCancelled) return;
           }
           setStatus(Status.CONFIRMED);
           setError('');
@@ -65,13 +72,17 @@ const EthToAeStep3 = () => {
       const attemptWaitForBridge = async () => {
         try {
           if (!SKIP_ETH) {
+            if (isCancelled) return;
             // Wait for a moment to let the bridge finalize
             await WebsocketService.waitForBridgeToComplete(
               amountInWei,
               aeAccount.address,
             );
+            if (isCancelled) return;
           } else {
+            if (isCancelled) return;
             await new Promise((resolve) => setTimeout(resolve, 1000));
+            if (isCancelled) return;
           }
           setStatus(Status.COMPLETED);
           setError('');
@@ -86,6 +97,7 @@ const EthToAeStep3 = () => {
       await attemptWaitForBridge();
     };
     if (aeAccount?.address && fromAmount && !ranBridge) {
+      isCancelled = false;
       Bridge();
       setRanBridge(true);
     }
@@ -185,7 +197,6 @@ const EthToAeStep3 = () => {
     <>
       <WizardFlowContainer
         title={'Bridge ETH to æETH'}
-        buttonLabel="Next"
         buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={status !== Status.COMPLETED}
         subtitle={getMessageBoxContent()}

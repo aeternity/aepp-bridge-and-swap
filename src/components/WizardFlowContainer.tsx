@@ -17,7 +17,7 @@ type StyledProps = {
 
 const StyledContainer = styled(Container)({
   minHeight: '436px',
-  margin: '120px 0px 200px 0px',
+  margin: '120px 0px 20px 0px',
   textAlign: 'center',
   display: 'flex',
   flexDirection: 'column',
@@ -137,13 +137,14 @@ const WizardFlowContainer = ({
         >
           <BackBox>
             {(currentStep !== steps.length - 1 ||
-              status !== Status.COMPLETED) && (
-              <StepArrowButton
-                text={'Back'}
-                rotation={'-180deg'}
-                onClick={currentStep == 0 ? reset : prevStep}
-              />
-            )}
+              status !== Status.COMPLETED) &&
+              currentStep < 2 && (
+                <StepArrowButton
+                  text={'Back'}
+                  rotation={'-180deg'}
+                  onClick={currentStep == 0 ? reset : prevStep}
+                />
+              )}
           </BackBox>
           <ContentBox>{content}</ContentBox>
           <NextBox>
@@ -162,15 +163,15 @@ const WizardFlowContainer = ({
         </Typography>
         <Typography fontSize="16px">{footer}</Typography>
       </Box>
-      {currentStep === steps.length - 1 && status === Status.COMPLETED && (
-        <Button
-          color={'primary'}
-          sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
-          onClick={() => alert(1)}
-        >
-          {'Do another:)'}
-        </Button>
-      )}
+      <Button
+        color={'primary'}
+        sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
+        onClick={reset}
+      >
+        {currentStep === steps.length - 1 && status === Status.COMPLETED
+          ? 'Do another:)'
+          : 'Cancel'}
+      </Button>
     </StyledContainer>
   );
 };

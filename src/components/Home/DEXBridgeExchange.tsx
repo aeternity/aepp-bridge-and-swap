@@ -14,21 +14,20 @@ const DEXBridgeExchange = () => {
         <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
           <Box sx={{ position: 'relative', marginTop: '160px' }}>
             <img
-              src={'/assets/quickbridge.svg'}
+              src={'/assets/superheroswaplogo.svg'}
               style={{
                 width: '300px',
                 height: 'auto',
               }}
             />
             <img
-              src={'/assets/human.svg'}
+              src={'/assets/superherologo.svg'}
               style={{
                 width: 'auto',
-                height: '60px',
+                height: '35px',
                 position: 'absolute',
-                right: '30px',
-                bottom: '50px',
-                transform: 'scale(-1, 1) rotate(-18deg)',
+                right: '-30px',
+                top: '-25px',
               }}
             />
           </Box>
