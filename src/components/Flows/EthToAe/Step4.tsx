@@ -1,101 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import MessageBox from '../../MessageBox';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import AeLogo from '../../../assets/AeLogo';
-import styled from '@emotion/styled';
 import Link from 'next/link';
 import ExternalIcon from '../../../assets/ExternalIcon';
 import { useWalletStore } from '../../../stores/walletStore';
-import { formatNumber, splitAddress } from '../../../helpers';
+import { formatNumber } from '../../../helpers';
 import DexService from '../../../services/DexService';
 import { BigNumber } from 'bignumber.js';
-import AeEthAvatar from '../../../assets/AeEthAvatar';
-import { StepProps } from '../../../types';
-
-const Separator = styled(Box)<StepProps>(({ completed }) => ({
-  position: 'relative',
-  height: '1px',
-  width: '100%',
-  backgroundColor: 'rgba(64, 67, 80, 1)',
-
-  '&::after': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 0,
-    height: 0,
-    borderTop: '10px solid transparent',
-    borderBottom: '10px solid transparent',
-    borderLeft: '18px solid rgba(64, 67, 80, 1)',
-  },
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 0,
-    height: 0,
-    borderTop: '8px solid transparent',
-    borderBottom: '8px solid transparent',
-    borderLeft: '16px solid #282c34',
-    borderLeftColor: completed ? '#00D3A1' : '#282c34',
-    zIndex: 1,
-  },
-}));
-
-const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
-  display: 'flex',
-  padding: '0px 17px',
-  alignItems: 'center',
-  marginBottom: '37px',
-  [theme.breakpoints.up('sm')]: {
-    padding: '0px 52px',
-  },
-}));
-const AmountBox = styled(Box)(({}) => ({
-  backgroundColor: 'rgba(142, 152, 186, 0.15)',
-  padding: '3px 12px',
-  borderRadius: '20px',
-  display: 'flex',
-  gap: '2px',
-  alignItems: 'end',
-  position: 'absolute',
-  left: '50%',
-  transform: 'translate(-50%)',
-  bottom: '-28px',
-}));
-const AmountTypography = styled(Typography)(() => ({
-  fontSize: '18px',
-  opacity: '60%',
-  lineHeight: '28px',
-  fontWeight: 500,
-}));
-const TokenTypography = styled(Typography)(() => ({
-  fontSize: '14px',
-  lineHeight: '24px',
-  fontWeight: 500,
-}));
-
-enum Status {
-  PENDING,
-  CONFIRMED,
-  COMPLETED,
-}
+import { Status, useExchangeStore } from '../../../stores/exchangeStore';
+import {
+  AmountBox,
+  AmountTypography,
+  BridgeBox,
+  TokenTypography,
+} from '../../shared';
+import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
 const EthToAeStep4 = () => {
+  const theme = useTheme();
+
   const { aeAccount } = useWalletStore();
   const { fromAmount, toAmount } = useFormStore();
-  const [status, setStatus] = useState(Status.PENDING);
+  const { status, setStatus } = useExchangeStore();
   const [swapResult, setSwapResult] = useState({
     aeEthIn: BigNumber(0),
     aeOut: BigNumber(0),
   });
   const [ranSwap, setRanSwap] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setStatus(Status.PENDING);
+  }, []);
 
   useEffect(() => {
     const Swap = async () => {
@@ -109,20 +46,40 @@ const EthToAeStep4 = () => {
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
       );
 
-      await DexService.changeAllowance(amountInWei);
+      const attemptChangeAllowance = async () => {
+        try {
+          await DexService.changeAllowance(amountInWei);
+          setStatus(Status.CONFIRMED);
+          setError('');
+        } catch (e: any) {
+          setStatus(Status.PENDING);
+          setError(e?.message ?? 'Something went wrong.');
+          await attemptChangeAllowance();
+        }
+      };
 
-      setStatus(Status.CONFIRMED);
+      const attemptSwapAeEthToAe = async () => {
+        try {
+          const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
+            amountInWei,
+            aeAccount.address,
+          );
+          setSwapResult({
+            aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
+            aeEthIn: BigNumber(aeEthIn),
+          });
 
-      const [aeEthIn, aeOut] = await DexService.swapAeEthToAE(
-        amountInWei,
-        aeAccount.address,
-      );
-      setSwapResult({
-        aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
-        aeEthIn: BigNumber(aeEthIn),
-      });
+          setStatus(Status.COMPLETED);
+          setError('');
+        } catch (e: any) {
+          setStatus(Status.CONFIRMED);
+          setError(e?.message ?? 'Something went wrong.');
+          await attemptSwapAeEthToAe();
+        }
+      };
 
-      setStatus(Status.COMPLETED);
+      await attemptChangeAllowance();
+      await attemptSwapAeEthToAe();
     };
     if (aeAccount?.address && fromAmount && !ranSwap) {
       Swap();
@@ -138,11 +95,7 @@ const EthToAeStep4 = () => {
             You are about to bridge{' '}
             <span style={{ fontWeight: 500 }}>{fromAmount} æETH</span> to{' '}
             <span style={{ fontWeight: 500 }}>≈{toAmount} ETH.</span> Coins will
-            be received by æternity account:
-            <br />
-            <span style={{ fontWeight: 500, fontFamily: 'monospace' }}>
-              {splitAddress(aeAccount?.address)}
-            </span>
+            be received by your connected æternity account.
           </>
         );
       case Status.CONFIRMED:
@@ -150,23 +103,14 @@ const EthToAeStep4 = () => {
           <>
             Swapping <span style={{ fontWeight: 500 }}>æETH</span> to{' '}
             <span style={{ fontWeight: 500 }}>AE</span> is in progress.
-            <br />
-            Usually it takes about 1-2 minutes to get the{' '}
-            <span style={{ fontWeight: 500 }}>AE</span> coins in the receiving
-            æternity account.
           </>
         );
       case Status.COMPLETED:
         return (
           <>
-            <span style={{ fontWeight: 500 }}>
-              {swapResult?.aeOut.toString()} AE
-            </span>{' '}
-            have been successfully received by æternity account:
+            Yay!
             <br />
-            <span style={{ fontWeight: 500, fontFamily: 'monospace' }}>
-              {splitAddress(aeAccount?.address)}
-            </span>
+            Success!
           </>
         );
     }
@@ -187,8 +131,11 @@ const EthToAeStep4 = () => {
           <>
             Transaction is processing ...
             <br />
+            Usually it takes about 1-2 minutes to get the AE coins in the
+            receiving æternity account.
+            <br />
             <Link
-              href="https://google.com"
+              href="#"
               target="_blank"
               style={{
                 color: 'rgba(0, 211, 161, 1)',
@@ -211,9 +158,10 @@ const EthToAeStep4 = () => {
       case Status.COMPLETED:
         return (
           <>
-            Click on the button below
+            {swapResult?.aeOut.toString()} AE have been successfully received by
+            your æternity account.
             <br />
-            to relaunch the exchange wizard.
+            All done! Congrats.
           </>
         );
     }
@@ -223,63 +171,42 @@ const EthToAeStep4 = () => {
     <>
       <WizardFlowContainer
         title={'Swap æETH for AE'}
-        buttonLabel={status !== Status.COMPLETED ? 'Next' : 'Go To Dashboard'}
         buttonLoading={status !== Status.COMPLETED}
-        buttonDisabled={false}
-        header={
-          <Box mt={'16px'}>
-            <MessageBox
-              message={getMessageBoxContent()}
-              type={status === Status.COMPLETED ? 'SUCCESS' : 'INFO'}
-            />
-          </Box>
-        }
+        buttonDisabled={status !== Status.COMPLETED}
+        subtitle={getMessageBoxContent()}
         content={
           <>
             <BridgeBox>
-              <Box position={'relative'}>
-                <Box
-                  position={'relative'}
-                  zIndex={1}
-                  width={'48px'}
-                  height={'48px'}
-                >
-                  <AeEthAvatar />
-                </Box>
-                <AmountBox>
-                  <AmountTypography>
-                    {formatNumber(Number(fromAmount), {
-                      maximumFractionDigits: 8,
-                    })}
-                  </AmountTypography>
-                  <TokenTypography>æETH</TokenTypography>
-                </AmountBox>
-              </Box>
-              <Separator completed={status === Status.COMPLETED} />
-              <Box position={'relative'}>
-                <Box
-                  position={'relative'}
-                  zIndex={1}
-                  width={'48px'}
-                  height={'48px'}
-                >
-                  <AeLogo width={'100%'} height={'100%'} />
-                </Box>
-                <AmountBox>
-                  <AmountTypography>
-                    {formatNumber(Number(toAmount), {
-                      maximumFractionDigits: 8,
-                    })}
-                  </AmountTypography>
-                  <TokenTypography>AE</TokenTypography>
-                </AmountBox>
-              </Box>
+              <AmountBox
+                style={{
+                  backgroundColor: theme.palette.secondary.main,
+                }}
+              >
+                <AmountTypography>
+                  {formatNumber(Number(fromAmount), {
+                    maximumFractionDigits: 8,
+                  })}
+                </AmountTypography>
+                <TokenTypography>æETH</TokenTypography>
+              </AmountBox>
+              <SwapArrowButton disabled />
+              <AmountBox
+                style={{
+                  backgroundColor: theme.palette.primary.main,
+                }}
+              >
+                <AmountTypography>
+                  {formatNumber(Number(toAmount), {
+                    maximumFractionDigits: 8,
+                  })}
+                </AmountTypography>
+                <TokenTypography>AE</TokenTypography>
+              </AmountBox>
             </BridgeBox>
-            <Typography fontSize={'14px'} textAlign={'center'}>
-              {getMessageFooter()}
-            </Typography>
           </>
         }
+        footer={getMessageFooter()}
+        error={error}
       />
     </>
   );

@@ -2,6 +2,12 @@ import { create } from 'zustand';
 
 export type FlowType = 'ethToAe' | 'aeToEth' | 'aeEthToAe' | 'aeEthToEth';
 
+export enum Status {
+  PENDING,
+  CONFIRMED,
+  COMPLETED,
+}
+
 const steps = {
   ethToAe: ['Connect wallets', 'Set amount', 'Bridge to æETH', 'Swap for AE'],
   aeToEth: ['Connect wallets', 'Set amount', 'Swap for AE', 'Bridge to ETH'],
@@ -13,10 +19,12 @@ interface ExchangeState {
   flow: FlowType | null;
   steps: string[];
   currentStep: number;
+  status: Status;
   setFlow: (flow: FlowType) => void;
   prevStep: () => void;
   nextStep: () => void;
   setStep: (step: number) => void;
+  setStatus: (status: Status) => void;
   reset: () => void;
 }
 
@@ -24,6 +32,7 @@ export const useExchangeStore = create<ExchangeState>((set) => ({
   flow: null,
   currentStep: 0,
   steps: [],
+  status: Status.PENDING,
   setFlow: (flow) => {
     set({ flow, currentStep: 0 });
     set({ steps: steps[flow] });
@@ -41,5 +50,6 @@ export const useExchangeStore = create<ExchangeState>((set) => ({
       };
     }),
   setStep: (step) => set({ currentStep: step }),
+  setStatus: (status) => set({ status }),
   reset: () => set({ flow: null, currentStep: 0 }),
 }));

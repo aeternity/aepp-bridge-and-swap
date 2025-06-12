@@ -35,9 +35,10 @@ const ConnectWalletButton = ({ protocol }: Props) => {
 
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const isConnected =
+  const isConnected = !!(
     (protocol === 'ETH' && ethereumAddressFromProvider && isAppKitConnected) ||
-    (protocol === 'AE' && aeAccount);
+    (protocol === 'AE' && aeAccount)
+  );
 
   const connectAeternity = useCallback(async () => {
     try {
@@ -57,13 +58,8 @@ const ConnectWalletButton = ({ protocol }: Props) => {
 
   const connectEthereum = useCallback(async () => {
     try {
-      console.log('connect eth');
       setIsConnecting(true);
       await open({ view: 'Connect' });
-      // const address = await WalletService.connectMetamask();
-      // const balance = await WalletService.getEthBalance(address);
-      // connectEth(address);
-      // updateEthBalance(BigNumber(balance));
     } catch (error) {
       console.error(error);
     } finally {
@@ -82,12 +78,11 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     disconnectEth();
   }, [disconnectEth]);
 
-  const { icon, label, connect, disconnect, address, balance, coinLabel } =
+  const { label, connect, disconnect, address, balance, coinLabel } =
     useMemo(() => {
       switch (protocol) {
         case 'ETH':
           return {
-            icon: <EthLogo />,
             label: 'Ethereum',
             coinLabel: 'ETH',
             address: ethAccount?.address,
@@ -99,7 +94,6 @@ const ConnectWalletButton = ({ protocol }: Props) => {
           };
         case 'AE':
           return {
-            icon: <AeLogoWhite />,
             label: 'æternity',
             coinLabel: 'AE',
             address: aeAccount?.address,
@@ -147,50 +141,61 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     }
   }, [isAppKitConnected, ethereumAddressFromProvider]);
 
-  if (isConnected) {
-    return (
-      <Box
-        display="flex"
-        alignItems={'center'}
-        gap={'12px'}
-        sx={{
-          backgroundColor: 'rgba(35, 38, 49, 1)',
-          borderRadius: '16px',
-          padding: '4px 10px 4px 4px',
-          minHeight: '44px',
-          fontSize: '16px',
-          fontWeight: 500,
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent={'center'}
-          alignItems={'center'}
-          gap={'8px'}
-          sx={{
-            backgroundColor: 'rgba(21, 23, 30, 1)',
-            borderRadius: '12px',
-            padding: '6px 10px',
-          }}
-        >
-          <Avatar address={address} />
-          <Typography fontSize={'15px'}>
-            {shortenAddress(address ?? '')}
-          </Typography>
-        </Box>
-        <Typography fontSize={'15px'}>
-          {balance} {coinLabel}
-        </Typography>
-        <ButtonBase onClick={disconnect} style={{ marginLeft: 'auto' }}>
-          <DisconnectIcon />
-        </ButtonBase>
-      </Box>
-    );
-  }
+  // if (isConnected) {
+  //   return (
+  //     <Box
+  //       display="flex"
+  //       alignItems={'center'}
+  //       gap={'12px'}
+  //       sx={{
+  //         backgroundColor: 'rgba(35, 38, 49, 1)',
+  //         borderRadius: '16px',
+  //         padding: '4px 10px 4px 4px',
+  //         minHeight: '44px',
+  //         fontSize: '16px',
+  //         fontWeight: 500,
+  //       }}
+  //     >
+  //       <Box
+  //         display="flex"
+  //         justifyContent={'center'}
+  //         alignItems={'center'}
+  //         gap={'8px'}
+  //         sx={{
+  //           backgroundColor: 'rgba(21, 23, 30, 1)',
+  //           borderRadius: '12px',
+  //           padding: '6px 10px',
+  //         }}
+  //       >
+  //         <Avatar address={address} />
+  //         <Typography fontSize={'15px'}>
+  //           {shortenAddress(address ?? '')}
+  //         </Typography>
+  //       </Box>
+  //       <Typography fontSize={'15px'}>
+  //         {balance} {coinLabel}
+  //       </Typography>
+  //       <Button
+  //         color={protocol === 'AE' ? 'primary' : 'secondary'}
+  //         onClick={disconnect}
+  //         style={{ marginLeft: 'auto' }}
+  //       >
+  //         <DisconnectIcon />
+  //       </Button>
+  //     </Box>
+  //   );
+  // }
 
   return (
-    <Button startIcon={icon} onClick={connect} loading={isConnecting}>
-      Connect {label} Wallet
+    <Button
+      color={protocol === 'AE' ? 'primary' : 'secondary'}
+      onClick={connect}
+      loading={isConnecting}
+      disabled={isConnected}
+      sx={{ minWidth: '240px' }}
+    >
+      {isConnected ? 'Connected' : 'Connect'}
+      {` ${label} Wallet`}
     </Button>
   );
 };

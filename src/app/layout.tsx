@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import '../index.css';
-import { IBM_Plex_Sans } from 'next/font/google';
+import { Tomorrow } from 'next/font/google';
 
-const ibmPlexSans = IBM_Plex_Sans({
+const font = Tomorrow({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-ibm-plex-sans',
+  weight: ['400', '800'],
+  variable: '--my-font',
   display: 'swap',
 });
 
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={ibmPlexSans.variable}>
+    <html lang="en" className={font.variable}>
       <head>
         <meta name="theme-color" content="#000000" />
       </head>

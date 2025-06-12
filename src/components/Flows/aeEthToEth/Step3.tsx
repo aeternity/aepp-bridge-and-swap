@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import MessageBox from '../../MessageBox';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
@@ -13,87 +13,28 @@ import AeEthAvatar from '../../../assets/AeEthAvatar';
 import BridgeService from '../../../services/BridgeService';
 import WebsocketService from '../../../services/WebsocketService';
 import { StepProps } from '../../../types';
+import { Status, useExchangeStore } from '../../../stores/exchangeStore';
+import {
+  AmountBox,
+  AmountTypography,
+  BridgeBox,
+  TokenTypography,
+} from '../../shared';
+import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
 const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
-const Separator = styled(Box)<StepProps>(({ completed }) => ({
-  position: 'relative',
-  height: '1px',
-  width: '100%',
-  backgroundColor: 'rgba(64, 67, 80, 1)',
-
-  '&::after': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 0,
-    height: 0,
-    borderTop: '10px solid transparent',
-    borderBottom: '10px solid transparent',
-    borderLeft: '18px solid rgba(64, 67, 80, 1)',
-  },
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 0,
-    height: 0,
-    borderTop: '8px solid transparent',
-    borderBottom: '8px solid transparent',
-    borderLeft: '16px solid #282c34',
-    borderLeftColor: completed ? '#00D3A1' : '#282c34',
-    zIndex: 1,
-  },
-}));
-
-const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
-  display: 'flex',
-  padding: '0px 17px',
-  alignItems: 'center',
-  marginBottom: '37px',
-  [theme.breakpoints.up('sm')]: {
-    padding: '0px 52px',
-  },
-}));
-const AmountBox = styled(Box)(({}) => ({
-  backgroundColor: 'rgba(142, 152, 186, 0.15)',
-  padding: '3px 12px',
-  borderRadius: '20px',
-  display: 'flex',
-  gap: '2px',
-  alignItems: 'end',
-  position: 'absolute',
-  left: '50%',
-  transform: 'translate(-50%)',
-  bottom: '-28px',
-}));
-const AmountTypography = styled(Typography)(() => ({
-  fontSize: '18px',
-  opacity: '60%',
-  lineHeight: '28px',
-  fontWeight: 500,
-}));
-const TokenTypography = styled(Typography)(() => ({
-  fontSize: '14px',
-  lineHeight: '24px',
-  fontWeight: 500,
-}));
-
-enum Status {
-  PENDING,
-  CONFIRMED,
-  COMPLETED,
-}
-
 const AeEthToEthStep3 = () => {
+  const theme = useTheme();
+
   const { aeAccount, ethAccount } = useWalletStore();
   const { toAmount } = useFormStore();
-  const [status, setStatus] = useState(Status.PENDING);
+  const { status, setStatus } = useExchangeStore();
   const [ranBridge, setRanBridge] = useState(false);
+
+  useEffect(() => {
+    setStatus(Status.PENDING);
+  }, []);
 
   useEffect(() => {
     const Bridge = async () => {
@@ -164,11 +105,7 @@ const AeEthToEthStep3 = () => {
         return (
           <>
             <span style={{ fontWeight: 500 }}>{toAmount} ETH</span> have been
-            successfully received by Ethereum account:
-            <br />
-            <span style={{ fontWeight: 500, fontFamily: 'monospace' }}>
-              {splitAddress(ethAccount?.address)}
-            </span>
+            successfully received by your connected Ethereum account.
           </>
         );
     }
@@ -190,7 +127,7 @@ const AeEthToEthStep3 = () => {
             Transaction is processing ...
             <br />
             <Link
-              href="https://google.com"
+              href="#"
               target="_blank"
               style={{
                 color: 'rgba(0, 211, 161, 1)',
@@ -225,63 +162,41 @@ const AeEthToEthStep3 = () => {
     <>
       <WizardFlowContainer
         title={'Bridge æETH to ETH'}
-        buttonLabel={status !== Status.COMPLETED ? 'Next' : 'Go To Dashboard'}
         buttonLoading={status !== Status.COMPLETED}
-        buttonDisabled={false}
-        header={
-          <Box mt={'16px'}>
-            <MessageBox
-              message={getMessageBoxContent()}
-              type={status === Status.COMPLETED ? 'SUCCESS' : 'INFO'}
-            />
-          </Box>
-        }
+        buttonDisabled={status !== Status.COMPLETED}
+        subtitle={getMessageBoxContent()}
         content={
           <>
             <BridgeBox>
-              <Box position={'relative'}>
-                <Box
-                  position={'relative'}
-                  zIndex={1}
-                  width={'48px'}
-                  height={'48px'}
-                >
-                  <AeEthAvatar />
-                </Box>
-                <AmountBox>
-                  <AmountTypography>
-                    {formatNumber(Number(toAmount), {
-                      maximumFractionDigits: 8,
-                    })}
-                  </AmountTypography>
-                  <TokenTypography>æETH</TokenTypography>
-                </AmountBox>
-              </Box>
-              <Separator completed={status === Status.COMPLETED} />
-              <Box position={'relative'}>
-                <Box
-                  position={'relative'}
-                  zIndex={1}
-                  width={'48px'}
-                  height={'48px'}
-                >
-                  <EthLogo width={'100%'} height={'100%'} />
-                </Box>
-                <AmountBox>
-                  <AmountTypography>
-                    {formatNumber(Number(toAmount), {
-                      maximumFractionDigits: 8,
-                    })}
-                  </AmountTypography>
-                  <TokenTypography>ETH</TokenTypography>
-                </AmountBox>
-              </Box>
+              <AmountBox
+                style={{
+                  backgroundColor: theme.palette.secondary.main,
+                }}
+              >
+                <AmountTypography>
+                  {formatNumber(Number(toAmount), {
+                    maximumFractionDigits: 8,
+                  })}
+                </AmountTypography>
+                <TokenTypography>æETH</TokenTypography>
+              </AmountBox>
+              <SwapArrowButton disabled />
+              <AmountBox
+                style={{
+                  backgroundColor: theme.palette.primary.main,
+                }}
+              >
+                <AmountTypography>
+                  {formatNumber(Number(toAmount), {
+                    maximumFractionDigits: 8,
+                  })}
+                </AmountTypography>
+                <TokenTypography>ETH</TokenTypography>
+              </AmountBox>
             </BridgeBox>
-            <Typography fontSize={'14px'} textAlign={'center'}>
-              {getMessageFooter()}
-            </Typography>
           </>
         }
+        footer={getMessageFooter()}
       />
     </>
   );

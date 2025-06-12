@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, InputBase, Typography } from '@mui/material';
+import { Box, InputBase, Typography, useTheme } from '@mui/material';
 import styled from '@emotion/styled';
 import TokenPriceService from '../../services/TokenPriceService';
 import WebsocketService from '../../services/WebsocketService';
@@ -12,6 +12,7 @@ interface Props {
   onChange: (amount: string | null) => void;
   value: string | number | null;
   label?: string;
+  backgroundColor?: string;
 }
 
 const TextInput = styled(InputBase)({
@@ -19,10 +20,26 @@ const TextInput = styled(InputBase)({
     textAlign: 'right',
     fontSize: '24px',
     padding: 0,
+    color: 'white',
+  },
+  'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button': {
+    WebkitAppearance: 'none',
+    margin: 0,
+  },
+  'input[type=number]': {
+    MozAppearance: 'textfield',
   },
 });
 
-const AmountInput = ({ protocol, onChange, value, label }: Props) => {
+const AmountInput = ({
+  protocol,
+  onChange,
+  value,
+  label,
+  backgroundColor,
+}: Props) => {
+  const theme = useTheme();
+
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
   useEffect(() => {
@@ -41,23 +58,27 @@ const AmountInput = ({ protocol, onChange, value, label }: Props) => {
       justifyContent={'space-between'}
       gap={'12px'}
       sx={{
-        backgroundColor: 'rgba(35, 38, 49, 1)',
+        backgroundColor: backgroundColor ?? theme.palette.primary.main,
         borderRadius: '16px',
         padding: '12px 16px',
         minHeight: '44px',
         fontSize: '16px',
         fontWeight: 500,
+        maxWidth: '300px',
       }}
     >
-      <Typography fontSize={'18px'}>{label || protocol}</Typography>
+      <Typography fontSize={'18px'} color="white">
+        {label || protocol}
+      </Typography>
       <Box display={'flex'} flexDirection={'column'} alignItems={'end'}>
         <TextInput
           fullWidth
           placeholder="0.00"
           onChange={onInputChange}
+          type="number"
           value={value}
         />
-        <Typography fontSize="12px">
+        <Typography fontSize="12px" color="white">
           {prices &&
             value &&
             formatCurrency(prices?.[protocol] * parseFloat(String(value)))}

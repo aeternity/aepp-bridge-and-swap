@@ -12,23 +12,16 @@ const AeEthToEthStep1 = () => {
     <>
       <WizardFlowContainer
         title={'Connect your wallets'}
+        subtitle={
+          <>
+            Got your two wallets sorted?
+            <br />
+            Just hit connect!
+          </>
+        }
         buttonLabel="Next"
         buttonLoading={false}
         buttonDisabled={!aeAccount || !ethAccount}
-        header={
-          <Box mt={'16px'}>
-            <MessageBox
-              message={
-                <>
-                  Please connect both your Ethereum and aeternity wallets in
-                  order to exchange{' '}
-                  <span style={{ fontWeight: 500 }}>æETH</span> to{' '}
-                  <span style={{ fontWeight: 500 }}>ETH</span> coins.
-                </>
-              }
-            />
-          </Box>
-        }
         content={
           <>
             <ConnectWalletButton protocol={'ETH'} />

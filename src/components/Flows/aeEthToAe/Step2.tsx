@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -10,6 +10,8 @@ import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import { AE_AVATAR_URL } from '../../../constants';
 
 const AeEthToAeStep2 = () => {
+  const theme = useTheme();
+
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
   const { aeAccount } = useWalletStore();
 
@@ -36,15 +38,15 @@ const AeEthToAeStep2 = () => {
     <>
       <WizardFlowContainer
         title={'Set amount'}
+        subtitle={'How much do you want to swap?'}
         buttonLabel="Next"
         buttonLoading={false}
         buttonDisabled={!fromAmount || !toAmount}
-        header={<></>}
         content={
           <>
             <Box
               display={'flex'}
-              gap={'6px'}
+              gap={'35px'}
               flexDirection={'column'}
               position={'relative'}
             >
@@ -53,6 +55,7 @@ const AeEthToAeStep2 = () => {
                 label="æETH"
                 onChange={onEthChange}
                 value={fromAmount}
+                backgroundColor={theme.palette.secondary.main}
               />
               <Box
                 position={'absolute'}
@@ -62,7 +65,7 @@ const AeEthToAeStep2 = () => {
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                <SwapArrowButton disabled />
+                <SwapArrowButton rotation="90deg" disabled />
               </Box>
               <AmountInput
                 protocol="AE"
@@ -70,32 +73,9 @@ const AeEthToAeStep2 = () => {
                 value={toAmount}
               />
             </Box>
-            <Typography fontSize="16px" fontWeight={600} sx={{ opacity: 0.8 }}>
-              Receiving æternity account
-            </Typography>
-            <Box
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'center'}
-              gap={'8px'}
-            >
-              <img
-                src={avatarUrl}
-                alt="Avatar"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-              <Typography
-                sx={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
-              >
-                {aeAccount?.address}
-              </Typography>
-            </Box>
           </>
         }
+        footer={'Almost there!'}
       />
     </>
   );
