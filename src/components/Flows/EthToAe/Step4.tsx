@@ -30,6 +30,7 @@ const EthToAeStep4 = () => {
   });
   const [ranSwap, setRanSwap] = useState(false);
   const [error, setError] = useState('');
+  const [hash, setHash] = useState('');
 
   useEffect(() => {
     setStatus(Status.PENDING);
@@ -73,17 +74,24 @@ const EthToAeStep4 = () => {
             amountInWei,
             aeAccount.address,
           );
-          console.log(txHash);
+          setHash(txHash);
           if (isCancelled) return;
+
           setStatus(Status.CONFIRMED);
+          setError('');
+
           const [aeEthIn, aeOut] = await DexService.pollSwapAeEthToAE(txHash);
           setSwapResult({
             aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
             aeEthIn: BigNumber(aeEthIn),
           });
 
-          setStatus(Status.COMPLETED);
-          setError('');
+          if (aeEthIn == 0n && aeOut == 0n) {
+            setError("It's taking a bit longer than expected.");
+          } else {
+            setError('');
+            setStatus(Status.COMPLETED);
+          }
         } catch (e: any) {
           setStatus(Status.PENDING);
           setError(e?.message ?? 'Something went wrong.');
@@ -148,25 +156,27 @@ const EthToAeStep4 = () => {
             Usually it takes about 1-2 minutes to get the AE coins in the
             receiving æternity account.
             <br />
-            <Link
-              href="#"
-              target="_blank"
-              style={{
-                color: 'rgba(0, 211, 161, 1)',
-                textDecoration: 'none',
-                fontWeight: 500,
-                display: 'inline-block',
-              }}
-            >
-              <Box
-                display={'flex'}
-                alignContent={'center'}
-                justifyContent={'center'}
-                gap={'2px'}
+            {hash && (
+              <Link
+                href={'https://aescan.io/transactions/' + hash}
+                target="_blank"
+                style={{
+                  color: 'rgba(0, 211, 161, 1)',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  display: 'inline-block',
+                }}
               >
-                View in blockchain explorer <ExternalIcon />
-              </Box>
-            </Link>
+                <Box
+                  display={'flex'}
+                  alignContent={'center'}
+                  justifyContent={'center'}
+                  gap={'2px'}
+                >
+                  View in blockchain explorer <ExternalIcon />
+                </Box>
+              </Link>
+            )}
           </>
         );
       case Status.COMPLETED:

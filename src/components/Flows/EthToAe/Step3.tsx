@@ -156,26 +156,6 @@ const EthToAeStep3 = () => {
             <br />
             Don't worry if this takes a bit of time. Feel free to zone out to
             Netflix.
-            <br />
-            <Link
-              href="#"
-              target="_blank"
-              style={{
-                color: 'rgba(0, 211, 161, 1)',
-                textDecoration: 'none',
-                fontWeight: 500,
-                display: 'inline-block',
-              }}
-            >
-              <Box
-                display={'flex'}
-                alignContent={'center'}
-                justifyContent={'center'}
-                gap={'2px'}
-              >
-                View in blockchain explorer <ExternalIcon />
-              </Box>
-            </Link>
           </>
         );
       case Status.COMPLETED:

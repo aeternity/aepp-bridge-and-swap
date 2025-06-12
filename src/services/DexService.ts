@@ -227,7 +227,7 @@ class DexService {
   static async pollSwapAeEthToAE(
     txHash: Encoded.TxHash,
   ): Promise<[bigint, bigint]> {
-    await aeSdk.poll(txHash, { blocks: 15 });
+    await aeSdk.poll(txHash, { blocks: 60 });
 
     const swapResult = await fetch(
       `${Constants.ae_middleware_url}/transactions/${txHash}`,
