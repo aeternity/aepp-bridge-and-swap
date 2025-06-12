@@ -18,7 +18,6 @@ const EthToAeStep1 = () => {
           </>
         }
         buttonLabel="Next"
-        buttonLoading={false}
         buttonDisabled={!aeAccount || !ethAccount}
         content={
           <>

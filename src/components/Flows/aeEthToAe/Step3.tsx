@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
-import MessageBox from '../../MessageBox';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import styled from '@emotion/styled';
 import Link from 'next/link';
 import ExternalIcon from '../../../assets/ExternalIcon';
 import { useWalletStore } from '../../../stores/walletStore';
 import { formatNumber } from '../../../helpers';
 import { BigNumber } from 'bignumber.js';
-import AeEthAvatar from '../../../assets/AeEthAvatar';
-import AeLogo from '../../../assets/AeLogo';
 import DexService from '../../../services/DexService';
-import { StepProps } from '../../../types';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
 import {
   AmountBox,
@@ -64,9 +59,9 @@ const AeEthToAeStep3 = () => {
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
-        } catch (e: any) {
+        } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e?.message ?? 'Something went wrong.');
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
           await attemptChangeAllowance();
         }
       };
@@ -97,9 +92,9 @@ const AeEthToAeStep3 = () => {
             setError('');
             setStatus(Status.COMPLETED);
           }
-        } catch (e: any) {
+        } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e?.message ?? 'Something went wrong.');
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
           await attemptSwapAeEthToAe();
         }
       };
@@ -205,7 +200,6 @@ const AeEthToAeStep3 = () => {
     <>
       <WizardFlowContainer
         title={'Swap æETH to AE'}
-        buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={status !== Status.COMPLETED}
         subtitle={getMessageBoxContent()}
         content={

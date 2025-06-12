@@ -1,6 +1,4 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import MessageBox from '../../MessageBox';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import ConnectWalletButton from '../../Buttons/ConnectWalletButton';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -19,8 +17,6 @@ const AeEthToAeStep1 = () => {
             Just hit connect!
           </>
         }
-        buttonLabel="Next"
-        buttonLoading={false}
         buttonDisabled={!aeAccount}
         content={
           <>

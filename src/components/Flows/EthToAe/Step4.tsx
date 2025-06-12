@@ -59,9 +59,9 @@ const EthToAeStep4 = () => {
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
-        } catch (e: any) {
+        } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e?.message ?? 'Something went wrong.');
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
           await attemptChangeAllowance();
         }
       };
@@ -92,9 +92,9 @@ const EthToAeStep4 = () => {
             setError('');
             setStatus(Status.COMPLETED);
           }
-        } catch (e: any) {
+        } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e?.message ?? 'Something went wrong.');
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
           await attemptSwapAeEthToAe();
         }
       };
@@ -195,7 +195,6 @@ const EthToAeStep4 = () => {
     <>
       <WizardFlowContainer
         title={'Swap æETH for AE'}
-        buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={status !== Status.COMPLETED}
         subtitle={getMessageBoxContent()}
         content={

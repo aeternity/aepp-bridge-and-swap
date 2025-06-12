@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
-import MessageBox from '../../MessageBox';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import styled from '@emotion/styled';
 import Link from 'next/link';
 import ExternalIcon from '../../../assets/ExternalIcon';
-import EthLogo from '../../../assets/EthLogo';
 import { useWalletStore } from '../../../stores/walletStore';
-import { formatNumber, splitAddress } from '../../../helpers';
-import AeEthAvatar from '../../../assets/AeEthAvatar';
+import { formatNumber } from '../../../helpers';
 import BridgeService from '../../../services/BridgeService';
 import WebsocketService from '../../../services/WebsocketService';
-import { StepProps } from '../../../types';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
 import {
   AmountBox,
@@ -162,7 +157,6 @@ const AeEthToEthStep3 = () => {
     <>
       <WizardFlowContainer
         title={'Bridge æETH to ETH'}
-        buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={status !== Status.COMPLETED}
         subtitle={getMessageBoxContent()}
         content={

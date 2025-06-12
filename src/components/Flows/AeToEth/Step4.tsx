@@ -158,7 +158,6 @@ const AeToEthStep4 = () => {
     <>
       <WizardFlowContainer
         title={'Bridge æETH to ETH'}
-        buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={status !== Status.COMPLETED}
         subtitle={getMessageBoxContent()}
         content={

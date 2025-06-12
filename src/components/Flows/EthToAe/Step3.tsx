@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import Link from 'next/link';
-import ExternalIcon from '../../../assets/ExternalIcon';
 import BridgeService from '../../../services/BridgeService';
 import { useWalletStore } from '../../../stores/walletStore';
 import WebsocketService from '../../../services/WebsocketService';
@@ -59,9 +57,9 @@ const EthToAeStep3 = () => {
           }
           setStatus(Status.CONFIRMED);
           setError('');
-        } catch (e: any) {
+        } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e?.message ?? 'Something went wrong.');
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
           await attemptBridge();
         }
       };
@@ -83,9 +81,9 @@ const EthToAeStep3 = () => {
           }
           setStatus(Status.COMPLETED);
           setError('');
-        } catch (e: any) {
+        } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e?.message ?? 'Something went wrong.');
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
           await attemptWaitForBridge();
         }
       };
@@ -174,7 +172,6 @@ const EthToAeStep3 = () => {
     <>
       <WizardFlowContainer
         title={'Bridge ETH to æETH'}
-        buttonLoading={status !== Status.COMPLETED}
         buttonDisabled={status !== Status.COMPLETED}
         subtitle={getMessageBoxContent()}
         content={

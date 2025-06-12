@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -7,7 +7,6 @@ import AmountInput from '../../Inputs/AmountInput';
 import TokenPriceService from '../../../services/TokenPriceService';
 import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
-import { AE_AVATAR_URL } from '../../../constants';
 
 const EthToAeStep2 = () => {
   const theme = useTheme();
@@ -37,7 +36,6 @@ const EthToAeStep2 = () => {
       <WizardFlowContainer
         title={'Set amount'}
         subtitle={'How much do you want to swap?'}
-        buttonLoading={false}
         buttonDisabled={
           !fromAmount ||
           !toAmount ||

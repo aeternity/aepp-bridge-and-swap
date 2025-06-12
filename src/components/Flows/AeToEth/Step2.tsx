@@ -7,14 +7,13 @@ import AmountInput from '../../Inputs/AmountInput';
 import TokenPriceService from '../../../services/TokenPriceService';
 import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
-import { AE_AVATAR_URL } from '../../../constants';
 import { powerAndTruncFloat } from '../../../helpers';
 
 const AeToEthStep2 = () => {
   const theme = useTheme();
 
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { aeAccount, ethAccount } = useWalletStore();
+  const { aeAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
@@ -38,7 +37,6 @@ const AeToEthStep2 = () => {
       <WizardFlowContainer
         title={'Set amount'}
         subtitle={'How much do you want to swap?'}
-        buttonLoading={false}
         buttonDisabled={
           !fromAmount ||
           !toAmount ||

@@ -136,7 +136,7 @@ class DexService {
         (await tokenInstance.balance(aeSdk.address, { onAccount: undefined }))
           .decodedResult ?? 0,
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
       return BigInt(0);
     }
   }

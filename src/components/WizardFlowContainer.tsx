@@ -61,7 +61,6 @@ const WizardFlowContainer = ({
   error,
   subtitle,
   content,
-  buttonLoading,
   buttonDisabled,
   ...props
 }: {
@@ -70,7 +69,6 @@ const WizardFlowContainer = ({
   subtitle?: React.ReactNode;
   error?: string;
   content: React.ReactNode;
-  buttonLoading: boolean;
   buttonDisabled: boolean;
 }) => {
   const theme = useTheme();

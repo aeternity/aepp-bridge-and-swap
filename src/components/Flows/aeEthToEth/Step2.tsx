@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import { useWalletStore } from '../../../stores/walletStore';
 import AmountInput from '../../Inputs/AmountInput';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import DexService from '../../../services/DexService';
@@ -28,7 +27,6 @@ const AeEthToEthStep2 = () => {
       <WizardFlowContainer
         title={'Set amount'}
         subtitle={'How much do you want to swap?'}
-        buttonLoading={false}
         buttonDisabled={
           !fromAmount ||
           !toAmount ||
