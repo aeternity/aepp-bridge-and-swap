@@ -27,8 +27,22 @@ export function formatCurrency(value: number): string {
   return result;
 }
 
-export function powerAndTruncFloat(value: string | number | bigint, power: number): bigint {
+export function powerAndTruncFloat(
+  value: string | number | bigint,
+  power: number,
+): bigint {
   return BigInt(Math.trunc(parseFloat(value.toString()) * 10 ** power));
+}
+
+export function shortenAddress(
+  address: string,
+  startLen = 8,
+  endLen = 4,
+): string {
+  if (!address || address.length <= startLen + endLen) return address;
+  const start = address.slice(0, startLen);
+  const end = address.slice(-endLen);
+  return `${start}...${end}`;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

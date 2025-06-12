@@ -1,74 +1,175 @@
 import styled from '@emotion/styled';
-import { Box, Button, Container, Typography } from '@mui/material';
-import AnimatedStepper from './AnimatedStepper';
-import { useExchangeStore } from '../stores/exchangeStore';
+import {
+  Box,
+  Button,
+  Container,
+  Theme,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import { Status, useExchangeStore } from '../stores/exchangeStore';
+import ConnectedWalletInfo from './ConnectedWalletInfo';
+import StepArrowButton from './Buttons/StepArrowButton';
+
+type StyledProps = {
+  theme?: Theme;
+};
 
 const StyledContainer = styled(Container)({
-  display: 'flex',
-  maxWidth: '618px',
   minHeight: '436px',
-  borderRadius: '24px',
-  overflow: 'hidden',
-  marginTop: '32px',
+  margin: '120px 0px 20px 0px',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '0px 20px',
 });
+
+const ContentBox = styled(Box)<StyledProps>(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '16px',
+  margin: '30px 0px',
+  minWidth: '300px',
+  [theme.breakpoints.down('md')]: {
+    order: 1,
+    flex: '100%',
+  },
+}));
+
+const BackBox = styled(Box)<StyledProps>(({ theme }) => ({
+  marginTop: '50px',
+  [theme.breakpoints.down('md')]: {
+    marginTop: '0px',
+    order: 2,
+  },
+}));
+
+const NextBox = styled(Box)<StyledProps>(({ theme }) => ({
+  marginTop: '50px',
+  [theme.breakpoints.down('md')]: {
+    marginTop: '0px',
+    order: 3,
+  },
+}));
 
 const WizardFlowContainer = ({
   title,
-  header,
+  footer,
+  error,
+  subtitle,
   content,
-  buttonLabel,
-  buttonLoading,
   buttonDisabled,
-   error,
   ...props
 }: {
   title: string;
-  header: React.ReactNode;
-  content: React.ReactNode;
-  buttonLabel: string;
-  buttonLoading: boolean;
-  buttonDisabled: boolean;
+  footer?: React.ReactNode;
+  subtitle?: React.ReactNode;
   error?: string;
+  content: React.ReactNode;
+  buttonDisabled: boolean;
 }) => {
-  const { nextStep } = useExchangeStore();
+  const theme = useTheme();
+
+  const { nextStep, prevStep, currentStep, reset, steps, status } =
+    useExchangeStore();
 
   return (
     <StyledContainer maxWidth={false} disableGutters {...props}>
       <Box
-        flex={'0 0 220px'}
-        padding={'64px 24px'}
-        sx={{ backgroundColor: 'rgba(21, 23, 30, 0.6)' }}
+        display={'flex'}
+        justifyContent={'space-between'}
+        width={'90%'}
+        maxWidth={'700px'}
+        marginBottom={'15px'}
       >
-        <AnimatedStepper />
-      </Box>
-      <Box padding={'24px'} sx={{ backgroundColor: 'rgba(21, 23, 30, 1)' }}>
-        <Box display="flex" flexDirection="column" height={'100%'}>
-          <Typography fontSize="16px" fontWeight={600} sx={{ opacity: 0.8 }}>
-            {title}
-          </Typography>
-          {header}
+        <Box flex={1}>
+          <ConnectedWalletInfo protocol={'ETH'} />
+        </Box>
+        <Box flex={1} display={'flex'} justifyContent={'center'}>
           <Box
-            flex={1}
-            display={'flex'}
-            flexDirection={'column'}
-            justifyContent={'center'}
-            gap={'16px'}
+            position={'relative'}
+            sx={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '100%',
+              backgroundColor: theme.palette.primary.main,
+            }}
           >
-            {content}
+            <Typography
+              sx={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: 'white',
+                fontSize: '40px',
+              }}
+            >
+              {currentStep + 1}
+            </Typography>
           </Box>
-          {error && (<Typography fontSize="16px" fontWeight={600} sx={{ opacity: 0.8, color: 'red' }}>
-            {error}
-          </Typography>
-          )}
-          <Button
-            disabled={buttonDisabled}
-            loading={buttonLoading}
-            onClick={nextStep}
-          >
-            {buttonLabel}
-          </Button>
+        </Box>
+        <Box flex={1}>
+          <ConnectedWalletInfo protocol={'AE'} />
         </Box>
       </Box>
+      <Box display="flex" flexDirection="column" height={'100%'}>
+        <Typography fontSize="40px" mb={'10px'}>
+          {title}
+        </Typography>
+        <Typography fontSize="20px" minHeight={'60px'}>
+          {subtitle}
+        </Typography>
+      </Box>
+      <Box display="flex" flexDirection="column" height={'100%'}>
+        <Box
+          display={'flex'}
+          flexDirection={'row'}
+          alignItems={'start'}
+          justifyContent={'center'}
+          columnGap={'40px'}
+          flexWrap={'wrap'}
+        >
+          <BackBox>
+            {(currentStep !== steps.length - 1 ||
+              status !== Status.COMPLETED) &&
+              currentStep < 2 && (
+                <StepArrowButton
+                  text={'Back'}
+                  rotation={'-180deg'}
+                  onClick={currentStep == 0 ? reset : prevStep}
+                />
+              )}
+          </BackBox>
+          <ContentBox>{content}</ContentBox>
+          <NextBox>
+            {(currentStep !== steps.length - 1 ||
+              status !== Status.COMPLETED) && (
+              <StepArrowButton
+                text={'Next'}
+                onClick={nextStep}
+                disabled={buttonDisabled}
+              />
+            )}
+          </NextBox>
+        </Box>
+        <Typography fontSize="16px" color={'error'}>
+          {error}
+        </Typography>
+        <Typography fontSize="16px">{footer}</Typography>
+      </Box>
+      <Button
+        color={'primary'}
+        sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
+        onClick={reset}
+      >
+        {currentStep === steps.length - 1 && status === Status.COMPLETED
+          ? 'Do another:)'
+          : 'Cancel'}
+      </Button>
     </StyledContainer>
   );
 };

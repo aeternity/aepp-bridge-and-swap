@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -7,16 +7,15 @@ import AmountInput from '../../Inputs/AmountInput';
 import TokenPriceService from '../../../services/TokenPriceService';
 import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
-import { AE_AVATAR_URL } from '../../../constants';
 import { powerAndTruncFloat } from '../../../helpers';
 
 const AeToEthStep2 = () => {
+  const theme = useTheme();
+
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
-  const { aeAccount, ethAccount } = useWalletStore();
+  const { aeAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
-
-  const avatarUrl = AE_AVATAR_URL + ethAccount?.address;
 
   useEffect(() => {
     TokenPriceService.getPrices().then(setPrices);
@@ -37,20 +36,23 @@ const AeToEthStep2 = () => {
     <>
       <WizardFlowContainer
         title={'Set amount'}
-        buttonLabel="Next"
-        buttonLoading={false}
-        buttonDisabled={!fromAmount || !toAmount || powerAndTruncFloat(fromAmount, 18) > Number(aeAccount?.balance || 0)}
+        subtitle={'How much do you want to swap?'}
+        buttonDisabled={
+          !fromAmount ||
+          !toAmount ||
+          powerAndTruncFloat(fromAmount, 18) > Number(aeAccount?.balance || 0)
+        }
         error={
-          !!fromAmount && powerAndTruncFloat(fromAmount, 18) > Number(aeAccount?.balance || 0)
+          !!fromAmount &&
+          powerAndTruncFloat(fromAmount, 18) > Number(aeAccount?.balance || 0)
             ? `Amount exceeds maximum available: ${Number(aeAccount?.balance || 0) * 10 ** -18} AE`
             : ''
         }
-        header={<></>}
         content={
           <>
             <Box
               display={'flex'}
-              gap={'6px'}
+              gap={'35px'}
               flexDirection={'column'}
               position={'relative'}
             >
@@ -58,6 +60,7 @@ const AeToEthStep2 = () => {
                 protocol="AE"
                 onChange={onAeChange}
                 value={fromAmount}
+                backgroundColor={theme.palette.secondary.main}
               />
               <Box
                 position={'absolute'}
@@ -67,7 +70,7 @@ const AeToEthStep2 = () => {
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                <SwapArrowButton disabled />
+                <SwapArrowButton rotation="90deg" disabled />
               </Box>
               <AmountInput
                 protocol="ETH"
@@ -75,32 +78,9 @@ const AeToEthStep2 = () => {
                 value={toAmount}
               />
             </Box>
-            <Typography fontSize="16px" fontWeight={600} sx={{ opacity: 0.8 }}>
-              Receiving Ethereum account
-            </Typography>
-            <Box
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'center'}
-              gap={'8px'}
-            >
-              <img
-                src={avatarUrl}
-                alt="Avatar"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-              <Typography
-                sx={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
-              >
-                {ethAccount?.address}
-              </Typography>
-            </Box>
           </>
         }
+        footer={'Just two steps to go!'}
       />
     </>
   );

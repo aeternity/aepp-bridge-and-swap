@@ -1,13 +1,12 @@
 body {
   margin: 0;
-  font-family: var(--font-ibm-plex-sans), sans-serif;
+  font-family: var(--my-font), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #282c34;
   color: white;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }

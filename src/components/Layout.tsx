@@ -42,7 +42,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           textAlign: 'center',
           mb: 4,
           fontSize: '32px',
-          fontWeight: 600,
           lineHeight: '72px',
         }}
       >

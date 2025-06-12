@@ -1,12 +1,8 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, ThemeOptions } from '@mui/material/styles';
 
-const PAGE_BACKGROUND_LIGHT = '#fff';
-const PAGE_BACKGROUND_DARK = '#232631';
-
-// Light theme
-export const lightTheme = createTheme({
+const common: ThemeOptions = {
   typography: {
-    fontFamily: 'var(--font-ibm-plex-sans), sans-serif',
+    fontFamily: 'var(--my-font), sans-serif',
   },
   components: {
     MuiButtonBase: {
@@ -15,58 +11,70 @@ export const lightTheme = createTheme({
       },
     },
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+        variant: 'contained',
+      },
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(35, 38, 49, 1)',
           borderRadius: '16px',
-          padding: '4px',
-          minHeight: '44px',
+          padding: '7px 14px',
+          minHeight: '0px',
           color: 'white',
           fontSize: '16px',
           fontWeight: 500,
           textTransform: 'none',
         },
       },
+    },
+  },
+};
+
+export const lightTheme = createTheme({
+  ...common,
+  typography: {
+    ...common.typography,
+    allVariants: {
+      color: '#53b6bf',
     },
   },
   palette: {
     mode: 'light',
-    background: {
-      default: PAGE_BACKGROUND_LIGHT,
+    primary: {
+      main: '#2879e8',
+    },
+    secondary: {
+      main: '#155195',
+    },
+    action: {
+      disabledBackground: '',
+      disabledOpacity: 0.5,
     },
   },
 });
 
-// Dark theme
 export const darkTheme = createTheme({
+  ...common,
   typography: {
-    fontFamily: 'var(--font-ibm-plex-sans), sans-serif',
-  },
-  components: {
-    MuiButtonBase: {
-      defaultProps: {
-        disableRipple: true,
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          backgroundColor: 'rgba(35, 38, 49, 1)',
-          borderRadius: '16px',
-          padding: '4px',
-          minHeight: '44px',
-          color: 'white',
-          fontSize: '16px',
-          fontWeight: 500,
-          textTransform: 'none',
-        },
-      },
+    ...common.typography,
+    allVariants: {
+      color: '#53b6bf',
     },
   },
   palette: {
     mode: 'dark',
     background: {
-      default: PAGE_BACKGROUND_DARK,
+      default: '#000',
+    },
+    primary: {
+      main: '#53b6bf',
+    },
+    secondary: {
+      main: '#155195',
+    },
+    action: {
+      disabledBackground: '',
+      disabledOpacity: 0.5,
     },
   },
 });

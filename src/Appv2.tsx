@@ -1,24 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { ThemeProvider, CssBaseline } from '@mui/material';
 
-import { darkTheme } from './app/theme';
+import { darkTheme, lightTheme } from './app/theme';
 
-import Header from './components/Header';
+import Background from './components/Background';
 import DEXBridgeExchange from './components/Home/DEXBridgeExchange';
 import { useExchangeStore } from './stores/exchangeStore';
 import ExchangeFlow from './components/Flows/ExchangeFlow';
 import { AppKitProvider } from './context/AppKitProvider';
+import { useThemeStore } from './stores/themeStore';
 
 function App() {
   const { flow } = useExchangeStore();
-  // const [light] = useState(false);
+  const { mode, setMode } = useThemeStore();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme-mode');
+    if (stored === 'light' || stored === 'dark') {
+      setMode(stored);
+    } else {
+      setMode('light');
+    }
+  }, []);
+
+  if (!mode) {
+    return;
+  }
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>
       <AppKitProvider>
         <CssBaseline />
-        <Header />
+        <Background />
         {flow ? <ExchangeFlow /> : <DEXBridgeExchange />}
       </AppKitProvider>
     </ThemeProvider>

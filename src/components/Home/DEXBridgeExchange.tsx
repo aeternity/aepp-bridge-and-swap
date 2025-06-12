@@ -1,114 +1,106 @@
 import React, { useState } from 'react';
-import { Box, Typography, Container, Tabs, Tab } from '@mui/material';
-import LightbulbCircleIcon from '../../assets/LightbulbCircleIcon';
-import ExchangeCoins from './ExchangeCoins';
-import ExchangeExistingCoins from './ExchangeExistingCoins';
-import MessageBox from '../MessageBox';
-
-const tabs = ['Exchange coins', 'Already have æETH?'];
+import { Box, Typography, Container, Button } from '@mui/material';
+import { useExchangeStore } from '../../stores/exchangeStore';
+import { useThemeStore } from '../../stores/themeStore';
 
 const DEXBridgeExchange = () => {
+  const { setFlow } = useExchangeStore();
+  const { toggleMode } = useThemeStore();
   const [tab, setTab] = useState(0);
-
-  // @ts-ignore
-  const handleChange = (event, newValue) => {
-    setTab(newValue);
-  };
 
   return (
     <>
-      <Typography
-        sx={{
-          textAlign: 'center',
-          mb: 4,
-          fontSize: '32px',
-          fontWeight: 600,
-          lineHeight: '72px',
-        }}
-      >
-        Welcome To <span style={{ color: '#00D3A1' }}>DEX</span>Bridge Exchange
-      </Typography>
       <Container sx={{ maxWidth: '472px' }} maxWidth={false} disableGutters>
-        <Tabs
-          value={tab}
-          onChange={handleChange}
-          variant="fullWidth"
-          sx={{
-            minHeight: 0,
-          }}
-          slotProps={{
-            indicator: {
-              style: {
-                display: 'none',
-              },
-            },
-          }}
-        >
-          {tabs.map((label, index) => (
-            <Tab
-              disableRipple
-              key={index}
-              label={
-                <Box
-                  display={'flex'}
-                  alignItems={'center'}
-                  justifyContent={'center'}
-                  sx={{
-                    fontSize: '20px',
-                    height: '100%',
-                    width: '100%',
-                    bgcolor: tab === index ? '#1B1D26' : '#232631',
-                    fontWeight: tab === index ? 600 : 500,
-                    borderTopLeftRadius: 0,
-                    borderTopRightRadius: 0,
-                    borderBottomRightRadius: index === 0 ? '16px' : 0,
-                    borderBottomLeftRadius: index === 0 ? 0 : '16px',
-                    transition:
-                      'background-color 0.2s ease-in-out, color 0.2s ease-in-out',
-                    color: tab === index ? '#fff' : '#00D1B2',
-                  }}
-                >
-                  <Box sx={{ padding: '10px 24px' }}>{label}</Box>
-                </Box>
-              }
-              sx={{
-                flex: index === 0 ? '0 1 auto' : '1',
-                textTransform: 'none',
-                minWidth: 'auto',
-                minHeight: 0,
-                padding: 0,
-                borderRadius: '16px 16px 0 0',
-                backgroundColor: '#1B1D26',
-                transition: 'all 0.2s ease-in-out',
+        <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
+          <Box sx={{ position: 'relative', marginTop: '160px' }}>
+            <img
+              src={'/assets/superheroswaplogo.svg'}
+              style={{
+                width: '300px',
+                height: 'auto',
               }}
             />
-          ))}
-        </Tabs>
-        <Box
-          sx={{
-            backgroundColor: '#1B1D26',
-            borderRadius: '16px',
-            padding: '24px',
-            borderTopLeftRadius: tab === 0 ? 0 : '16px',
-            borderTopRightRadius: tab === 1 ? 0 : '16px',
-            transition: 'all 0.2s ease-in-out',
-          }}
-        >
-          {tab === 0 ? <ExchangeCoins /> : <ExchangeExistingCoins />}
+            <img
+              src={'/assets/superherologo.svg'}
+              style={{
+                width: 'auto',
+                height: '35px',
+                position: 'absolute',
+                right: '-30px',
+                top: '-25px',
+              }}
+            />
+          </Box>
+          <Typography fontSize={'23px'}>
+            what would you like to swap?
+          </Typography>
         </Box>
-        <Box mt={'16px'}>
-          <MessageBox
-            icon={<LightbulbCircleIcon />}
-            message={
-              <>
-                <span style={{ fontWeight: 500 }}>Tip:</span> if you already
-                have <span style={{ fontWeight: 500 }}>æETH</span> (wrapped ETH)
-                tokens in your æternity wallet you may directly exchange them
-                for <span style={{ fontWeight: 500 }}>AE</span> or{' '}
-                <span style={{ fontWeight: 500 }}>ETH</span>.
-              </>
-            }
-          />
+        <Box
+          display={'flex'}
+          flexDirection={'column'}
+          alignItems={'center'}
+          gap={'15px'}
+          sx={{ margin: '67px 0px' }}
+        >
+          {tab === 0 ? (
+            <>
+              <Button color="primary" onClick={() => setFlow('ethToAe')}>
+                ETH to AE
+              </Button>
+              <Button color="secondary" onClick={() => setFlow('aeToEth')}>
+                AE to ETH
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button color="primary" onClick={() => setFlow('aeEthToAe')}>
+                aeETH to AE
+              </Button>
+              <Button color="secondary" onClick={() => setFlow('aeEthToEth')}>
+                aeETH to ETH
+              </Button>
+            </>
+          )}
+        </Box>
+        <Container
+          sx={{ maxWidth: '240px', marginTop: '67px', textAlign: 'center' }}
+          maxWidth={false}
+          disableGutters
+        >
+          <Typography mb={'10px'}>new to all this?</Typography>
+          <Typography>
+            Don't worry: it's {tab === 0 ? 4 : 3} steps, and we'll guide you
+            along the way.
+          </Typography>
+        </Container>
+        <Box>
+          <Button
+            sx={{
+              position: 'fixed',
+              bottom: '20px',
+              left: '20px',
+              borderRadius: '100%',
+              width: '50px',
+              height: '50px',
+              minWidth: '50px',
+            }}
+            onClick={toggleMode}
+          >
+            <img
+              src={'/assets/mode.svg'}
+              style={{
+                width: '40px',
+                height: 'auto',
+              }}
+            />
+          </Button>
+          <Button
+            color={'primary'}
+            sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
+            onClick={() => setTab(tab === 0 ? 1 : 0)}
+          >
+            {tab === 0 ? 'Already have aeETH?' : "Don't have aeETH?"}
+          </Button>
         </Box>
       </Container>
     </>

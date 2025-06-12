@@ -35,7 +35,7 @@ const HomeButton = ({
           {toIcon}
         </Box>
       </Box>
-      <Typography mt={'8px'} fontSize={'18px'} fontWeight={600}>
+      <Typography mt={'8px'} fontSize={'18px'}>
         {title}
       </Typography>
       <Typography mt={'4px'} fontSize={'15px'} sx={{ opacity: 0.8 }}>

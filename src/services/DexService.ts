@@ -4,7 +4,7 @@ import aex9ACI from 'dex-contracts-v2/build/FungibleTokenFull.aci.json';
 import WalletService from './WalletService';
 import { aeSdk } from './WalletService';
 import { payForTx } from '../app/actions/payForTx';
-import { Contract, Tag, getExecutionCost } from '@aeternity/aepp-sdk';
+import { Contract, Encoded, Tag, getExecutionCost } from '@aeternity/aepp-sdk';
 import { Constants } from '../constants';
 
 class DexService {
@@ -136,7 +136,7 @@ class DexService {
         (await tokenInstance.balance(aeSdk.address, { onAccount: undefined }))
           .decodedResult ?? 0,
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
       return BigInt(0);
     }
   }
@@ -166,7 +166,7 @@ class DexService {
   static async swapAeEthToAE(
     amountWei: bigint,
     aeAddress: string,
-  ): Promise<[bigint, bigint]> {
+  ): Promise<Encoded.TxHash> {
     return WalletService.getAeBalance(aeSdk.address).then((balance: bigint) =>
       this.swapAeEthToAEInternal(amountWei, aeAddress, balance),
     );
@@ -176,7 +176,7 @@ class DexService {
     amountWei: bigint,
     aeAddress: string,
     userBalance: bigint,
-  ): Promise<[bigint, bigint]> {
+  ): Promise<Encoded.TxHash> {
     console.log('Swap aeEth to AE');
     const routerContract = await aeSdk.initializeContract({
       aci: routerACI,
@@ -221,25 +221,26 @@ class DexService {
           .then((result) => ({ hash: result.txHash }))
       : await payForTx(signedContractCallTx);
 
-    console.info(`tx hash: ${result.hash}`);
+    return result.hash;
+  }
 
-    await aeSdk.poll(result.hash, { blocks: 15 });
+  static async pollSwapAeEthToAE(
+    txHash: Encoded.TxHash,
+  ): Promise<[bigint, bigint]> {
+    await aeSdk.poll(txHash, { blocks: 60 });
 
     const swapResult = await fetch(
-      `${Constants.ae_middleware_url}/transactions/${result.hash}`,
+      `${Constants.ae_middleware_url}/transactions/${txHash}`,
     ).then((res) => res.json());
 
     console.log('swap result', swapResult);
 
-    if (isUserHaveEnoughCoins && swapResult?.tx?.result === 'ok') {
+    if (swapResult?.tx?.result === 'ok') {
       return [
         swapResult.tx.return.value[0].value,
         swapResult.tx.return.value[1].value,
       ];
-    } else if (
-      !isUserHaveEnoughCoins &&
-      swapResult?.tx?.tx?.tx?.result === 'ok'
-    ) {
+    } else if (swapResult?.tx?.tx?.tx?.result === 'ok') {
       return [
         swapResult.tx.tx.tx.return.value[0].value,
         swapResult.tx.tx.tx.return.value[1].value,

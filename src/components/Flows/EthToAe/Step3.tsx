@@ -1,99 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import MessageBox from '../../MessageBox';
+import { useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import styled from '@emotion/styled';
-import Link from 'next/link';
-import ExternalIcon from '../../../assets/ExternalIcon';
-import EthLogo from '../../../assets/EthLogo';
 import BridgeService from '../../../services/BridgeService';
 import { useWalletStore } from '../../../stores/walletStore';
 import WebsocketService from '../../../services/WebsocketService';
 import { formatNumber } from '../../../helpers';
-import AeEthAvatar from '../../../assets/AeEthAvatar';
-import { StepProps } from '../../../types';
+import { Status, useExchangeStore } from '../../../stores/exchangeStore';
+import {
+  AmountBox,
+  AmountTypography,
+  BridgeBox,
+  TokenTypography,
+} from '../../shared';
+import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
 const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
-const Separator = styled(Box)<StepProps>(({ completed }) => ({
-  position: 'relative',
-  height: '1px',
-  width: '100%',
-  backgroundColor: 'rgba(64, 67, 80, 1)',
-
-  '&::after': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 0,
-    height: 0,
-    borderTop: '10px solid transparent',
-    borderBottom: '10px solid transparent',
-    borderLeft: '18px solid rgba(64, 67, 80, 1)',
-  },
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 0,
-    height: 0,
-    borderTop: '8px solid transparent',
-    borderBottom: '8px solid transparent',
-    borderLeft: '16px solid #282c34',
-    borderLeftColor: completed ? '#00D3A1' : '#282c34',
-    zIndex: 1,
-  },
-}));
-
-const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
-  display: 'flex',
-  padding: '0px 17px',
-  alignItems: 'center',
-  marginBottom: '37px',
-  [theme.breakpoints.up('sm')]: {
-    padding: '0px 52px',
-  },
-}));
-const AmountBox = styled(Box)(({}) => ({
-  backgroundColor: 'rgba(142, 152, 186, 0.15)',
-  padding: '3px 12px',
-  borderRadius: '20px',
-  display: 'flex',
-  gap: '2px',
-  alignItems: 'end',
-  position: 'absolute',
-  left: '50%',
-  transform: 'translate(-50%)',
-  bottom: '-28px',
-}));
-const AmountTypography = styled(Typography)(() => ({
-  fontSize: '18px',
-  opacity: '60%',
-  lineHeight: '28px',
-  fontWeight: 500,
-}));
-const TokenTypography = styled(Typography)(() => ({
-  fontSize: '14px',
-  lineHeight: '24px',
-  fontWeight: 500,
-}));
-
-enum Status {
-  PENDING,
-  CONFIRMED,
-  COMPLETED,
-}
-
+let isCancelled = false;
 const EthToAeStep3 = () => {
+  const theme = useTheme();
+
   const { aeAccount } = useWalletStore();
   const { fromAmount, toAmount } = useFormStore();
-  const [status, setStatus] = useState(Status.PENDING);
+  const { status, setStatus } = useExchangeStore();
   const [ranBridge, setRanBridge] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setStatus(Status.PENDING);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const Bridge = async () => {
@@ -107,28 +47,52 @@ const EthToAeStep3 = () => {
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
       );
       console.log('Skip', SKIP_ETH, process.env.NEXT_PUBLIC_SKIP_ETH);
-      if (!SKIP_ETH) {
-        await BridgeService.bridgeEthToAe(
-          amountInWei,
-          aeAccount.address,
-        );
-      }
 
-      setStatus(Status.CONFIRMED);
+      const attemptBridge = async () => {
+        try {
+          if (!SKIP_ETH) {
+            if (isCancelled) return;
+            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address);
+            if (isCancelled) return;
+          }
+          setStatus(Status.CONFIRMED);
+          setError('');
+        } catch (e: unknown) {
+          setStatus(Status.PENDING);
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
+          await attemptBridge();
+        }
+      };
 
-      if (!SKIP_ETH) {
-        // Wait for a moment to let the bridge finalize
-        await WebsocketService.waitForBridgeToComplete(
-          amountInWei,
-          aeAccount.address,
-        );
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+      const attemptWaitForBridge = async () => {
+        try {
+          if (!SKIP_ETH) {
+            if (isCancelled) return;
+            // Wait for a moment to let the bridge finalize
+            await WebsocketService.waitForBridgeToComplete(
+              amountInWei,
+              aeAccount.address,
+            );
+            if (isCancelled) return;
+          } else {
+            if (isCancelled) return;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            if (isCancelled) return;
+          }
+          setStatus(Status.COMPLETED);
+          setError('');
+        } catch (e: unknown) {
+          setStatus(Status.PENDING);
+          setError(e instanceof Error ? e.message : 'Something went wrong.');
+          await attemptWaitForBridge();
+        }
+      };
 
-      setStatus(Status.COMPLETED);
+      await attemptBridge();
+      await attemptWaitForBridge();
     };
     if (aeAccount?.address && fromAmount && !ranBridge) {
+      isCancelled = false;
       Bridge();
       setRanBridge(true);
     }
@@ -185,30 +149,15 @@ const EthToAeStep3 = () => {
           <>
             Transaction is processing ...
             <br />
-            <Link
-              href="https://google.com"
-              target="_blank"
-              style={{
-                color: 'rgba(0, 211, 161, 1)',
-                textDecoration: 'none',
-                fontWeight: 500,
-                display: 'inline-block',
-              }}
-            >
-              <Box
-                display={'flex'}
-                alignContent={'center'}
-                justifyContent={'center'}
-                gap={'2px'}
-              >
-                View in blockchain explorer <ExternalIcon />
-              </Box>
-            </Link>
+            Don't worry if this takes a bit of time. Feel free to zone out to
+            Netflix.
           </>
         );
       case Status.COMPLETED:
         return (
           <>
+            Almost there!
+            <br />
             Click on <span style={{ fontWeight: 500 }}>Next</span> to proceed to
             bridge.
             <br />
@@ -223,63 +172,41 @@ const EthToAeStep3 = () => {
     <>
       <WizardFlowContainer
         title={'Bridge ETH to æETH'}
-        buttonLabel="Next"
-        buttonLoading={status !== Status.COMPLETED}
-        buttonDisabled={false}
-        header={
-          <Box mt={'16px'}>
-            <MessageBox
-              message={getMessageBoxContent()}
-              type={status === Status.COMPLETED ? 'SUCCESS' : 'INFO'}
-            />
-          </Box>
-        }
+        buttonDisabled={status !== Status.COMPLETED}
+        subtitle={getMessageBoxContent()}
         content={
           <>
             <BridgeBox>
-              <Box position={'relative'}>
-                <Box
-                  position={'relative'}
-                  zIndex={1}
-                  width={'48px'}
-                  height={'48px'}
-                >
-                  <EthLogo width={'100%'} height={'100%'} />
-                </Box>
-                <AmountBox>
-                  <AmountTypography>
-                    {formatNumber(Number(fromAmount), {
-                      maximumFractionDigits: 8,
-                    })}
-                  </AmountTypography>
-                  <TokenTypography>ETH</TokenTypography>
-                </AmountBox>
-              </Box>
-              <Separator completed={status === Status.COMPLETED} />
-              <Box position={'relative'}>
-                <Box
-                  position={'relative'}
-                  zIndex={1}
-                  width={'48px'}
-                  height={'48px'}
-                >
-                  <AeEthAvatar />
-                </Box>
-                <AmountBox>
-                  <AmountTypography>
-                    {formatNumber(Number(fromAmount), {
-                      maximumFractionDigits: 8,
-                    })}
-                  </AmountTypography>
-                  <TokenTypography>æETH</TokenTypography>
-                </AmountBox>
-              </Box>
+              <AmountBox
+                style={{
+                  backgroundColor: theme.palette.secondary.main,
+                }}
+              >
+                <AmountTypography>
+                  {formatNumber(Number(fromAmount), {
+                    maximumFractionDigits: 8,
+                  })}
+                </AmountTypography>
+                <TokenTypography>ETH</TokenTypography>
+              </AmountBox>
+              <SwapArrowButton disabled />
+              <AmountBox
+                style={{
+                  backgroundColor: theme.palette.primary.main,
+                }}
+              >
+                <AmountTypography>
+                  {formatNumber(Number(fromAmount), {
+                    maximumFractionDigits: 8,
+                  })}
+                </AmountTypography>
+                <TokenTypography>æETH</TokenTypography>
+              </AmountBox>
             </BridgeBox>
-            <Typography fontSize={'14px'} textAlign={'center'}>
-              {getMessageFooter()}
-            </Typography>
           </>
         }
+        footer={getMessageFooter()}
+        error={error}
       />
     </>
   );

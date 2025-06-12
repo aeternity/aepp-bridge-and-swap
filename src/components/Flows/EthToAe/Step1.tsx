@@ -1,6 +1,4 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import MessageBox from '../../MessageBox';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import ConnectWalletButton from '../../Buttons/ConnectWalletButton';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -11,29 +9,22 @@ const EthToAeStep1 = () => {
   return (
     <>
       <WizardFlowContainer
-        title={'Connect your wallets'}
-        buttonLabel="Next"
-        buttonLoading={false}
-        buttonDisabled={!aeAccount || !ethAccount}
-        header={
-          <Box mt={'16px'}>
-            <MessageBox
-              message={
-                <>
-                  Please connect both your Ethereum and aeternity wallets in
-                  order to exchange <span style={{ fontWeight: 500 }}>ETH</span>{' '}
-                  to <span style={{ fontWeight: 500 }}>AE</span> coins.
-                </>
-              }
-            />
-          </Box>
-        }
-        content={
+        title={'Connect Wallets'}
+        subtitle={
           <>
-            <ConnectWalletButton protocol={'ETH'} />
-            <ConnectWalletButton protocol={'AE'} />
+            Got your two wallets sorted?
+            <br />
+            Just hit connect!
           </>
         }
+        buttonDisabled={!aeAccount || !ethAccount}
+        content={
+          <>
+            <ConnectWalletButton protocol={'AE'} />
+            <ConnectWalletButton protocol={'ETH'} />
+          </>
+        }
+        footer={'Just three steps to go!'}
       />
     </>
   );

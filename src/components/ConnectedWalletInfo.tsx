@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { useWalletStore } from '../stores/walletStore';
 import { formatNumber } from '../helpers';
-import Avatar from './Avatar';
 
 type Protocol = 'ETH' | 'AE';
 
@@ -11,6 +10,8 @@ interface Props {
 }
 
 const ConnectedWalletInfo = ({ protocol }: Props) => {
+  const theme = useTheme();
+
   const { aeAccount, ethAccount } = useWalletStore();
 
   const isConnected =
@@ -57,39 +58,30 @@ const ConnectedWalletInfo = ({ protocol }: Props) => {
 
   if (isConnected) {
     return (
-      <Box
-        display="flex"
-        alignItems={'center'}
-        gap={'12px'}
-        sx={{
-          backgroundColor: 'rgba(21, 23, 30, 1)',
-          borderRadius: '16px',
-          padding: '4px 10px 4px 4px',
-          minHeight: '44px',
-          fontSize: '16px',
-          fontWeight: 500,
-        }}
-      >
+      <>
+        <Typography fontSize={'15px'}>
+          {shortenAddress(address ?? '')}
+        </Typography>
         <Box
           display="flex"
-          justifyContent={'center'}
           alignItems={'center'}
-          gap={'8px'}
+          justifyContent={'center'}
+          gap={'12px'}
           sx={{
-            backgroundColor: 'rgba(35, 38, 49, 1)',
-            borderRadius: '12px',
-            padding: '6px 10px',
+            backgroundColor:
+              protocol == 'AE'
+                ? theme.palette.primary.main
+                : theme.palette.secondary.main,
+            borderRadius: '16px',
+            padding: '4px',
+            fontSize: '16px',
           }}
         >
-          <Avatar address={address} />
-          <Typography fontSize={'15px'}>
-            {shortenAddress(address ?? '')}
+          <Typography fontSize={'15px'} color="white">
+            {balance} {coinLabel}
           </Typography>
         </Box>
-        <Typography fontSize={'15px'}>
-          {balance} {coinLabel}
-        </Typography>
-      </Box>
+      </>
     );
   }
 };

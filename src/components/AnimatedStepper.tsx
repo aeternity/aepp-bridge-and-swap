@@ -76,7 +76,6 @@ const StyledStepIcon = styled('div')<StyledProps>(({ active, done }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   color: active || done ? '#00D3A1' : 'white',
-  fontWeight: 'bold',
   outline: done ? '3px solid' : 'none',
 }));
 
@@ -112,7 +111,6 @@ const StyledTypography = styled(Typography)<StyledProps>(
     marginLeft: '8px',
     textWrap: 'nowrap',
     color: active ? '#00D3A1' : 'white',
-    fontWeight: active ? 600 : 500,
     opacity: active || done ? 1 : 0.8,
   }),
 );
