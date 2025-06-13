@@ -113,8 +113,9 @@ const EthToAeStep3 = () => {
       case Status.CONFIRMED:
         return (
           <>
-            Swapping <span style={{ fontWeight: 500 }}>AE</span> for{' '}
-            <span style={{ fontWeight: 500 }}>æETH</span> is in progress.
+            Bridging <span style={{ fontWeight: 500 }}>ETH</span> to{' '}
+            <span style={{ fontWeight: 500 }}>æETH (wrapped ETH)</span> is in
+            progress.
             <br />
             Usually it takes about 1-2 minutes to receive the{' '}
             <span style={{ fontWeight: 500 }}>æETH</span> tokens in your
