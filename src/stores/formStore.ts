@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
 interface FormState {
-  fromAmount: number | null;
-  toAmount: number | null;
+  fromAmount: number | null | '';
+  toAmount: number | null | '';
 
-  setFromAmount: (amount: number | null) => void;
-  setToAmount: (amount: number | null) => void;
+  setFromAmount: (amount: number | null | '') => void;
+  setToAmount: (amount: number | null | '') => void;
 
   reset: () => void;
 }

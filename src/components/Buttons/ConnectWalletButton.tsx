@@ -46,7 +46,6 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       connectAe(address);
       if (!pollAeBalanceInterval) {
         pollAeBalanceInterval = executeAndSetInterval(async () => {
-          console.log('hey');
           const balance = await WalletService.getAeBalance(
             address as `ak_${string}`,
           );

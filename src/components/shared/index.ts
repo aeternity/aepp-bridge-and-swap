@@ -58,9 +58,11 @@ export const AmountTypography = styled(Typography)(() => ({
   fontWeight: 500,
   color: 'white',
 }));
-export const TokenTypography = styled(Typography)(() => ({
+export const TokenTypography = styled(Typography)(({}) => ({
   fontSize: '14px',
   lineHeight: '24px',
   fontWeight: 500,
   color: 'white',
+  position: 'relative',
+  top: '-1px',
 }));

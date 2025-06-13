@@ -24,12 +24,16 @@ const AeToEthStep2 = () => {
 
   const onEthChange = (value: string) => {
     setToAmount(Number(value));
-    setFromAmount(Number(value) * (prices ? prices.ETH / prices.AE : 0));
+    setFromAmount(
+      value ? Number(value) * (prices ? prices.ETH / prices.AE : 0) : '',
+    );
   };
 
   const onAeChange = (value: string) => {
     setFromAmount(Number(value));
-    setToAmount(Number(value) * (prices ? prices.AE / prices.ETH : 0));
+    setToAmount(
+      value ? Number(value) * (prices ? prices.AE / prices.ETH : 0) : '',
+    );
   };
 
   return (
