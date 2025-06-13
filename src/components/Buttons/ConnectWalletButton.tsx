@@ -5,6 +5,7 @@ import WalletService from '../../services/WalletService';
 import { BigNumber } from 'bignumber.js';
 import { executeAndSetInterval, formatNumber } from '../../helpers';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import DisconnectIcon from '../../assets/DisconnectIcon';
 
 type Protocol = 'ETH' | 'AE';
 
@@ -86,7 +87,7 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     }
   }, [disconnectEth]);
 
-  const { label, connect } = useMemo(() => {
+  const { label, connect, disconnect } = useMemo(() => {
     switch (protocol) {
       case 'ETH':
         return {
@@ -144,12 +145,16 @@ const ConnectWalletButton = ({ protocol }: Props) => {
   return (
     <Button
       color={protocol === 'AE' ? 'primary' : 'secondary'}
-      onClick={connect}
+      onClick={isConnected ? disconnect : connect}
       loading={isConnecting}
-      disabled={isConnected}
-      sx={{ minWidth: '240px' }}
+      sx={{
+        minWidth: '272px',
+        justifyContent: isConnected ? 'end' : 'center',
+        backgroundColor: isConnected ? '#adadad' : '',
+      }}
+      endIcon={isConnected && <DisconnectIcon />}
     >
-      {isConnected ? 'Connected' : 'Connect'}
+      {isConnected ? 'Disconnect' : 'Connect'}
       {` ${label} Wallet`}
     </Button>
   );
