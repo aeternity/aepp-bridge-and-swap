@@ -48,7 +48,8 @@ const AmountInput = ({
   }, []);
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+    // we are allowing to paste only positive values
+    onChange(Number(e.target.value) < 0 ? '0' : e.target.value);
   };
 
   return (
@@ -72,6 +73,7 @@ const AmountInput = ({
       </Typography>
       <Box display={'flex'} flexDirection={'column'} alignItems={'end'}>
         <TextInput
+          inputProps={{ min: 0 }}
           fullWidth
           placeholder="0.00"
           onChange={onInputChange}
