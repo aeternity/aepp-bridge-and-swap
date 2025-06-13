@@ -116,11 +116,9 @@ const AeEthToAeStep3 = () => {
           <>
             You are about to swap{' '}
             <span style={{ fontWeight: 500 }}>{fromAmount} æETH</span> for{' '}
-            <span style={{ fontWeight: 500 }}>
-              ≈{Number(toAmount).toFixed(2)} AE.
-            </span>{' '}
-            You will receive the AE tokens in your æternity wallet account
-            connected to this app.
+            <span style={{ fontWeight: 500 }}>≈{toAmount} AE.</span> You will
+            receive the AE tokens in your æternity wallet account connected to
+            this app.
           </>
         );
       case Status.CONFIRMED:

@@ -78,10 +78,8 @@ const AeToEthStep4 = () => {
           <>
             You are about to bridge{' '}
             <span style={{ fontWeight: 500 }}>{toAmount} æETH</span> to{' '}
-            <span style={{ fontWeight: 500 }}>
-              ≈{Number(toAmount).toFixed(4)} ETH.
-            </span>{' '}
-            Coins will be received by your connected Ethereum account.
+            <span style={{ fontWeight: 500 }}>≈{toAmount} ETH.</span> Coins will
+            be received by your connected Ethereum account.
           </>
         );
       case Status.CONFIRMED:

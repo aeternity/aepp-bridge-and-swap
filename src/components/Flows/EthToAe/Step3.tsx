@@ -105,11 +105,9 @@ const EthToAeStep3 = () => {
           <>
             You are about to bridge{' '}
             <span style={{ fontWeight: 500 }}>{fromAmount} ETH</span> to{' '}
-            <span style={{ fontWeight: 500 }}>
-              ≈{Number(fromAmount).toFixed(4)} æETH.
-            </span>{' '}
-            You will receive the æETH tokens in your æternity account connected
-            to this app.
+            <span style={{ fontWeight: 500 }}>≈{fromAmount} æETH.</span> You
+            will receive the æETH tokens in your æternity account connected to
+            this app.
           </>
         );
       case Status.CONFIRMED:
