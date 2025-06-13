@@ -143,10 +143,10 @@ const AeToEthStep3 = () => {
             Almost there!
             <br />
             Click on <span style={{ fontWeight: 500 }}>Next</span> to proceed to
-            swap.
+            bridge.
             <br />
             You will receive{' '}
-            <span style={{ fontWeight: 500 }}>≈{toAmount} æETH</span>
+            <span style={{ fontWeight: 500 }}>≈{toAmount} ETH</span>
           </>
         );
     }

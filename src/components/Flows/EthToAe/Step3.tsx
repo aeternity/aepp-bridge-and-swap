@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material';
-import { ethers, Eip1193Provider } from "ethers";
+import { ethers, Eip1193Provider } from 'ethers';
 import { useAppKitProvider } from '@reown/appkit/react';
 
 import WizardFlowContainer from '../../WizardFlowContainer';
@@ -21,6 +21,7 @@ import SwapArrowButton from '../../Buttons/SwapArrowButton';
 const SKIP_ETH = !!process.env.NEXT_PUBLIC_SKIP_ETH;
 
 let isCancelled = false;
+let currentSubstep: () => Promise<void>;
 const EthToAeStep3 = () => {
   const theme = useTheme();
 
@@ -58,15 +59,20 @@ const EthToAeStep3 = () => {
             if (isCancelled) return;
             const provider = new ethers.BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address, signer);
+            await BridgeService.bridgeEthToAe(
+              amountInWei,
+              aeAccount.address,
+              signer,
+            );
             if (isCancelled) return;
           }
           setStatus(Status.CONFIRMED);
           setError('');
+          await attemptWaitForBridge();
         } catch (e: unknown) {
           setStatus(Status.PENDING);
           setError(e instanceof Error ? e.message : 'Something went wrong.');
-          await attemptBridge();
+          currentSubstep = attemptBridge;
         }
       };
 
@@ -90,12 +96,11 @@ const EthToAeStep3 = () => {
         } catch (e: unknown) {
           setStatus(Status.PENDING);
           setError(e instanceof Error ? e.message : 'Something went wrong.');
-          await attemptWaitForBridge();
+          currentSubstep = attemptWaitForBridge;
         }
       };
 
       await attemptBridge();
-      await attemptWaitForBridge();
     };
     if (aeAccount?.address && fromAmount && !ranBridge) {
       isCancelled = false;
@@ -212,6 +217,7 @@ const EthToAeStep3 = () => {
         }
         footer={getMessageFooter()}
         error={error}
+        retry={currentSubstep}
       />
     </>
   );

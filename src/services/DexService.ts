@@ -226,8 +226,8 @@ class DexService {
 
   static async pollSwapAeEthToAE(
     txHash: Encoded.TxHash,
-  ): Promise<[bigint, bigint]> {
-    await aeSdk.poll(txHash, { blocks: 60 });
+  ): Promise<{ success: boolean; error?: string; values?: [bigint, bigint] }> {
+    await aeSdk.poll(txHash, { blocks: 15 });
 
     const swapResult = await fetch(
       `${Constants.ae_middleware_url}/transactions/${txHash}`,
@@ -235,18 +235,28 @@ class DexService {
 
     console.log('swap result', swapResult);
 
+    if (swapResult.error) {
+      return { success: false, error: swapResult.error };
+    }
+
+    let values: [bigint, bigint];
     if (swapResult?.tx?.result === 'ok') {
-      return [
+      values = [
         swapResult.tx.return.value[0].value,
         swapResult.tx.return.value[1].value,
       ];
     } else if (swapResult?.tx?.tx?.tx?.result === 'ok') {
-      return [
+      values = [
         swapResult.tx.tx.tx.return.value[0].value,
         swapResult.tx.tx.tx.return.value[1].value,
       ];
     }
-    return [0n, 0n];
+
+    if (values!) {
+      return { success: true, values };
+    }
+
+    return { success: false, error: 'Invalid transaction result' };
   }
 }
 

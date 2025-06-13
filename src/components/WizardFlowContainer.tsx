@@ -67,6 +67,7 @@ const WizardFlowContainer = ({
   subtitle,
   content,
   buttonDisabled,
+  retry,
   ...props
 }: {
   title: string;
@@ -75,6 +76,7 @@ const WizardFlowContainer = ({
   error?: string;
   content: React.ReactNode;
   buttonDisabled: boolean;
+  retry?: () => {};
 }) => {
   const theme = useTheme();
 
@@ -164,7 +166,13 @@ const WizardFlowContainer = ({
         <Typography fontSize="16px" color={'error'}>
           {error}
         </Typography>
-        <Typography fontSize="16px">{footer}</Typography>
+        {error && retry ? (
+          <Box>
+            <Button onClick={retry}>Retry</Button>
+          </Box>
+        ) : (
+          <Typography fontSize="16px">{footer}</Typography>
+        )}
       </Box>
       <Button
         color={'primary'}

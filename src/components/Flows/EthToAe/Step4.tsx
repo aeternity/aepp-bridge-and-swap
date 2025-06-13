@@ -18,6 +18,7 @@ import {
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 
 let isCancelled = false;
+let currentSubstep: () => Promise<void>;
 const EthToAeStep4 = () => {
   const theme = useTheme();
 
@@ -59,10 +60,11 @@ const EthToAeStep4 = () => {
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
+          await attemptSwapAeEthToAe();
         } catch (e: unknown) {
           setStatus(Status.PENDING);
           setError(e instanceof Error ? e.message : 'Something went wrong.');
-          await attemptChangeAllowance();
+          currentSubstep = attemptChangeAllowance;
         }
       };
 
@@ -80,27 +82,27 @@ const EthToAeStep4 = () => {
           setStatus(Status.CONFIRMED);
           setError('');
 
-          const [aeEthIn, aeOut] = await DexService.pollSwapAeEthToAE(txHash);
-          setSwapResult({
-            aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
-            aeEthIn: BigNumber(aeEthIn),
-          });
-
-          if (aeEthIn == 0n && aeOut == 0n) {
-            setError("It's taking a bit longer than expected.");
-          } else {
+          const { success, values, error } =
+            await DexService.pollSwapAeEthToAE(txHash);
+          if (success && values) {
+            const [aeEthIn, aeOut] = values;
+            setSwapResult({
+              aeOut: BigNumber(aeOut).dividedBy(10 ** 18),
+              aeEthIn: BigNumber(aeEthIn),
+            });
             setError('');
             setStatus(Status.COMPLETED);
+          } else {
+            throw new Error(error ?? 'Something went wrong.');
           }
         } catch (e: unknown) {
           setStatus(Status.PENDING);
           setError(e instanceof Error ? e.message : 'Something went wrong.');
-          await attemptSwapAeEthToAe();
+          currentSubstep = attemptSwapAeEthToAe;
         }
       };
 
       await attemptChangeAllowance();
-      await attemptSwapAeEthToAe();
     };
     if (aeAccount?.address && fromAmount && !ranSwap) {
       isCancelled = false;
@@ -230,6 +232,7 @@ const EthToAeStep4 = () => {
         }
         footer={getMessageFooter()}
         error={error}
+        retry={currentSubstep}
       />
     </>
   );
