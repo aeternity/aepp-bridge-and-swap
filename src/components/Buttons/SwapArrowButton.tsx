@@ -13,7 +13,7 @@ const SwapArrowButton = ({ disabled, onClick, rotation = '0deg' }: Props) => {
     <ButtonBase disabled={disabled} onClick={onClick}>
       <ArrowSecondary
         style={{
-          width: '60px',
+          width: '50px',
           height: 'auto',
           transform: `rotate(${rotation})`,
         }}

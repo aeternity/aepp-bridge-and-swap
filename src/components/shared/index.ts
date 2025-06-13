@@ -36,13 +36,15 @@ export const Separator = styled(Box)<StepProps>(({ completed }) => ({
   },
 }));
 
-export const BridgeBox = styled(Box)<StepProps>(() => ({
+export const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginTop: '37px',
-  marginBottom: '37px',
-  gap: '20px',
+  margin: '37px 0px',
+  gap: '1.5vw',
+  [theme.breakpoints.down('md')]: {
+    margin: '17px 0px',
+  },
 }));
 export const AmountBox = styled(Box)(() => ({
   padding: '12px',
@@ -51,18 +53,24 @@ export const AmountBox = styled(Box)(() => ({
   gap: '2px',
   alignItems: 'end',
 }));
-export const AmountTypography = styled(Typography)(() => ({
+export const AmountTypography = styled(Typography)<StepProps>(({ theme }) => ({
   fontSize: '18px',
   opacity: '60%',
   lineHeight: '28px',
   fontWeight: 500,
   color: 'white',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '13px',
+  },
 }));
-export const TokenTypography = styled(Typography)(({}) => ({
+export const TokenTypography = styled(Typography)<StepProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '24px',
   fontWeight: 500,
   color: 'white',
   position: 'relative',
   top: '-1px',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '13px',
+  },
 }));

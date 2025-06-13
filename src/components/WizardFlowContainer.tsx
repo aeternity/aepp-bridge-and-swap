@@ -15,7 +15,7 @@ type StyledProps = {
   theme?: Theme;
 };
 
-const StyledContainer = styled(Container)({
+const StyledContainer = styled(Container)<StyledProps>(({ theme }) => ({
   minHeight: '436px',
   margin: '120px 0px 20px 0px',
   textAlign: 'center',
@@ -23,7 +23,11 @@ const StyledContainer = styled(Container)({
   flexDirection: 'column',
   alignItems: 'center',
   padding: '0px 20px',
-});
+  [theme.breakpoints.down('sm')]: {
+    margin: '20px 0px',
+    padding: '0px 5px',
+  },
+}));
 
 const ContentBox = styled(Box)<StyledProps>(({ theme }) => ({
   display: 'flex',
@@ -36,6 +40,7 @@ const ContentBox = styled(Box)<StyledProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     order: 1,
     flex: '100%',
+    margin: '30px 0px 0px 0px',
   },
 }));
 
@@ -81,7 +86,7 @@ const WizardFlowContainer = ({
       <Box
         display={'flex'}
         justifyContent={'space-between'}
-        width={'90%'}
+        width={'100%'}
         maxWidth={'700px'}
         marginBottom={'15px'}
       >
