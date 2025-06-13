@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material';
+import { ethers, Eip1193Provider } from "ethers";
+import { useAppKitProvider } from '@reown/appkit/react';
+
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import BridgeService from '../../../services/BridgeService';
@@ -26,6 +29,7 @@ const EthToAeStep3 = () => {
   const { status, setStatus } = useExchangeStore();
   const [ranBridge, setRanBridge] = useState(false);
   const [error, setError] = useState('');
+  const { walletProvider } = useAppKitProvider<Eip1193Provider>('eip155');
 
   useEffect(() => {
     setStatus(Status.PENDING);
@@ -52,7 +56,9 @@ const EthToAeStep3 = () => {
         try {
           if (!SKIP_ETH) {
             if (isCancelled) return;
-            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address);
+            const provider = new ethers.BrowserProvider(walletProvider);
+            const signer = await provider.getSigner();
+            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address, signer);
             if (isCancelled) return;
           }
           setStatus(Status.CONFIRMED);

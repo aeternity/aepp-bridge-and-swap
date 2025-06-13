@@ -5,9 +5,7 @@ import { BRIDGE_ABI, BRIDGE_ACI, Constants } from "../constants";
 import { aeSdk } from "./WalletService";
 
 class BridgeService {
-  static async bridgeEthToAe(amountInWei: bigint, aeAddress: string): Promise<void> {
-    const provider = new ethers.BrowserProvider(window.ethereum!);
-    const signer = await provider.getSigner();
+  static async bridgeEthToAe(amountInWei: bigint, aeAddress: string, signer: ethers.JsonRpcSigner): Promise<void> {
     const bridgeContract = new ethers.Contract(
       Constants.eth_bridge_address,
       BRIDGE_ABI,
