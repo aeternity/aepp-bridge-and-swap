@@ -17,13 +17,15 @@ const AeEthToEthStep2 = () => {
 
   useEffect(() => {
     if (aeAccount?.address) {
-      WalletService.getAeWethBalance(aeAccount.address as `ak_${string}`).then(setAmountAeEth);
+      WalletService.getAeWethBalance(aeAccount.address as `ak_${string}`).then(
+        setAmountAeEth,
+      );
     }
   }, []);
 
   const onChange = (value: string) => {
-    setToAmount(Number(value));
-    setFromAmount(Number(value));
+    setToAmount(value ? Number(value) : '');
+    setFromAmount(value ? Number(value) : '');
   };
 
   return (

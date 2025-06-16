@@ -22,21 +22,23 @@ const AeEthToAeStep2 = () => {
 
   useEffect(() => {
     if (aeAccount?.address) {
-      WalletService.getAeWethBalance(aeAccount.address as `ak_${string}`).then(setAmountAeEth);
+      WalletService.getAeWethBalance(aeAccount.address as `ak_${string}`).then(
+        setAmountAeEth,
+      );
     }
     TokenPriceService.getPrices().then(setPrices);
     WebsocketService.init();
   }, []);
 
   const onEthChange = (value: string) => {
-    setFromAmount(Number(value));
+    setFromAmount(value ? Number(value) : '');
     setToAmount(
       value ? Number(value) * (prices ? prices.ETH / prices.AE : 0) : '',
     );
   };
 
   const onAeChange = (value: string) => {
-    setToAmount(Number(value));
+    setToAmount(value ? Number(value) : '');
     setFromAmount(
       value ? Number(value) * (prices ? prices.AE / prices.ETH : 0) : '',
     );

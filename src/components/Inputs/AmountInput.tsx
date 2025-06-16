@@ -48,8 +48,12 @@ const AmountInput = ({
   }, []);
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // we are allowing to paste only positive values
-    onChange(Number(e.target.value) < 0 ? '0' : e.target.value);
+    if (!e.target.value) {
+      onChange(null);
+    } else {
+      // we are allowing to paste only positive values
+      onChange(Number(e.target.value) < 0 ? null : e.target.value);
+    }
   };
 
   return (
