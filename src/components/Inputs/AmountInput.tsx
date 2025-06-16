@@ -18,7 +18,6 @@ interface Props {
 const TextInput = styled(InputBase)({
   '& .MuiInputBase-input': {
     textAlign: 'right',
-    fontSize: '24px',
     padding: 0,
     color: 'white',
   },
@@ -48,8 +47,26 @@ const AmountInput = ({
   }, []);
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // we are allowing to paste only positive values
-    onChange(Number(e.target.value) < 0 ? '0' : e.target.value);
+    if (!e.target.value) {
+      onChange(null);
+    } else {
+      // we are allowing to paste only positive values
+      onChange(Number(e.target.value) < 0 ? null : e.target.value);
+    }
+  };
+
+  const formattedValue = (val: string | number | null) => {
+    if (val === null || val === '') return '';
+
+    const str = String(val);
+
+    // Allow the user to type '0.', '0.0', etc.
+    if (/^0\.\d*$/.test(str) || str === '0') {
+      return str;
+    }
+
+    // Otherwise, remove leading zeros (but preserve decimal places)
+    return str.replace(/^0+(?=\d)/, '');
   };
 
   return (
@@ -71,14 +88,19 @@ const AmountInput = ({
       <Typography fontSize={'18px'} color="white">
         {label || protocol}
       </Typography>
-      <Box display={'flex'} flexDirection={'column'} alignItems={'end'}>
+      <Box
+        display={'flex'}
+        flexDirection={'column'}
+        alignItems={'end'}
+        overflow={'hidden'}
+      >
         <TextInput
-          inputProps={{ min: 0 }}
+          inputProps={{ min: 0, style: { fontSize: '24px' } }}
           fullWidth
           placeholder="0.00"
           onChange={onInputChange}
           type="number"
-          value={value}
+          value={formattedValue(value)}
         />
         <Typography fontSize="12px" color="white">
           {prices &&
