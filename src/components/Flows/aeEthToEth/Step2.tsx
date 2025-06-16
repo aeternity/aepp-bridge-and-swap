@@ -24,8 +24,8 @@ const AeEthToEthStep2 = () => {
   }, []);
 
   const onChange = (value: string) => {
-    setToAmount(value ? Number(value) : '');
-    setFromAmount(value ? Number(value) : '');
+    setToAmount(value);
+    setFromAmount(value);
   };
 
   return (

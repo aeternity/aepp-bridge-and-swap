@@ -56,6 +56,20 @@ const AmountInput = ({
     }
   };
 
+  const formattedValue = (val: string | number | null) => {
+    if (val === null || val === '') return '';
+
+    const str = String(val);
+
+    // Allow the user to type '0.', '0.0', etc.
+    if (/^0\.\d*$/.test(str) || str === '0') {
+      return str;
+    }
+
+    // Otherwise, remove leading zeros (but preserve decimal places)
+    return str.replace(/^0+(?=\d)/, '');
+  };
+
   return (
     <Box
       display="flex"
@@ -82,7 +96,7 @@ const AmountInput = ({
           placeholder="0.00"
           onChange={onInputChange}
           type="number"
-          value={value}
+          value={formattedValue(value)}
         />
         <Typography fontSize="12px" color="white">
           {prices &&

@@ -22,14 +22,14 @@ const EthToAeStep2 = () => {
   }, []);
 
   const onEthChange = (value: string) => {
-    setFromAmount(value ? Number(value) : '');
+    setFromAmount(value);
     setToAmount(
       value ? Number(value) * (prices ? prices.ETH / prices.AE : 0) : '',
     );
   };
 
   const onAeChange = (value: string) => {
-    setToAmount(value ? Number(value) : '');
+    setToAmount(value);
     setFromAmount(
       value ? Number(value) * (prices ? prices.AE / prices.ETH : 0) : '',
     );
@@ -44,10 +44,10 @@ const EthToAeStep2 = () => {
           !fromAmount ||
           !toAmount ||
           !ethAccount?.balance ||
-          fromAmount > Number(ethAccount?.balance)
+          Number(fromAmount) > Number(ethAccount?.balance)
         }
         error={
-          !!fromAmount && fromAmount > Number(ethAccount?.balance || 0)
+          !!fromAmount && Number(fromAmount) > Number(ethAccount?.balance || 0)
             ? `Amount exceeds maximum available: ${Number(ethAccount?.balance)} ETH`
             : ''
         }

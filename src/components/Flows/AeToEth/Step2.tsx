@@ -23,14 +23,14 @@ const AeToEthStep2 = () => {
   }, []);
 
   const onEthChange = (value: string) => {
-    setToAmount(value ? Number(value) : '');
+    setToAmount(value);
     setFromAmount(
       value ? Number(value) * (prices ? prices.ETH / prices.AE : 0) : '',
     );
   };
 
   const onAeChange = (value: string) => {
-    setFromAmount(value ? Number(value) : '');
+    setFromAmount(value);
     setToAmount(
       value ? Number(value) * (prices ? prices.AE / prices.ETH : 0) : '',
     );
