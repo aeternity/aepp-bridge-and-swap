@@ -6,8 +6,9 @@ import AmountInput from '../../Inputs/AmountInput';
 import TokenPriceService from '../../../services/TokenPriceService';
 import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
-import DexService from '../../../services/DexService';
+import WalletService from '../../../services/WalletService';
 import { powerAndTruncFloat } from '../../../helpers';
+import { useWalletStore } from '../../../stores/walletStore';
 
 const AeEthToAeStep2 = () => {
   const theme = useTheme();
@@ -15,11 +16,14 @@ const AeEthToAeStep2 = () => {
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
 
   const [amountAeEth, setAmountAeEth] = useState(0n);
+  const { aeAccount } = useWalletStore();
 
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
   useEffect(() => {
-    DexService.getAeWethBalance().then(setAmountAeEth);
+    if (aeAccount?.address) {
+      WalletService.getAeWethBalance(aeAccount.address as `ak_${string}`).then(setAmountAeEth);
+    }
     TokenPriceService.getPrices().then(setPrices);
     WebsocketService.init();
   }, []);

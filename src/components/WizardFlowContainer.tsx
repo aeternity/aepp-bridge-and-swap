@@ -83,6 +83,14 @@ const WizardFlowContainer = ({
   const { nextStep, prevStep, currentStep, reset, steps, status } =
     useExchangeStore();
 
+  function resetState() {
+    const query = {
+      aeAddress: new URLSearchParams(window.location.search).get('ae-address'),
+    }
+    window.history.pushState({}, document.title, `/${query.aeAddress ? `?ae-address=${query.aeAddress}`: ''}`);
+    reset();
+  }
+
   return (
     <StyledContainer maxWidth={false} disableGutters {...props}>
       <Box
@@ -177,7 +185,7 @@ const WizardFlowContainer = ({
       <Button
         color={'primary'}
         sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
-        onClick={reset}
+        onClick={resetState}
       >
         {currentStep === steps.length - 1 && status === Status.COMPLETED
           ? 'Do another:)'

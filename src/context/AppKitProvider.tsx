@@ -6,7 +6,7 @@ const networks = [mainnet] as [AppKitNetwork, ...AppKitNetwork[]];
 const metadata = {
   name: 'AE Bridge and Swap',
   description: 'aeternity/aepp-bridge-and-swap',
-  url: 'example.com',
+  url: 'https://bridge-and-swap.aepps.com/',
   icons: [],
 };
 

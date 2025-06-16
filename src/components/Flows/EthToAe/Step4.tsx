@@ -49,14 +49,15 @@ const EthToAeStep4 = () => {
         return;
       }
 
+      const DexServiceInstance = new DexService(aeAccount.address as `ak_${string}`, 'ethToAe', 3);
+
       const amountInWei = BigInt(
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
       );
-
       const attemptChangeAllowance = async () => {
         try {
           if (isCancelled) return;
-          await DexService.changeAllowance(amountInWei);
+          await DexServiceInstance.changeAllowance(amountInWei);
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
@@ -72,10 +73,7 @@ const EthToAeStep4 = () => {
         try {
           setStatus(Status.PENDING);
           if (isCancelled) return;
-          const txHash = await DexService.swapAeEthToAE(
-            amountInWei,
-            aeAccount.address,
-          );
+          const txHash = await DexServiceInstance.swapAeEthToAE(amountInWei);
           setHash(txHash);
           if (isCancelled) return;
 
@@ -83,7 +81,7 @@ const EthToAeStep4 = () => {
           setError('');
 
           const { success, values, error } =
-            await DexService.pollSwapAeEthToAE(txHash);
+            await DexServiceInstance.pollSwapAeEthToAE(txHash);
           if (success && values) {
             const [aeEthIn, aeOut] = values;
             setSwapResult({

@@ -8,7 +8,7 @@ import { useFormStore } from '../../../stores/formStore';
 import BridgeService from '../../../services/BridgeService';
 import { useWalletStore } from '../../../stores/walletStore';
 import WebsocketService from '../../../services/WebsocketService';
-import { formatNumber } from '../../../helpers';
+import { formatNumber, isSafariBrowser } from '../../../helpers';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
 import {
   AmountBox,
@@ -59,11 +59,7 @@ const EthToAeStep3 = () => {
             if (isCancelled) return;
             const provider = new ethers.BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            await BridgeService.bridgeEthToAe(
-              amountInWei,
-              aeAccount.address,
-              signer,
-            );
+            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address, signer);
             if (isCancelled) return;
           }
           setStatus(Status.CONFIRMED);

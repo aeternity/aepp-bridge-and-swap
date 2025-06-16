@@ -4,17 +4,21 @@ import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import AmountInput from '../../Inputs/AmountInput';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
-import DexService from '../../../services/DexService';
+import WalletService from '../../../services/WalletService';
 import { powerAndTruncFloat } from '../../../helpers';
+import { useWalletStore } from '../../../stores/walletStore';
 
 const AeEthToEthStep2 = () => {
   const theme = useTheme();
 
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
   const [amountAeEth, setAmountAeEth] = useState(0n);
+  const { aeAccount } = useWalletStore();
 
   useEffect(() => {
-    DexService.getAeWethBalance().then(setAmountAeEth);
+    if (aeAccount?.address) {
+      WalletService.getAeWethBalance(aeAccount.address as `ak_${string}`).then(setAmountAeEth);
+    }
   }, []);
 
   const onChange = (value: string) => {

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { BigNumber } from 'bignumber.js';
 import { Box, useTheme } from '@mui/material';
+import Link from 'next/link';
+
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
-import Link from 'next/link';
-import ExternalIcon from '../../../assets/ExternalIcon';
 import { useWalletStore } from '../../../stores/walletStore';
-import { formatNumber } from '../../../helpers';
-import { BigNumber } from 'bignumber.js';
 import DexService from '../../../services/DexService';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
+
+import ExternalIcon from '../../../assets/ExternalIcon';
+import { formatNumber } from '../../../helpers';
 import {
   AmountBox,
   AmountTypography,
@@ -49,6 +51,8 @@ const AeEthToAeStep3 = () => {
         return;
       }
 
+      const DexServiceInstance = new DexService(aeAccount?.address as `ak_${string}`, 'aeEthToAe', 2);
+
       const amountInWei = BigInt(
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
       );
@@ -56,7 +60,7 @@ const AeEthToAeStep3 = () => {
       const attemptChangeAllowance = async () => {
         try {
           if (isCancelled) return;
-          await DexService.changeAllowance(amountInWei);
+          await DexServiceInstance.changeAllowance(amountInWei);
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
@@ -72,10 +76,7 @@ const AeEthToAeStep3 = () => {
         try {
           setStatus(Status.PENDING);
           if (isCancelled) return;
-          const txHash = await DexService.swapAeEthToAE(
-            amountInWei,
-            aeAccount.address,
-          );
+          const txHash = await DexServiceInstance.swapAeEthToAE(amountInWei);
           setHash(txHash);
           if (isCancelled) return;
 
@@ -83,7 +84,7 @@ const AeEthToAeStep3 = () => {
           setError('');
 
           const { success, values, error } =
-            await DexService.pollSwapAeEthToAE(txHash);
+            await await DexServiceInstance.pollSwapAeEthToAE(txHash);
           if (success && values) {
             const [aeEthIn, aeOut] = values;
             setSwapResult({

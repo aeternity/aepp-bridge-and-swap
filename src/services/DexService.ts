@@ -4,17 +4,95 @@ import aex9ACI from 'dex-contracts-v2/build/FungibleTokenFull.aci.json';
 import WalletService from './WalletService';
 import { aeSdk } from './WalletService';
 import { payForTx } from '../app/actions/payForTx';
-import { Contract, Encoded, Tag, getExecutionCost } from '@aeternity/aepp-sdk';
+import {
+  Contract,
+  Encoded,
+  getExecutionCost,
+  getExecutionCostBySignedTx,
+  Tag,
+  unpackTx,
+} from '@aeternity/aepp-sdk';
 import { Constants } from '../constants';
+import { isSafariBrowser, sendTxDeepLinkUrl } from '../helpers';
+import { FlowType } from '../stores/exchangeStore';
+
+export async function postOrPayForTransaction(signedTransaction: `tx_${string}`, isPost: boolean) {
+  return isPost
+    ? await aeSdk.api
+        .postTransaction({ tx: signedTransaction })
+        .then((result) => ({ hash: result.txHash }))
+    : await payForTx(signedTransaction);
+}
 
 class DexService {
-  static async changeAllowance(amountWei: bigint): Promise<void> {
-    return WalletService.getAeBalance(aeSdk.address).then((balance: bigint) =>
+  address: `ak_${string}`;
+  flow: FlowType;
+  step: number;
+
+  constructor(address: `ak_${string}`, flow: FlowType, step: number) {
+    this.address = address;
+    this.step = step;
+    this.flow = flow;
+  }
+
+  async buildAndSend(
+    callData: `cb_${string}`,
+    contractId: `ct_${string}`,
+    userBalance: bigint,
+    newAccount: boolean,
+  ) {
+
+    const query = {
+      transaction: new URLSearchParams(window.location.search).get('transaction'),
+    };
+
+    if (query.transaction) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const unpackedTransaction = unpackTx(query.transaction as `tx_${string}`, Tag.SignedTx) as any;
+
+      const cost = getExecutionCostBySignedTx(query.transaction as `tx_${string}`, 'ae_mainnet');
+      const isUserHaveEnoughCoins = userBalance > cost + Constants.ae_balance_threshold;
+      if (unpackedTransaction.encodedTx.contractId === contractId) {
+
+        return postOrPayForTransaction(query.transaction as `tx_${string}`, isUserHaveEnoughCoins)
+      }
+    }
+    const contractCallTx = await aeSdk.buildTx({
+      tag: Tag.ContractCallTx,
+      callerId: this.address,
+      contractId,
+      amount: 0,
+      gasLimit: 1000000,
+      gasPrice: 1500000000,
+      callData,
+      ...(newAccount ? { nonce: 1 } : {}),
+    });
+
+    const cost = getExecutionCost(contractCallTx);
+    const isUserHaveEnoughCoins =
+      userBalance > cost + Constants.ae_balance_threshold;
+
+    if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
+      console.log('sendTxDeepLinkUrl');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step);
+      return;
+    }
+    const signedContractCallTx = await aeSdk.signTransaction(
+      contractCallTx,
+      isUserHaveEnoughCoins ? {} : { innerTx: true },
+    );
+    return postOrPayForTransaction(signedContractCallTx, isUserHaveEnoughCoins);
+  }
+
+  async changeAllowance(amountWei: bigint): Promise<void> {
+    return WalletService.getAeBalance(this.address).then((balance: bigint) =>
       this.changeAllowanceInternal(amountWei, balance),
     );
   }
 
-  static async changeAllowanceInternal(
+  async changeAllowanceInternal(
     amountWei: bigint,
     userBalance: bigint,
   ): Promise<void> {
@@ -32,10 +110,10 @@ class DexService {
 
     let newAccount = false;
 
-    let { decodedResult: allowance } = await tokenContractWallet
+    const { decodedResult: allowance } = await tokenContractWallet
       .allowance(
         {
-          from_account: aeSdk.address,
+          from_account: this.address,
           for_account: Constants.ae_dex_router_address.replace('ct_', 'ak_'),
         },
         { callStatic: true },
@@ -61,32 +139,10 @@ class DexService {
           amountWei + (amountWei * Constants.allowance_slippage) / 100n,
         ],
       );
-
-      const contractCallTx = await aeSdk.buildTx({
-        tag: Tag.ContractCallTx,
-        callerId: aeSdk.address,
-        contractId: Constants.ae_weth_address,
-        amount: 0,
-        gasLimit: 1000000,
-        gasPrice: 1500000000,
-        callData: calldata,
-        ...(newAccount ? { nonce: 1 } : {}),
-      });
-
-      let cost = getExecutionCost(contractCallTx);
-      let isUserHaveEnoughCoins =
-        userBalance > cost + Constants.ae_balance_threshold;
-      const signedContractCallTx = await aeSdk.signTransaction(
-        contractCallTx,
-        isUserHaveEnoughCoins ? {} : { innerTx: true },
-      );
-
-      isUserHaveEnoughCoins
-        ? await aeSdk.api.postTransaction({ tx: signedContractCallTx })
-        : await payForTx(signedContractCallTx);
+      this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, newAccount);
     } else {
       console.info('Changing allowance.');
-      let amount_with_allowance_slippage =
+      const amount_with_allowance_slippage =
         amountWei + (amountWei * Constants.allowance_slippage) / 100n;
       if (allowance < amount_with_allowance_slippage) {
         const calldata = tokenContract._calldata.encode(
@@ -97,54 +153,14 @@ class DexService {
             (amount_with_allowance_slippage - allowance).toString(),
           ],
         );
-
-        const contractCallTx = await aeSdk.buildTx({
-          tag: Tag.ContractCallTx,
-          callerId: aeSdk.address,
-          contractId: Constants.ae_weth_address,
-          amount: 0,
-          gasLimit: 1000000,
-          gasPrice: 1500000000,
-          callData: calldata,
-        });
-
-        let cost = getExecutionCost(contractCallTx);
-        let isUserHaveEnoughCoins =
-          userBalance > cost + Constants.ae_balance_threshold;
-
-        const signedContractCallTx = await aeSdk.signTransaction(
-          contractCallTx,
-          isUserHaveEnoughCoins ? {} : { innerTx: true },
-        );
-
-        isUserHaveEnoughCoins
-          ? await aeSdk.api.postTransaction({ tx: signedContractCallTx })
-          : await payForTx(signedContractCallTx);
+        this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, false);
       }
     }
   }
 
-  static async getAeWethBalance(): Promise<bigint> {
-    const tokenInstance = await aeSdk.initializeContract({
-      aci: aex9ACI,
-      address: Constants.ae_weth_address,
-    });
-    try {
-      // { onAccount: undefined } option is added, because current sdk version will fail
-      // to get balance, in case account was never used before
-      return BigInt(
-        (await tokenInstance.balance(aeSdk.address, { onAccount: undefined }))
-          .decodedResult ?? 0,
-      );
-    } catch (e: unknown) {
-      return BigInt(0);
-    }
-  }
-
-  static async swapAetoAeEth(
+  async swapAetoAeEth(
     amountinAettos: bigint,
     amountOut: bigint,
-    aeAddress: string,
   ) {
     const routerContract = await aeSdk.initializeContract({
       aci: routerACI,
@@ -156,25 +172,21 @@ class DexService {
     return routerContract.swap_exact_ae_for_tokens(
       (amountOut / 100n) * 95n,
       [Constants.ae_wae_address, Constants.ae_weth_address],
-      aeAddress,
+      this.address,
       aHourFromNow,
       undefined,
       { amount: amountinAettos.toString() },
     );
   }
 
-  static async swapAeEthToAE(
-    amountWei: bigint,
-    aeAddress: string,
-  ): Promise<Encoded.TxHash> {
-    return WalletService.getAeBalance(aeSdk.address).then((balance: bigint) =>
-      this.swapAeEthToAEInternal(amountWei, aeAddress, balance),
+  async swapAeEthToAE(amountWei: bigint): Promise<Encoded.TxHash> {
+    return WalletService.getAeBalance(this.address).then((balance: bigint) =>
+      this.swapAeEthToAEInternal(amountWei, balance),
     );
   }
 
-  static async swapAeEthToAEInternal(
+  async swapAeEthToAEInternal(
     amountWei: bigint,
-    aeAddress: string,
     userBalance: bigint,
   ): Promise<Encoded.TxHash> {
     console.log('Swap aeEth to AE');
@@ -192,42 +204,26 @@ class DexService {
         (amountWei / 100n) * 95n, // min amount out
         // [ aeEth, wAE] // path
         [Constants.ae_weth_address, Constants.ae_wae_address],
-        aeAddress,
+        this.address,
         aHourFromNow, // deadline is 1 hour
       ],
     );
+    const result = await this.buildAndSend(calldata, Constants.ae_dex_router_address, userBalance, false);
+    if (!result?.hash) {
+      throw new Error('Failed to build and send the transaction');
+    }
 
-    const contractCallTx = await aeSdk.buildTx({
-      tag: Tag.ContractCallTx,
-      callerId: aeSdk.address,
-      contractId: Constants.ae_dex_router_address,
-      amount: 0,
-      gasLimit: 1000000,
-      gasPrice: 1500000000,
-      callData: calldata,
-    });
-    let cost = getExecutionCost(contractCallTx);
-    let isUserHaveEnoughCoins =
-      userBalance > cost + Constants.ae_balance_threshold;
-
-    const signedContractCallTx = await aeSdk.signTransaction(
-      contractCallTx,
-      isUserHaveEnoughCoins ? {} : { innerTx: true },
-    );
-
-    const result = isUserHaveEnoughCoins
-      ? await aeSdk.api
-          .postTransaction({ tx: signedContractCallTx })
-          .then((result) => ({ hash: result.txHash }))
-      : await payForTx(signedContractCallTx);
-
-    return result.hash;
+    return result?.hash;
   }
 
-  static async pollSwapAeEthToAE(
+  async pollSwapAeEthToAE(
     txHash: Encoded.TxHash,
   ): Promise<{ success: boolean; error?: string; values?: [bigint, bigint] }> {
     await aeSdk.poll(txHash, { blocks: 15 });
+
+    // We are waiting for it to appear in the mdw
+    // TODO: do it with websocket
+    await new Promise((resolve) => setTimeout(resolve, 10000));
 
     const swapResult = await fetch(
       `${Constants.ae_middleware_url}/transactions/${txHash}`,

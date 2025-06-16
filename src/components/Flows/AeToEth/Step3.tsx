@@ -41,9 +41,11 @@ const AeToEthStep3 = () => {
         return;
       }
 
+      const DexServiceInstance = new DexService(aeAccount.address as `ak_${string}`, 'aeToEth', 2);
+
       const amountInAettos = BigInt(parseFloat(aeAmount) * 10 ** 18);
 
-      await DexService.changeAllowance(amountInAettos);
+      await DexServiceInstance.changeAllowance(amountInAettos);
 
       setStatus(Status.CONFIRMED);
 
@@ -51,10 +53,9 @@ const AeToEthStep3 = () => {
         ? BigInt(Math.trunc(Number(amountInAettos) / exchangeRatio))
         : BigInt(0);
 
-      await DexService.swapAetoAeEth(
+      await DexServiceInstance.swapAetoAeEth(
         amountInAettos,
         amountOut,
-        aeAccount.address,
       );
 
       setStatus(Status.COMPLETED);

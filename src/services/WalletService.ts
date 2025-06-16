@@ -5,6 +5,8 @@ import {
   SUBSCRIPTION_TYPES,
   walletDetector,
 } from '@aeternity/aepp-sdk';
+import aex9ACI from 'dex-contracts-v2/build/FungibleTokenFull.aci.json';
+
 import { Constants } from '../constants';
 
 export const aeSdk = new AeSdkAepp({
@@ -16,7 +18,6 @@ export const aeSdk = new AeSdkAepp({
     },
   ],
   onNetworkChange: async ({ networkId }) => {
-    console.log(await aeSdk.getNodesInPool(), networkId);
     const currentNetwork = (await aeSdk.getNodesInPool()).filter(
       (node) => node.nodeNetworkId === networkId,
     );
@@ -37,13 +38,6 @@ export const aeSdk = new AeSdkAepp({
 
 // TODO rewrite this to use the new SDK https://github.com/aeternity/aepp-sdk-js/blob/2d6ec8138af448204271b10c7517ede96f0ef998/examples/browser/aepp/src/components/ConnectFrame.vue#L61
 export default class WalletService {
-  static async connectMetamask() {
-    const accounts = await window.ethereum?.request({
-      method: 'eth_requestAccounts',
-    });
-    return accounts[0];
-  }
-
   static async getEthBalance(address: string): Promise<number> {
     const balance = await window.ethereum?.request({
       method: 'eth_getBalance',
@@ -53,7 +47,7 @@ export default class WalletService {
     return balance ? parseInt(balance) / 1e18 : 0;
   }
 
-  static getAeBalance(address: `ak_${string}`): Promise<BigInt> {
+  static getAeBalance(address: `ak_${string}`): Promise<bigint> {
     return aeSdk
       .getBalance(address)
       .then((balance) => BigInt(balance))
@@ -61,6 +55,25 @@ export default class WalletService {
         console.info(error);
         return 0n;
       });
+  }
+
+  static async getAeWethBalance(address: `ak_${string}`): Promise<bigint> {
+    console.log('getAeWethBalance');
+    const tokenInstance = await aeSdk.initializeContract({
+      aci: aex9ACI,
+      address: Constants.ae_weth_address,
+    });
+    try {
+      // { onAccount: undefined } option is added, because current sdk version will fail
+      // to get balance, in case account was never used before
+      return BigInt(
+        (await tokenInstance.balance(address, { onAccount: undefined }))
+          .decodedResult ?? 0,
+      );
+    } catch (e: unknown) {
+      console.log(e);
+      return BigInt(0);
+    }
   }
 
   static connectSuperHero(): Promise<string> {

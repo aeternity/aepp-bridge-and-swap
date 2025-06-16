@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aeternity/aepp-calldata": "^1.9.1",
     "@aeternity/aepp-sdk": "^13.3.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",

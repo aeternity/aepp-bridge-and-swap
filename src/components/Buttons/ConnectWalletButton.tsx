@@ -3,8 +3,13 @@ import { Button } from '@mui/material';
 import { useWalletStore } from '../../stores/walletStore';
 import WalletService from '../../services/WalletService';
 import { BigNumber } from 'bignumber.js';
-import { executeAndSetInterval, formatNumber } from '../../helpers';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import {
+  createDeepLinkUrl,
+  executeAndSetInterval,
+  formatNumber,
+  isSafariBrowser,
+} from '../../helpers';
+import { useAppKit, useAppKitAccount, useAppKitBalance } from '@reown/appkit/react';
 
 type Protocol = 'ETH' | 'AE';
 
@@ -31,8 +36,21 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     address: ethereumAddressFromProvider,
     isConnected: isAppKitConnected,
   } = useAppKitAccount();
+  const { fetchBalance} = useAppKitBalance();
 
   const [isConnecting, setIsConnecting] = useState(false);
+
+  useEffect(() => {
+    if (aeAccount?.address && !pollAeBalanceInterval) {
+      pollAeBalanceInterval = executeAndSetInterval(async () => {
+        const balance = await WalletService.getAeBalance(
+          aeAccount?.address as `ak_${string}`,
+        );
+        updateAeBalance(BigNumber(balance.toString()));
+      }, 5000);
+    }
+  }, []);
+
 
   const isConnected = !!(
     (protocol === 'ETH' && ethereumAddressFromProvider && isAppKitConnected) ||
@@ -42,8 +60,21 @@ const ConnectWalletButton = ({ protocol }: Props) => {
   const connectAeternity = useCallback(async () => {
     try {
       setIsConnecting(true);
-      const address = await WalletService.connectSuperHero();
-      connectAe(address);
+      let address: string;
+
+      if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
+        const addressDeepLink = createDeepLinkUrl({
+          type: 'address',
+          'x-success': `${window.location.href.split('?')[0]}?ae-address={address}&networkId={networkId}`,
+          'x-cancel': window.location.href.split('?')[0],
+        });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        window.location = addressDeepLink;
+      } else {
+        address = await WalletService.connectSuperHero();
+        connectAe(address);
+      }
       if (!pollAeBalanceInterval) {
         pollAeBalanceInterval = executeAndSetInterval(async () => {
           const balance = await WalletService.getAeBalance(
@@ -130,12 +161,12 @@ const ConnectWalletButton = ({ protocol }: Props) => {
 
       if (!pollEthBalanceInterval) {
         pollEthBalanceInterval = executeAndSetInterval(() => {
-          WalletService.getEthBalance(ethereumAddressFromProvider)
-            .then((balance) => {
-              updateEthBalance(BigNumber(balance.toString()));
-              setIsConnecting(false);
-            })
-            .catch(() => setIsConnecting(false));
+          fetchBalance()
+             .then((balance) => {
+               updateEthBalance(BigNumber(balance.data?.balance || 0));
+               setIsConnecting(false);
+             })
+             .catch(() => setIsConnecting(false));
         }, 5000);
       }
     }
