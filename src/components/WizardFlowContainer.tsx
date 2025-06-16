@@ -80,14 +80,18 @@ const WizardFlowContainer = ({
 }) => {
   const theme = useTheme();
 
-  const { nextStep, prevStep, currentStep, reset, steps, status } =
+  const { flow, nextStep, prevStep, currentStep, reset, steps, status } =
     useExchangeStore();
 
   function resetState() {
     const query = {
       aeAddress: new URLSearchParams(window.location.search).get('ae-address'),
-    }
-    window.history.pushState({}, document.title, `/${query.aeAddress ? `?ae-address=${query.aeAddress}`: ''}`);
+    };
+    window.history.pushState(
+      {},
+      document.title,
+      `/${query.aeAddress ? `?ae-address=${query.aeAddress}` : ''}`,
+    );
     reset();
   }
 
@@ -101,7 +105,7 @@ const WizardFlowContainer = ({
         marginBottom={'15px'}
       >
         <Box flex={1}>
-          <ConnectedWalletInfo protocol={'ETH'} />
+          {flow != 'aeEthToAe' && <ConnectedWalletInfo protocol={'ETH'} />}
         </Box>
         <Box flex={1} display={'flex'} justifyContent={'center'}>
           <Box

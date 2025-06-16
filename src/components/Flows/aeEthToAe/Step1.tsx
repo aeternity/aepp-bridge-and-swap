@@ -2,6 +2,7 @@ import React from 'react';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import ConnectWalletButton from '../../Buttons/ConnectWalletButton';
 import { useWalletStore } from '../../../stores/walletStore';
+import { Box } from '@mui/material';
 
 const AeEthToAeStep1 = () => {
   const { aeAccount } = useWalletStore();
@@ -19,9 +20,9 @@ const AeEthToAeStep1 = () => {
         }
         buttonDisabled={!aeAccount}
         content={
-          <>
+          <Box marginTop={'47px'}>
             <ConnectWalletButton protocol={'AE'} />
-          </>
+          </Box>
         }
       />
     </>
