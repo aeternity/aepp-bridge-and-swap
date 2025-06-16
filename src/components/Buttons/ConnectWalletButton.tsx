@@ -179,6 +179,11 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       loading={isConnecting}
       disabled={isConnected}
       sx={{ minWidth: '240px' }}
+      style={
+        isConnected
+          ? { background: 'white', border: '1px solid var(--variant-containedBg)', color: 'var(--variant-containedBg)' }
+          : {}
+      }
     >
       {isConnected ? 'Connected' : 'Connect'}
       {` ${label} Wallet`}

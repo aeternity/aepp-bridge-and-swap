@@ -38,17 +38,20 @@ const DEXBridgeExchange = () => {
         <Box
           display={'flex'}
           flexDirection={'column'}
-          alignItems={'center'}
+          alignItems={'stretch'}
           gap={'15px'}
           sx={{ margin: '67px 0px' }}
         >
           {tab === 0 ? (
             <>
-              <Button color="primary" onClick={() => setFlow('ethToAe')}>
+              <Button color="primary" onClick={() => setFlow('ethToAe')} style={{ display: 'block' }}>
                 ETH to AE
               </Button>
-              <Button color="secondary" onClick={() => setFlow('aeToEth')}>
+              <Button color="secondary" onClick={() => setFlow('aeToEth')} style={{ display: 'none' }}>
                 AE to ETH
+              </Button>
+              <Button color="secondary" onClick={() => setFlow('aeEthToAe')}>
+                aeETH to AE
               </Button>
             </>
           ) : (
@@ -69,8 +72,7 @@ const DEXBridgeExchange = () => {
         >
           <Typography mb={'10px'}>new to all this?</Typography>
           <Typography>
-            Don't worry: it's {tab === 0 ? 4 : 3} steps, and we'll guide you
-            along the way.
+            Don't worry: it’s quick, and we’ll guide you along the way.
           </Typography>
         </Container>
         <Box>
@@ -98,6 +100,7 @@ const DEXBridgeExchange = () => {
             color={'primary'}
             sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
             onClick={() => setTab(tab === 0 ? 1 : 0)}
+            style={{ display: 'none' }}
           >
             {tab === 0 ? 'Already have aeETH?' : "Don't have aeETH?"}
           </Button>
