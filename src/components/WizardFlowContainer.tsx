@@ -36,7 +36,7 @@ const ContentBox = styled(Box)<StyledProps>(({ theme }) => ({
   alignItems: 'center',
   gap: '16px',
   margin: '30px 0px',
-  minWidth: '300px',
+  minWidth: '320px',
   [theme.breakpoints.down('md')]: {
     order: 1,
     flex: '100%',

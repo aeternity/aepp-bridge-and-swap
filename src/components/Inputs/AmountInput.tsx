@@ -74,18 +74,19 @@ const AmountInput = ({
       display="flex"
       alignItems={'center'}
       justifyContent={'space-between'}
-      gap={'12px'}
+      gap={'6px'}
       sx={{
         backgroundColor: backgroundColor ?? theme.palette.primary.main,
         borderRadius: '16px',
-        padding: '12px 16px',
+        padding: '14px 7px',
         minHeight: '44px',
         fontSize: '16px',
         fontWeight: 500,
-        maxWidth: '300px',
+        maxWidth: '100%',
+        width: '320px',
       }}
     >
-      <Typography fontSize={'18px'} color="white">
+      <Typography fontSize={'12px'} color="white">
         {label || protocol}
       </Typography>
       <Box
@@ -93,9 +94,10 @@ const AmountInput = ({
         flexDirection={'column'}
         alignItems={'end'}
         overflow={'hidden'}
+        width={'100%'}
       >
         <TextInput
-          inputProps={{ min: 0, style: { fontSize: '24px' } }}
+          inputProps={{ min: 0, style: { fontSize: '18px' } }}
           fullWidth
           placeholder="0.00"
           onChange={onInputChange}
