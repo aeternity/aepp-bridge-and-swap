@@ -18,7 +18,6 @@ interface Props {
 const TextInput = styled(InputBase)({
   '& .MuiInputBase-input': {
     textAlign: 'right',
-    fontSize: '24px',
     padding: 0,
     color: 'white',
   },
@@ -89,9 +88,14 @@ const AmountInput = ({
       <Typography fontSize={'18px'} color="white">
         {label || protocol}
       </Typography>
-      <Box display={'flex'} flexDirection={'column'} alignItems={'end'}>
+      <Box
+        display={'flex'}
+        flexDirection={'column'}
+        alignItems={'end'}
+        overflow={'hidden'}
+      >
         <TextInput
-          inputProps={{ min: 0 }}
+          inputProps={{ min: 0, style: { fontSize: '24px' } }}
           fullWidth
           placeholder="0.00"
           onChange={onInputChange}
