@@ -93,7 +93,13 @@ const ConnectWalletButton = ({ protocol }: Props) => {
   const connectEthereum = useCallback(async () => {
     try {
       setIsConnecting(true);
-      await open({ view: 'Connect' });
+      await open({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        view: window.navigator.userAgent.includes('Mobi') || isSafariBrowser()
+          ? 'ConnectingWalletConnect'
+          : 'Connect'
+      });
     } catch (error) {
       console.error(error);
     } finally {
