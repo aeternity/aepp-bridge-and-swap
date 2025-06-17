@@ -47,7 +47,7 @@ const AeEthToAeStep3 = () => {
     const Swap = async () => {
       const ethAmount = fromAmount?.toString();
 
-      if (!ethAmount || !aeAccount?.address) {
+      if (!ethAmount || !aeAccount?.address || !toAmount) {
         return;
       }
 
@@ -55,6 +55,10 @@ const AeEthToAeStep3 = () => {
 
       const amountInWei = BigInt(
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
+      );
+
+      const amountOutWei = BigInt(
+        Math.trunc(parseFloat(toAmount.toString()) * 10 ** 18),
       );
 
       const attemptChangeAllowance = async () => {
@@ -76,7 +80,7 @@ const AeEthToAeStep3 = () => {
         try {
           setStatus(Status.PENDING);
           if (isCancelled) return;
-          const txHash = await DexServiceInstance.swapAeEthToAE(amountInWei);
+          const txHash = await DexServiceInstance.swapAeEthToAE(amountInWei, amountOutWei);
           setHash(txHash);
           if (isCancelled) return;
 

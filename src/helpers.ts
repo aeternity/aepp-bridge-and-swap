@@ -1,5 +1,7 @@
+import { BigNumber } from 'bignumber.js';
 import { FlowType } from 'typescript';
 import { DEFAULT_LOCALE } from './constants';
+import { Route } from './types';
 
 export function splitAddress(address: string | null | undefined): string {
   return address
@@ -127,3 +129,56 @@ export function sendTxDeepLinkUrl(networkId: string, encodedTx: string, flow: Fl
     'x-cancel': decodeURI(cancelUrl.href),
   });
 }
+
+// DEX utils functions
+/**
+ * A number, or a string containing a number.
+ * @typedef {(BigNumber|number|bigint|string)} NumberLike
+ * @typedef {[ NumberLike, NumberLike ]} Reserves
+ */
+
+/**
+ * @description orders the route in the proper direction depending on the starting token
+ * NOTE: is useful for swaps
+ */
+function orderRoute(route: Route[], tokenA: `ct_${string}`): Route[] {
+  if (!route || !route.length) return [];
+  return route.length < 2 || route[0].token0 === tokenA || route[0].token1 === tokenA
+    ? route
+    : [...route].reverse();
+};
+/**
+ * @description extracts the pair reserves from a swap-route
+ * @param {array} route - the route in the shape received from 'dex-backend'
+ * @param {string} tokenA tokenA address
+ * @return {Reserves[]}
+ * NOTE: doesn't matter if the route starts with tokenA or with tokenB.
+ * the function is capable to figure out the right order
+ */
+export function getRouteReserves(route: Route[], tokenA: `ct_${string}`): number[][] {
+  if (!route || !route.length) return [];
+  return orderRoute(route, tokenA).reduce(
+    ([acc, prev], { token0, token1, liquidityInfo: { reserve0, reserve1 } }) => {
+      const [reserves, next] =
+        token0 === prev ? [[reserve0, reserve1], token1] : [[reserve1, reserve0], token0];
+      return [acc.concat([reserves]), next];
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [[], tokenA] as any,
+  )[0];
+};
+
+const ratioFromPairReserves = (pairReserves: number[][]) =>
+  pairReserves.reduce(
+    (ratio, [reserveA, reserveB]) => ratio.multipliedBy(BigNumber(reserveB).div(reserveA)),
+    BigNumber(1),
+  );
+
+  /**
+ * @description gets ratio from a full swap-route path
+ * @param {array} route path
+ * @param {string} tokenA address
+ * @return {BigNumber}
+ */
+export const ratioFromRoute = (route: Route[], tokenA: `ct_${string}`) =>
+  ratioFromPairReserves(getRouteReserves(route, tokenA))

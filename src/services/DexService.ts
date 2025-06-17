@@ -179,14 +179,15 @@ class DexService {
     );
   }
 
-  async swapAeEthToAE(amountWei: bigint): Promise<Encoded.TxHash> {
+  async swapAeEthToAE(amountWei: bigint, amountOut: bigint): Promise<Encoded.TxHash> {
     return WalletService.getAeBalance(this.address).then((balance: bigint) =>
-      this.swapAeEthToAEInternal(amountWei, balance),
+      this.swapAeEthToAEInternal(amountWei, amountOut, balance),
     );
   }
 
   async swapAeEthToAEInternal(
     amountWei: bigint,
+    amountOut: bigint,
     userBalance: bigint,
   ): Promise<Encoded.TxHash> {
     console.log('Swap aeEth to AE');
@@ -201,7 +202,7 @@ class DexService {
       'swap_exact_tokens_for_ae',
       [
         amountWei, // how much eth to swap for ae
-        (amountWei / 100n) * 95n, // min amount out
+        (amountOut / 100n) * 95n, // min amount out
         // [ aeEth, wAE] // path
         [Constants.ae_weth_address, Constants.ae_wae_address],
         this.address,

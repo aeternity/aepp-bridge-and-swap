@@ -1,5 +1,7 @@
+import { BigNumber } from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
+
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import AmountInput from '../../Inputs/AmountInput';
@@ -18,7 +20,7 @@ const AeEthToAeStep2 = () => {
   const [amountAeEth, setAmountAeEth] = useState(0n);
   const { aeAccount } = useWalletStore();
 
-  const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
+  const [prices, setPrices] = useState<{ AE: number; ETH: number, aeEthToAeRatio: BigNumber }>();
 
   useEffect(() => {
     if (aeAccount?.address) {
@@ -33,16 +35,16 @@ const AeEthToAeStep2 = () => {
   const onEthChange = (value: string) => {
     setFromAmount(value);
     setToAmount(
-      value ? Number(value) * (prices ? prices.ETH / prices.AE : 0) : '',
+      Number(value) ? BigNumber(value).multipliedBy(prices ?  prices.aeEthToAeRatio : 1).toFixed(18).toString() : '',
     );
   };
 
   const onAeChange = (value: string) => {
     setToAmount(value);
     setFromAmount(
-      value ? Number(value) * (prices ? prices.AE / prices.ETH : 0) : '',
+      Number(value) ? BigNumber(value).dividedBy(prices ?  prices.aeEthToAeRatio : 1).toFixed(18).toString() : '',
     );
-  };
+  }
 
   return (
     <>
