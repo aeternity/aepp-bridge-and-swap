@@ -20,17 +20,18 @@ import { useFormStore } from './stores/formStore';
 
 
 function App() {
-  const { connectAe }= useWalletStore();
+  const { connectAe } = useWalletStore();
   const { setFromAmount, setToAmount } = useFormStore();
   const { flow, setStep, setFlow } = useExchangeStore();
   const { mode, setMode } = useThemeStore();
 
   useEffect(() => {
+    const search = new URLSearchParams(window.location.search);
     const query = {
-      aeAddress: new URLSearchParams(window.location.search).get('ae-address'),
-      flow: new URLSearchParams(window.location.search).get('flow'),
-      step: new URLSearchParams(window.location.search).get('step'),
-      transaction: new URLSearchParams(window.location.search).get('transaction'),
+      aeAddress: search.get('ae-address'),
+      flow: search.get('flow'),
+      step: search.get('step'),
+      transaction: search.get('transaction'),
     };
 
     if (query.aeAddress) {
@@ -41,16 +42,16 @@ function App() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const unpackedTransaction = unpackTx(query.transaction as `tx_${string}`, Tag.SignedTx) as any;
       if (unpackedTransaction.encodedTx.contractId === Constants.ae_dex_router_address) {
-      setFlow(query.flow as FlowType);
-        fetchJson(`https://mainnet.aeternity.io/v3/contracts/${unpackedTransaction.encodedTx.contractId}/code`)
-          .then(({ bytecode }) => {
-            const bytecodeContractCallEncoder = new BytecodeContractCallEncoder(bytecode);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const decodedCallData = bytecodeContractCallEncoder.decodeCall(unpackedTransaction.encodedTx.callData) as any;
-            setFromAmount(BigNumber(decodedCallData.args[0] as bigint).shiftedBy(-18).toNumber());
-            setToAmount(BigNumber(decodedCallData.args[1] as bigint).shiftedBy(-18).toNumber());
-            setStep(Number(query.step));
-        })
+        setFlow(query.flow as FlowType);
+          fetchJson(`https://mainnet.aeternity.io/v3/contracts/${unpackedTransaction.encodedTx.contractId}/code`)
+            .then(({ bytecode }) => {
+              const bytecodeContractCallEncoder = new BytecodeContractCallEncoder(bytecode);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const decodedCallData = bytecodeContractCallEncoder.decodeCall(unpackedTransaction.encodedTx.callData) as any;
+              setFromAmount(BigNumber(decodedCallData.args[0] as bigint).shiftedBy(-18).toNumber());
+              setToAmount(BigNumber(decodedCallData.args[1] as bigint).shiftedBy(-18).toNumber());
+              setStep(Number(query.step));
+          })
       }
     }
 
@@ -58,6 +59,8 @@ function App() {
     const stored = localStorage.getItem('theme-mode');
     if (stored === 'light' || stored === 'dark') {
       setMode(stored);
+    } else if (window.matchMedia?.('(prefers-color-scheme: dark)')?.matches) {
+      setMode('dark');
     } else {
       setMode('light');
     }

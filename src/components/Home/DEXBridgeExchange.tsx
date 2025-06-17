@@ -10,13 +10,14 @@ const DEXBridgeExchange = () => {
 
   return (
     <>
-      <Container sx={{ maxWidth: '472px' }} maxWidth={false} disableGutters>
+      <Container sx={{ maxWidth: '472px' }} maxWidth={false}>
         <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
-          <Box sx={{ position: 'relative', marginTop: '160px' }}>
+          <Box sx={{ position: 'relative', marginTop: '160px', paddingRight: '24px' }}>
             <img
               src={'/assets/superheroswaplogo.svg'}
               style={{
-                width: '300px',
+                width: '100%',
+                maxWidth: '300px',
                 height: 'auto',
               }}
             />
@@ -26,12 +27,12 @@ const DEXBridgeExchange = () => {
                 width: 'auto',
                 height: '35px',
                 position: 'absolute',
-                right: '-30px',
+                right: '-8px',
                 top: '-25px',
               }}
             />
           </Box>
-          <Typography fontSize={'23px'}>
+          <Typography fontSize={'23px'} textAlign={'center'}>
             what would you like to swap?
           </Typography>
         </Box>
@@ -40,7 +41,7 @@ const DEXBridgeExchange = () => {
           flexDirection={'column'}
           alignItems={'stretch'}
           gap={'15px'}
-          sx={{ margin: '67px 0px' }}
+          sx={{ margin: '60px 0px' }}
         >
           {tab === 0 ? (
             <>

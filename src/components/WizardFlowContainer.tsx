@@ -201,7 +201,9 @@ const WizardFlowContainer = ({
           </NextBox>
         </Box>
         {(aeAccount || isAppKitConnected) &&
-          <a href="#" onClick={event => returnToConnectStep(event)}>Disconnect</a>
+          <Box>
+            <a href="#" onClick={event => returnToConnectStep(event)}>Disconnect</a>
+          </Box>
         }
         <Typography fontSize="16px" color={'error'}>
           {error}
