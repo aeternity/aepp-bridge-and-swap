@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Container,
+  Link,
   Theme,
   Typography,
   useTheme,
@@ -27,10 +28,8 @@ const StyledContainer = styled(Container)<StyledProps>(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '0px 20px',
   [theme.breakpoints.down('sm')]: {
-    margin: '20px 0px',
-    padding: '0px 5px',
+    marginTop: '20px',
   },
 }));
 
@@ -52,7 +51,7 @@ const ContentBox = styled(Box)<StyledProps>(({ theme }) => ({
 const BackBox = styled(Box)<StyledProps>(({ theme }) => ({
   marginTop: '50px',
   [theme.breakpoints.down('md')]: {
-    marginTop: '0px',
+    marginTop: '24px',
     order: 2,
   },
 }));
@@ -60,7 +59,7 @@ const BackBox = styled(Box)<StyledProps>(({ theme }) => ({
 const NextBox = styled(Box)<StyledProps>(({ theme }) => ({
   marginTop: '50px',
   [theme.breakpoints.down('md')]: {
-    marginTop: '0px',
+    marginTop: '24px',
     order: 3,
   },
 }));
@@ -121,7 +120,7 @@ const WizardFlowContainer = ({
   }
 
   return (
-    <StyledContainer maxWidth={false} disableGutters {...props}>
+    <StyledContainer maxWidth={false} {...props}>
       <Box
         display={'flex'}
         justifyContent={'space-between'}
@@ -183,12 +182,22 @@ const WizardFlowContainer = ({
               currentStep < 2 && (
                 <StepArrowButton
                   text={'Back'}
-                  rotation={'-180deg'}
+                  prev={true}
                   onClick={currentStep == 0 ? reset : prevStep}
                 />
               )}
           </BackBox>
-          <ContentBox>{content}</ContentBox>
+          <ContentBox>
+            {content}
+
+            {(aeAccount || isAppKitConnected) &&
+              <Box>
+                <Link href="#" onClick={event => returnToConnectStep(event)}>
+                  Disconnect wallets
+                </Link>
+              </Box>
+            }
+          </ContentBox>
           <NextBox>
             {(currentStep !== steps.length - 1 ||
               status !== Status.COMPLETED) && (
@@ -200,21 +209,16 @@ const WizardFlowContainer = ({
             )}
           </NextBox>
         </Box>
-        {(aeAccount || isAppKitConnected) &&
-          <Box>
-            <a href="#" onClick={event => returnToConnectStep(event)}>Disconnect</a>
-          </Box>
-        }
         <Typography fontSize="16px" color={'error'}>
           {error}
         </Typography>
-        {error && retry ? (
-          <Box>
+        <Box marginTop={'16px'}>
+          {error && retry ? (
             <Button onClick={retry}>Retry</Button>
-          </Box>
-        ) : (
-          <Typography fontSize="16px">{footer}</Typography>
-        )}
+          ) : (
+            <Typography fontSize="16px">{footer}</Typography>
+          )}
+        </Box>
       </Box>
       <Button
         color={'primary'}

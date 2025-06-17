@@ -17,7 +17,7 @@ const ExchangeFlow = () => {
   const steps = flowSteps[flow];
   const StepComponent = steps[currentStep];
 
-  return <Box>{StepComponent}</Box>;
+  return StepComponent;
 };
 
 export default ExchangeFlow;

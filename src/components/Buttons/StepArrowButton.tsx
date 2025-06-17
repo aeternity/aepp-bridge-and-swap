@@ -4,9 +4,10 @@ import styled from '@emotion/styled';
 import ArrowPrimary from '../../assets/ArrowPrimary';
 
 const StyledButtonBase = styled(ButtonBase)({
-  width: '40px',
   height: 'auto',
   transition: 'transform 0.15s ease',
+  paddingInline: '16px',
+  willChange: 'transform',
   '&:hover': {
     transform: 'scale(1.1)',
   },
@@ -15,14 +16,14 @@ const StyledButtonBase = styled(ButtonBase)({
 interface Props {
   disabled?: boolean;
   text?: string;
-  rotation?: string;
+  prev?: boolean;
   onClick?: () => void;
 }
 
 const StepArrowButton = ({
   disabled,
   text,
-  rotation = '0deg',
+  prev,
   onClick,
 }: Props) => {
   const theme = useTheme();
@@ -33,13 +34,13 @@ const StepArrowButton = ({
       sx={{ opacity: disabled ? 0.4 : 1 }}
       onClick={onClick}
     >
-      <Box>
-        <Typography>{text}</Typography>
+      <Box display={'flex'} gap={'6px'} flexDirection={prev ? 'row-reverse' : 'row'} alignItems={'center'}>
+        <Typography fontSize={'18px'}>{text}</Typography>
         <ArrowPrimary
           style={{
-            width: '100%',
+            width: '30px',
             height: 'auto',
-            transform: `rotate(${rotation})`,
+            transform: prev ? 'rotate(180deg)' : undefined,
             color: theme.palette.primary.main,
           }}
         />
