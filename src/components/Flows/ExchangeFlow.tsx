@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import { flowSteps } from './FlowSteps';
 import { useExchangeStore } from '../../stores/exchangeStore';
 import { useFormStore } from '../../stores/formStore';

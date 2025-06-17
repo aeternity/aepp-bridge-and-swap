@@ -14,8 +14,8 @@ const Background = () => {
           zIndex: -2,
           background:
             theme.palette.mode === 'dark'
-              ? 'linear-gradient(340deg,rgba(0, 211, 161, 0) 50%, #53b6bf 100%);'
-              : 'linear-gradient(156deg,rgba(0, 211, 161, 0) 50%, #53b6bf 100%);',
+              ? 'linear-gradient(340deg, #141414 50%, #53b6bf 100%);'
+              : 'linear-gradient(156deg, white 50%, #53b6bf 100%);',
           backgroundAttachment: 'fixed',
           opacity: 0.4,
         }}
