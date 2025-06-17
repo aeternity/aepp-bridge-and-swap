@@ -8,7 +8,7 @@ import { useFormStore } from '../../../stores/formStore';
 import BridgeService from '../../../services/BridgeService';
 import { useWalletStore } from '../../../stores/walletStore';
 import WebsocketService from '../../../services/WebsocketService';
-import { formatNumber, isSafariBrowser } from '../../../helpers';
+import { formatNumber } from '../../../helpers';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
 import {
   AmountBox,
@@ -28,7 +28,6 @@ const EthToAeStep3 = () => {
   const { aeAccount } = useWalletStore();
   const { fromAmount, toAmount } = useFormStore();
   const { status, setStatus } = useExchangeStore();
-  const [ranBridge, setRanBridge] = useState(false);
   const [error, setError] = useState('');
   const { walletProvider } = useAppKitProvider<Eip1193Provider>('eip155');
 
@@ -98,12 +97,11 @@ const EthToAeStep3 = () => {
 
       await attemptBridge();
     };
-    if (aeAccount?.address && fromAmount && !ranBridge) {
+    if (aeAccount?.address && fromAmount) {
       isCancelled = false;
       Bridge();
-      setRanBridge(true);
     }
-  }, [aeAccount?.address, fromAmount, ranBridge]);
+  }, [aeAccount?.address, fromAmount]);
 
   const getMessageBoxContent = () => {
     switch (status) {
