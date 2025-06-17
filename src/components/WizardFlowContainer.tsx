@@ -7,7 +7,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
+
 import { Status, useExchangeStore } from '../stores/exchangeStore';
+import { useWalletStore } from '../stores/walletStore';
+import WalletService from '../services/WalletService';
+
 import ConnectedWalletInfo from './ConnectedWalletInfo';
 import StepArrowButton from './Buttons/StepArrowButton';
 
@@ -80,8 +85,27 @@ const WizardFlowContainer = ({
 }) => {
   const theme = useTheme();
 
-  const { flow, nextStep, prevStep, currentStep, reset, steps, status } =
+  const { flow, nextStep, prevStep, setStep, currentStep, reset, steps, status } =
     useExchangeStore();
+
+  const { aeAccount, disconnectAe, disconnectEth } = useWalletStore();
+
+  const { disconnect } = useDisconnect();
+
+  const { isConnected: isAppKitConnected } = useAppKitAccount();
+
+  function disconnectAll() {
+    disconnect();
+    disconnectAe();
+    disconnectEth();
+    WalletService.disconnectWallet();
+  }
+
+  function returnToConnectStep(event: React.MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    disconnectAll();
+    setStep(0);
+  }
 
   function resetState() {
     const query = {
@@ -93,6 +117,7 @@ const WizardFlowContainer = ({
       `/${query.aeAddress ? `?ae-address=${query.aeAddress}` : ''}`,
     );
     reset();
+    disconnectAll();
   }
 
   return (
@@ -175,6 +200,9 @@ const WizardFlowContainer = ({
             )}
           </NextBox>
         </Box>
+        {(aeAccount || isAppKitConnected) &&
+          <a href="#" onClick={event => returnToConnectStep(event)}>Disconnect</a>
+        }
         <Typography fontSize="16px" color={'error'}>
           {error}
         </Typography>
