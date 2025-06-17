@@ -55,6 +55,11 @@ function App() {
       }
     }
 
+    if (!query.transaction && query.flow) {
+      setFlow(query.flow as FlowType);
+      setStep(Number(query.step));
+    }
+
 
     const stored = localStorage.getItem('theme-mode');
     if (stored === 'light' || stored === 'dark') {

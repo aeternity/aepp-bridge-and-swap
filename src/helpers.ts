@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
-import { FlowType } from 'typescript';
 import { DEFAULT_LOCALE } from './constants';
 import { Route } from './types';
+import { FlowType } from './stores/exchangeStore';
 
 export function splitAddress(address: string | null | undefined): string {
   return address
@@ -79,8 +79,6 @@ export const createDeepLinkUrl = ({ type, callbackUrl, ...params }: {
   callbackUrl?: string,
   transaction?: string,
   networkId?: string,
-  step?: number;
-  flow?: FlowType;
   'x-success': string,
   'x-cancel': string,
 }) => {
@@ -122,8 +120,6 @@ export function sendTxDeepLinkUrl(networkId: string, encodedTx: string, flow: Fl
     type: 'sign-transaction',
     transaction: encodedTx,
     networkId,
-    step,
-    flow,
     // decode these urls because they will be encoded again
     'x-success': decodeURI(successUrl.href),
     'x-cancel': decodeURI(cancelUrl.href),

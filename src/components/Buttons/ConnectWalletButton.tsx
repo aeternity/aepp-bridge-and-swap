@@ -10,6 +10,7 @@ import {
   isSafariBrowser,
 } from '../../helpers';
 import { useAppKit, useAppKitAccount, useAppKitBalance } from '@reown/appkit/react';
+import { useExchangeStore } from '../../stores/exchangeStore';
 
 type Protocol = 'ETH' | 'AE';
 
@@ -31,6 +32,7 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     updateAeBalance,
     updateEthBalance,
   } = useWalletStore();
+  const { flow } = useExchangeStore();
   const { open } = useAppKit();
   const {
     address: ethereumAddressFromProvider,
@@ -65,7 +67,7 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
         const addressDeepLink = createDeepLinkUrl({
           type: 'address',
-          'x-success': `${window.location.href.split('?')[0]}?ae-address={address}&networkId={networkId}`,
+          'x-success': `${window.location.href.split('?')[0]}?ae-address={address}&networkId={networkId}&step=0&flow=${flow}`,
           'x-cancel': window.location.href.split('?')[0],
         });
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
