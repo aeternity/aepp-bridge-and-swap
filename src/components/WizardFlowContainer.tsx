@@ -190,7 +190,7 @@ const WizardFlowContainer = ({
           <ContentBox>
             {content}
 
-            {(aeAccount || isAppKitConnected) &&
+            {currentStep === 0 && (aeAccount || isAppKitConnected) &&
               <Box>
                 <Link href="#" onClick={event => returnToConnectStep(event)}>
                   Disconnect wallets
