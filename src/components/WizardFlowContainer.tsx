@@ -49,7 +49,6 @@ const ContentBox = styled(Box)<StyledProps>(({ theme }) => ({
 }));
 
 const BackBox = styled(Box)<StyledProps>(({ theme }) => ({
-  marginTop: '50px',
   [theme.breakpoints.down('md')]: {
     marginTop: '24px',
     order: 2,
@@ -57,7 +56,6 @@ const BackBox = styled(Box)<StyledProps>(({ theme }) => ({
 }));
 
 const NextBox = styled(Box)<StyledProps>(({ theme }) => ({
-  marginTop: '50px',
   [theme.breakpoints.down('md')]: {
     marginTop: '24px',
     order: 3,
@@ -171,7 +169,7 @@ const WizardFlowContainer = ({
         <Box
           display={'flex'}
           flexDirection={'row'}
-          alignItems={'start'}
+          alignItems={'center'}
           justifyContent={'center'}
           columnGap={'40px'}
           flexWrap={'wrap'}
@@ -192,7 +190,7 @@ const WizardFlowContainer = ({
 
             {currentStep === 0 && (aeAccount || isAppKitConnected) &&
               <Box>
-                <Link href="#" onClick={event => returnToConnectStep(event)}>
+                <Link href="#" onClick={event => returnToConnectStep(event)} sx={{ opacity: '80%' }}>
                   Disconnect wallets
                 </Link>
               </Box>

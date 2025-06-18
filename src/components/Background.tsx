@@ -15,7 +15,7 @@ const Background = () => {
           background:
             theme.palette.mode === 'dark'
               ? 'linear-gradient(340deg, #141414 50%, #53b6bf 100%);'
-              : 'linear-gradient(156deg, white 50%, #53b6bf 100%);',
+              : 'linear-gradient(160deg, white 30%, #53b6bf 100%);',
           backgroundAttachment: 'fixed',
           opacity: 0.4,
         }}

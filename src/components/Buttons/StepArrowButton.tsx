@@ -13,7 +13,7 @@ const StyledButtonBase = styled(ButtonBase)({
   fontFamily: 'var(--my-font), sans-serif',
   fontSize: '15px',
   '&:hover': {
-    color: 'white',
+    color: '#3a7f85',
   },
 });
 

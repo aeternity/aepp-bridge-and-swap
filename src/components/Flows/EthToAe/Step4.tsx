@@ -57,7 +57,7 @@ const EthToAeStep4 = () => {
       const amountOutWei = BigInt(
         Math.trunc(parseFloat(toAmount.toString()) * 10 ** 18),
       );
-  
+
       const attemptChangeAllowance = async () => {
         try {
           if (isCancelled) return;
@@ -120,8 +120,9 @@ const EthToAeStep4 = () => {
           <>
             You are about to bridge{' '}
             <span style={{ fontWeight: 500 }}>{fromAmount} æETH</span> to{' '}
-            <span style={{ fontWeight: 500 }}>≈{toAmount} AE.</span> Coins will
-            be received by your connected æternity account.
+            <span style={{ fontWeight: 500 }}>≈{toAmount} AE.</span>
+            <br />
+            Coins will be received by your connected æternity account.
           </>
         );
       case Status.CONFIRMED:
