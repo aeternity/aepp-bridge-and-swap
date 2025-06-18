@@ -14,13 +14,13 @@ export default class WebsocketService {
         if (data.source === "mdw" && data.subscription === "Object") {
           // validate parameter
           console.debug(data);
+          const args = data.payload.tx.arguments;
+          const [arg] = args || [];
           if (
-            data.payload.tx.arguments.length === 1 &&
-            data.payload.tx.arguments[0].value[1]?.value ===
-              Constants.eth_native_eth_placeholder_address &&
-            data.payload.tx.arguments[0].value[2]?.value === aeAddress &&
-            data.payload.tx.arguments[0].value[3]?.value?.toString() ===
-              amountWei.toString()
+            args.length === 1
+            && arg.value[1]?.value === Constants.eth_native_eth_placeholder_address
+            && arg.value[2]?.value === aeAddress
+            && arg.value[3]?.value?.toString() === amountWei.toString()
           ) {
             resolve();
           }

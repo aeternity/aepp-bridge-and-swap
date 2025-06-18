@@ -1,15 +1,19 @@
 import React from 'react';
-import { Box, ButtonBase, Typography, useTheme } from '@mui/material';
+import { Box, ButtonBase } from '@mui/material';
 import styled from '@emotion/styled';
 import ArrowPrimary from '../../assets/ArrowPrimary';
 
 const StyledButtonBase = styled(ButtonBase)({
   height: 'auto',
-  transition: 'transform 0.15s ease',
+  transition: 'all 0.15s ease',
   paddingInline: '16px',
   willChange: 'transform',
+  textTransform: 'uppercase',
+  letterSpacing: '0.2em',
+  fontFamily: 'var(--my-font), sans-serif',
+  fontSize: '15px',
   '&:hover': {
-    transform: 'scale(1.1)',
+    color: 'white',
   },
 });
 
@@ -26,22 +30,22 @@ const StepArrowButton = ({
   prev,
   onClick,
 }: Props) => {
-  const theme = useTheme();
-
   return (
     <StyledButtonBase
       disabled={disabled}
-      sx={{ opacity: disabled ? 0.4 : 1 }}
+      sx={{
+        opacity: disabled ? 0.4 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      }}
       onClick={onClick}
     >
       <Box display={'flex'} gap={'6px'} flexDirection={prev ? 'row-reverse' : 'row'} alignItems={'center'}>
-        <Typography fontSize={'18px'}>{text}</Typography>
+        {text}
         <ArrowPrimary
           style={{
             width: '30px',
             height: 'auto',
             transform: prev ? 'rotate(180deg)' : undefined,
-            color: theme.palette.primary.main,
           }}
         />
       </Box>

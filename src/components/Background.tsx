@@ -19,7 +19,7 @@ const Background = () => {
           backgroundAttachment: 'fixed',
           opacity: 0.4,
         }}
-      ></Box>
+      />
     </>
   );
 };
