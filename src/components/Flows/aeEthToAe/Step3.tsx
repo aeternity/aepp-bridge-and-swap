@@ -88,7 +88,7 @@ const AeEthToAeStep3 = () => {
           setError('');
 
           const { success, values, error } =
-            await await DexServiceInstance.pollSwapAeEthToAE(txHash);
+            await DexServiceInstance.pollSwapAeEthToAE(txHash);
           if (success && values) {
             const [aeEthIn, aeOut] = values;
             setSwapResult({

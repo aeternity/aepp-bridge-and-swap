@@ -18,10 +18,10 @@ import { FlowType } from '../stores/exchangeStore';
 
 export async function postOrPayForTransaction(signedTransaction: `tx_${string}`, isPost: boolean) {
   return isPost
-    ? await aeSdk.api
+    ? aeSdk.api
         .postTransaction({ tx: signedTransaction })
         .then((result) => ({ hash: result.txHash }))
-    : await payForTx(signedTransaction);
+    : payForTx(signedTransaction);
 }
 
 class DexService {
@@ -139,7 +139,7 @@ class DexService {
           amountWei + (amountWei * Constants.allowance_slippage) / 100n,
         ],
       );
-      this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, newAccount);
+      await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, newAccount);
     } else {
       console.info('Changing allowance.');
       const amount_with_allowance_slippage =
@@ -153,7 +153,7 @@ class DexService {
             (amount_with_allowance_slippage - allowance).toString(),
           ],
         );
-        this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, false);
+        await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, newAccount);
       }
     }
   }

@@ -46,7 +46,11 @@ export async function payForTx(singedTx: Encoded.Transaction) {
     ) as [string, [string, bigint]];
 
     // hash of the change_allowance or create_allowance functions
-    if (Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70=" && Buffer.from(args[0]).toString("base64") !== "78xY4Q==" ) { 
+    if (
+      Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70="
+      && Buffer.from(args[0]).toString("base64") !== "78xY4Q=="
+      && Buffer.from(args[0]).toString("base64") !== "PYVajg=="
+    ) { 
       throw new Error("Invalid function: " + Buffer.from(args[0]).toString("base64"));
     }
     // check for router address
