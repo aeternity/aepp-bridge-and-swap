@@ -79,6 +79,7 @@ export const createDeepLinkUrl = ({ type, callbackUrl, ...params }: {
   callbackUrl?: string,
   transaction?: string,
   networkId?: string,
+  innerTx?: boolean,
   'x-success': string,
   'x-cancel': string,
 }) => {
@@ -96,7 +97,14 @@ export const createDeepLinkUrl = ({ type, callbackUrl, ...params }: {
   return url;
 };
 
-export function sendTxDeepLinkUrl(networkId: string, encodedTx: string, flow: FlowType, step: number) {
+export function sendTxDeepLinkUrl(
+  networkId: string,
+  encodedTx: string,
+  flow: FlowType,
+  step: number,
+  amountWei: bigint,
+  isInnerTransaction?: boolean,
+) {
   const currentUrl = new URL(window.location.href);
   // reset url
   currentUrl.searchParams.delete('transaction');
@@ -109,17 +117,20 @@ export function sendTxDeepLinkUrl(networkId: string, encodedTx: string, flow: Fl
   successUrl.searchParams.set('transaction', '{transaction}');
   successUrl.searchParams.set('flow', flow as unknown as string);
   successUrl.searchParams.set('step', step.toString());
+  successUrl.searchParams.set('amountFrom', amountWei.toString());
 
   // append transaction parameter for failed case
   const cancelUrl = new URL(currentUrl.href);
   cancelUrl.searchParams.set('transaction-status', 'cancelled');
   cancelUrl.searchParams.set('flow', flow as unknown as string);
   cancelUrl.searchParams.set('step', step.toString());
+  cancelUrl.searchParams.set('amountFrom', amountWei.toString());
 
   return createDeepLinkUrl({
     type: 'sign-transaction',
     transaction: encodedTx,
     networkId,
+    innerTx: isInnerTransaction,
     // decode these urls because they will be encoded again
     'x-success': decodeURI(successUrl.href),
     'x-cancel': decodeURI(cancelUrl.href),

@@ -57,6 +57,13 @@ export default class WalletService {
       });
   }
 
+  static isNewAccount(address: `ak_${string}`): Promise<boolean> {
+    return aeSdk
+      .getBalance(address)
+      .then(() => false)
+      .catch(() => true);
+  }
+
   static async getAeWethBalance(address: `ak_${string}`): Promise<bigint> {
     console.log('getAeWethBalance');
     const tokenInstance = await aeSdk.initializeContract({

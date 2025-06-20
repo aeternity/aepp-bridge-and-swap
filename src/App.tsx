@@ -14,9 +14,8 @@ import { AppKitProvider } from './context/AppKitProvider';
 import { useThemeStore } from './stores/themeStore';
 import { FlowType } from './stores/exchangeStore';
 import { useWalletStore } from './stores/walletStore';
-import { fetchJson } from './helpers';
-import { Constants } from './constants';
 import { useFormStore } from './stores/formStore';
+import TokenPriceService from './services/TokenPriceService';
 
 
 function App() {
@@ -32,28 +31,22 @@ function App() {
       flow: search.get('flow'),
       step: search.get('step'),
       transaction: search.get('transaction'),
+      amountFrom: search.get('amountFrom'),
     };
 
     if (query.aeAddress) {
       connectAe(query.aeAddress);
     }
-
-    if (query.transaction) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const unpackedTransaction = unpackTx(query.transaction as `tx_${string}`, Tag.SignedTx) as any;
-      if (unpackedTransaction.encodedTx.contractId === Constants.ae_dex_router_address) {
-        setFlow(query.flow as FlowType);
-          fetchJson(`https://mainnet.aeternity.io/v3/contracts/${unpackedTransaction.encodedTx.contractId}/code`)
-            .then(({ bytecode }) => {
-              const bytecodeContractCallEncoder = new BytecodeContractCallEncoder(bytecode);
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const decodedCallData = bytecodeContractCallEncoder.decodeCall(unpackedTransaction.encodedTx.callData) as any;
-              setFromAmount(BigNumber(decodedCallData.args[0] as bigint).shiftedBy(-18).toNumber());
-              setToAmount(BigNumber(decodedCallData.args[1] as bigint).shiftedBy(-18).toNumber());
-              setStep(Number(query.step));
-          })
-      }
+    if (query.flow) {
+      setFlow(query.flow as FlowType);
     }
+    TokenPriceService.getPrices().then((prices) => {
+      if (query.transaction && query.amountFrom) {
+        setFromAmount(BigNumber(query.amountFrom).shiftedBy(-18).toNumber());
+        setToAmount(BigNumber(query.amountFrom).multipliedBy(prices.aeEthToAeRatio).shiftedBy(-18).toNumber());
+        setStep(Number(query.step));
+      }
+    });
 
     if (!query.transaction && query.flow) {
       setFlow(query.flow as FlowType);

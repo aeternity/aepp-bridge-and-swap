@@ -39,6 +39,7 @@ class DexService {
     callData: `cb_${string}`,
     contractId: `ct_${string}`,
     userBalance: bigint,
+    amountWei: bigint,
     newAccount: boolean,
   ) {
 
@@ -50,10 +51,9 @@ class DexService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const unpackedTransaction = unpackTx(query.transaction as `tx_${string}`, Tag.SignedTx) as any;
 
-      const cost = getExecutionCostBySignedTx(query.transaction as `tx_${string}`, 'ae_mainnet');
+      const cost = getExecutionCostBySignedTx(query.transaction as `tx_${string}`, 'ae_mainnet', { innerTx: "fee-payer" });
       const isUserHaveEnoughCoins = userBalance > cost + Constants.ae_balance_threshold;
       if (unpackedTransaction.encodedTx.contractId === contractId) {
-
         return postOrPayForTransaction(query.transaction as `tx_${string}`, isUserHaveEnoughCoins)
       }
     }
@@ -74,9 +74,10 @@ class DexService {
 
     if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
       console.log('sendTxDeepLinkUrl');
+       await new Promise((resolve) => setTimeout(resolve, 3000));
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step);
+      window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step, amountWei, !isUserHaveEnoughCoins);
       return;
     }
     const signedContractCallTx = await aeSdk.signTransaction(
@@ -108,7 +109,7 @@ class DexService {
       address: Constants.ae_weth_address,
     });
 
-    let newAccount = false;
+    const newAccount = await WalletService.isNewAccount(this.address);
 
     const { decodedResult: allowance } = await tokenContractWallet
       .allowance(
@@ -120,9 +121,6 @@ class DexService {
       )
       .catch((error) => {
         console.info(error);
-        if (error?.statusCode === 404) {
-          newAccount = true;
-        }
 
         return {
           decodedResult: undefined,
@@ -139,12 +137,12 @@ class DexService {
           amountWei + (amountWei * Constants.allowance_slippage) / 100n,
         ],
       );
-      await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, newAccount);
+      await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, amountWei, newAccount);
     } else {
-      console.info('Changing allowance.');
       const amount_with_allowance_slippage =
         amountWei + (amountWei * Constants.allowance_slippage) / 100n;
       if (allowance < amount_with_allowance_slippage) {
+        console.info('Changing allowance.');
         const calldata = tokenContract._calldata.encode(
           'FungibleTokenFull',
           'change_allowance',
@@ -153,7 +151,7 @@ class DexService {
             (amount_with_allowance_slippage - allowance).toString(),
           ],
         );
-        await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, newAccount);
+        await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, amountWei, newAccount);
       }
     }
   }
@@ -209,7 +207,7 @@ class DexService {
         aHourFromNow, // deadline is 1 hour
       ],
     );
-    const result = await this.buildAndSend(calldata, Constants.ae_dex_router_address, userBalance, false);
+    const result = await this.buildAndSend(calldata, Constants.ae_dex_router_address, userBalance, amountWei, false);
     if (!result?.hash) {
       throw new Error('Failed to build and send the transaction');
     }
