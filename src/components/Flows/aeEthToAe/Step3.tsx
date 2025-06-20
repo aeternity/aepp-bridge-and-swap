@@ -10,7 +10,7 @@ import DexService from '../../../services/DexService';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
 
 import ExternalIcon from '../../../assets/ExternalIcon';
-import { formatNumber } from '../../../helpers';
+import { extractErrorMessage, formatNumber } from '../../../helpers';
 import {
   AmountBox,
   AmountTypography,
@@ -51,7 +51,11 @@ const AeEthToAeStep3 = () => {
         return;
       }
 
-      const DexServiceInstance = new DexService(aeAccount?.address as `ak_${string}`, 'aeEthToAe', 2);
+      const DexServiceInstance = new DexService(
+        aeAccount?.address as `ak_${string}`,
+        'aeEthToAe',
+        2,
+      );
 
       const amountInWei = BigInt(
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
@@ -63,6 +67,7 @@ const AeEthToAeStep3 = () => {
 
       const attemptChangeAllowance = async () => {
         try {
+          setError('');
           if (isCancelled) return;
           await DexServiceInstance.changeAllowance(amountInWei);
           if (isCancelled) return;
@@ -71,16 +76,20 @@ const AeEthToAeStep3 = () => {
           await attemptSwapAeEthToAe();
         } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e instanceof Error ? e.message : 'Something went wrong.');
           currentSubstep = attemptChangeAllowance;
+          setError(extractErrorMessage(e));
         }
       };
 
       const attemptSwapAeEthToAe = async () => {
         try {
           setStatus(Status.PENDING);
+          setError('');
           if (isCancelled) return;
-          const txHash = await DexServiceInstance.swapAeEthToAE(amountInWei, amountOutWei);
+          const txHash = await DexServiceInstance.swapAeEthToAE(
+            amountInWei,
+            amountOutWei,
+          );
           setHash(txHash);
           if (isCancelled) return;
 
@@ -102,8 +111,8 @@ const AeEthToAeStep3 = () => {
           }
         } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e instanceof Error ? e.message : 'Something went wrong.');
           currentSubstep = attemptSwapAeEthToAe;
+          setError(extractErrorMessage(e));
         }
       };
 

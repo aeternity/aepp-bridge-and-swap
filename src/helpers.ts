@@ -72,16 +72,21 @@ export const createOnAccountObject = (address: string) => ({
 });
 
 export const isSafariBrowser = () =>
-  navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
+  navigator.userAgent.includes('Safari') &&
+  !navigator.userAgent.includes('Chrome');
 
-export const createDeepLinkUrl = ({ type, callbackUrl, ...params }: {
-  type: string,
-  callbackUrl?: string,
-  transaction?: string,
-  networkId?: string,
-  innerTx?: boolean,
-  'x-success': string,
-  'x-cancel': string,
+export const createDeepLinkUrl = ({
+  type,
+  callbackUrl,
+  ...params
+}: {
+  type: string;
+  callbackUrl?: string;
+  transaction?: string;
+  networkId?: string;
+  innerTx?: boolean;
+  'x-success': string;
+  'x-cancel': string;
 }) => {
   const url = new URL(`https://wallet.superhero.com/${type}`);
   if (callbackUrl) {
@@ -150,10 +155,12 @@ export function sendTxDeepLinkUrl(
  */
 function orderRoute(route: Route[], tokenA: `ct_${string}`): Route[] {
   if (!route || !route.length) return [];
-  return route.length < 2 || route[0].token0 === tokenA || route[0].token1 === tokenA
+  return route.length < 2 ||
+    route[0].token0 === tokenA ||
+    route[0].token1 === tokenA
     ? route
     : [...route].reverse();
-};
+}
 /**
  * @description extracts the pair reserves from a swap-route
  * @param {array} route - the route in the shape received from 'dex-backend'
@@ -162,30 +169,47 @@ function orderRoute(route: Route[], tokenA: `ct_${string}`): Route[] {
  * NOTE: doesn't matter if the route starts with tokenA or with tokenB.
  * the function is capable to figure out the right order
  */
-export function getRouteReserves(route: Route[], tokenA: `ct_${string}`): number[][] {
+export function getRouteReserves(
+  route: Route[],
+  tokenA: `ct_${string}`,
+): number[][] {
   if (!route || !route.length) return [];
   return orderRoute(route, tokenA).reduce(
-    ([acc, prev], { token0, token1, liquidityInfo: { reserve0, reserve1 } }) => {
+    (
+      [acc, prev],
+      { token0, token1, liquidityInfo: { reserve0, reserve1 } },
+    ) => {
       const [reserves, next] =
-        token0 === prev ? [[reserve0, reserve1], token1] : [[reserve1, reserve0], token0];
+        token0 === prev
+          ? [[reserve0, reserve1], token1]
+          : [[reserve1, reserve0], token0];
       return [acc.concat([reserves]), next];
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [[], tokenA] as any,
   )[0];
-};
+}
 
 const ratioFromPairReserves = (pairReserves: number[][]) =>
   pairReserves.reduce(
-    (ratio, [reserveA, reserveB]) => ratio.multipliedBy(BigNumber(reserveB).div(reserveA)),
+    (ratio, [reserveA, reserveB]) =>
+      ratio.multipliedBy(BigNumber(reserveB).div(reserveA)),
     BigNumber(1),
   );
 
-  /**
+/**
  * @description gets ratio from a full swap-route path
  * @param {array} route path
  * @param {string} tokenA address
  * @return {BigNumber}
  */
 export const ratioFromRoute = (route: Route[], tokenA: `ct_${string}`) =>
-  ratioFromPairReserves(getRouteReserves(route, tokenA))
+  ratioFromPairReserves(getRouteReserves(route, tokenA));
+
+export const extractErrorMessage = (e: unknown): string => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const error = e as any;
+  return (
+    error?.info?.error?.message || error?.message || 'Something went wrong.'
+  );
+};

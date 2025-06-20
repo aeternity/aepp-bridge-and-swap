@@ -5,7 +5,7 @@ import { useFormStore } from '../../../stores/formStore';
 import Link from 'next/link';
 import ExternalIcon from '../../../assets/ExternalIcon';
 import { useWalletStore } from '../../../stores/walletStore';
-import { formatNumber } from '../../../helpers';
+import { extractErrorMessage, formatNumber } from '../../../helpers';
 import DexService from '../../../services/DexService';
 import { BigNumber } from 'bignumber.js';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
@@ -49,7 +49,11 @@ const EthToAeStep4 = () => {
         return;
       }
 
-      const DexServiceInstance = new DexService(aeAccount.address as `ak_${string}`, 'ethToAe', 3);
+      const DexServiceInstance = new DexService(
+        aeAccount.address as `ak_${string}`,
+        'ethToAe',
+        3,
+      );
 
       const amountInWei = BigInt(
         Math.trunc(parseFloat(ethAmount.toString()) * 10 ** 18),
@@ -60,6 +64,7 @@ const EthToAeStep4 = () => {
 
       const attemptChangeAllowance = async () => {
         try {
+          setError('');
           if (isCancelled) return;
           await DexServiceInstance.changeAllowance(amountInWei);
           if (isCancelled) return;
@@ -68,16 +73,20 @@ const EthToAeStep4 = () => {
           await attemptSwapAeEthToAe();
         } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e instanceof Error ? e.message : 'Something went wrong.');
           currentSubstep = attemptChangeAllowance;
+          setError(extractErrorMessage(e));
         }
       };
 
       const attemptSwapAeEthToAe = async () => {
         try {
+          setError('');
           setStatus(Status.PENDING);
           if (isCancelled) return;
-          const txHash = await DexServiceInstance.swapAeEthToAE(amountInWei, amountOutWei);
+          const txHash = await DexServiceInstance.swapAeEthToAE(
+            amountInWei,
+            amountOutWei,
+          );
           setHash(txHash);
           if (isCancelled) return;
 
@@ -99,8 +108,8 @@ const EthToAeStep4 = () => {
           }
         } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e instanceof Error ? e.message : 'Something went wrong.');
           currentSubstep = attemptSwapAeEthToAe;
+          setError(extractErrorMessage(e));
         }
       };
 

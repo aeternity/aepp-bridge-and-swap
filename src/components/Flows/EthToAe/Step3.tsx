@@ -8,7 +8,7 @@ import { useFormStore } from '../../../stores/formStore';
 import BridgeService from '../../../services/BridgeService';
 import { useWalletStore } from '../../../stores/walletStore';
 import WebsocketService from '../../../services/WebsocketService';
-import { formatNumber } from '../../../helpers';
+import { extractErrorMessage, formatNumber } from '../../../helpers';
 import { Status, useExchangeStore } from '../../../stores/exchangeStore';
 import {
   AmountBox,
@@ -54,11 +54,16 @@ const EthToAeStep3 = () => {
 
       const attemptBridge = async () => {
         try {
+          setError('');
           if (!SKIP_ETH) {
             if (isCancelled) return;
             const provider = new ethers.BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            await BridgeService.bridgeEthToAe(amountInWei, aeAccount.address, signer);
+            await BridgeService.bridgeEthToAe(
+              amountInWei,
+              aeAccount.address,
+              signer,
+            );
             if (isCancelled) return;
           }
           setStatus(Status.CONFIRMED);
@@ -66,13 +71,14 @@ const EthToAeStep3 = () => {
           await attemptWaitForBridge();
         } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e instanceof Error ? e.message : 'Something went wrong.');
           currentSubstep = attemptBridge;
+          setError(extractErrorMessage(e));
         }
       };
 
       const attemptWaitForBridge = async () => {
         try {
+          setError('');
           if (!SKIP_ETH) {
             if (isCancelled) return;
             // Wait for a moment to let the bridge finalize
@@ -90,8 +96,8 @@ const EthToAeStep3 = () => {
           setError('');
         } catch (e: unknown) {
           setStatus(Status.PENDING);
-          setError(e instanceof Error ? e.message : 'Something went wrong.');
-          currentSubstep = attemptWaitForBridge;
+          currentSubstep = attemptBridge;
+          setError(extractErrorMessage(e));
         }
       };
 
