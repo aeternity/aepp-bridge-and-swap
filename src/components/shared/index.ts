@@ -72,5 +72,6 @@ export const TokenTypography = styled(Typography)<StepProps>(({ theme }) => ({
   top: '-1px',
   [theme.breakpoints.down('sm')]: {
     fontSize: '13px',
+    top: '-2px',
   },
 }));
