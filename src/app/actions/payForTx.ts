@@ -8,9 +8,14 @@ import {
   Tag,
   unpackTx,
 } from "@aeternity/aepp-sdk";
-import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
-import routerACI from "dex-contracts-v2/build/AedexV2Router.aci.json";
+import { BytecodeContractCallEncoder } from "@aeternity/aepp-calldata";
 import { Constants } from "../../constants";
+import { fetchJson } from "../../helpers";
+
+export interface AeDecodedCallData {
+  functionName: string;
+  args: string[];
+}
 
 if (!process.env.NEXT_PUBLIC_AE_PRIVATE_KEY) {
   throw new Error("NEXT_PUBLIC_AE_PRIVATE_KEY is required");
@@ -24,16 +29,6 @@ const aeSdk = new AeSdk({
   accounts: [payerAccount],
 });
 
-const tokenContract = await aeSdk.initializeContract({
-  aci: aex9ACI,
-  address: Constants.ae_weth_address,
-});
-
-const routerContract = await aeSdk.initializeContract({
-  aci: routerACI,
-  address: Constants.ae_dex_router_address,
-});
-
 export async function payForTx(singedTx: Encoded.Transaction) {
   const result = unpackTx(singedTx, Tag.SignedTx);
   if (result.encodedTx.tag !== Tag.ContractCallTx)
@@ -41,48 +36,52 @@ export async function payForTx(singedTx: Encoded.Transaction) {
 
   // check for token contract
   if (result.encodedTx.contractId === Constants.ae_weth_address) {
-    const args = tokenContract._calldata.decodeContractByteArray(
-      result.encodedTx.callData,
-    ) as [string, [string, bigint]];
+    const { bytecode } = await fetchJson(`https://mainnet.aeternity.io/v3/contracts/${result.encodedTx.contractId}/code`);
 
-    // hash of the change_allowance or create_allowance functions
+    const bytecodeContractCallEncoder = new BytecodeContractCallEncoder(bytecode);
+
+    const transactionParams = bytecodeContractCallEncoder.decodeCall(
+      result.encodedTx.callData,
+    ) as AeDecodedCallData;
+
     if (
-      Buffer.from(args[0]).toString("base64") !== "Pe+/vVrvv70="
-      && Buffer.from(args[0]).toString("base64") !== "78xY4Q=="
-      && Buffer.from(args[0]).toString("base64") !== "PYVajg=="
-    ) { 
-      throw new Error("Invalid function: " + Buffer.from(args[0]).toString("base64"));
+      transactionParams.functionName !== 'create_allowance'
+      && transactionParams.functionName !== 'change_allowance'
+    ) {
+      throw new Error("Invalid function: " + transactionParams.functionName);
     }
     // check for router address
-    if (args[1][0] !== Constants.ae_dex_router_address.replace("ct_", "ak_")) {
+    if (transactionParams.args[0] !== Constants.ae_dex_router_address.replace("ct_", "ak_")) {
       throw new Error("Invalid router address");
     }
     // If the account was never used, upon transaction verifying sdk will throw an error: Account not found
-    // this is a known issue from sdk
+    // this is a known issue from sdk, using { verify: false } to avoid it
     return aeSdk.payForTransaction(singedTx, { verify: false });
   }
 
   // check for swap
   if (result.encodedTx.contractId === Constants.ae_dex_router_address) {
-    const args = routerContract._calldata.decodeContractByteArray(
-      result.encodedTx.callData,
-    ) as [string, [bigint, bigint, [string, string], string, bigint]];
+    const { bytecode } = await fetchJson(`https://mainnet.aeternity.io/v3/contracts/${result.encodedTx.contractId}/code`);
 
-    console.log(Buffer.from(args[0]).toString("base64"));
-    // hash of the swap function
-    if (Buffer.from(args[0]).toString("base64") !== "QiZRBw==") {
+    const bytecodeContractCallEncoder = new BytecodeContractCallEncoder(bytecode);
+
+    const transactionParams = bytecodeContractCallEncoder.decodeCall(
+      result.encodedTx.callData,
+    ) as AeDecodedCallData;
+
+    if (transactionParams.functionName !== 'swap_exact_tokens_for_ae') {
       throw new Error("Invalid function");
     }
     // check for router address
     if (
-      args[1][2][0] !== Constants.ae_dex_router_address &&
-      args[1][2][1] !== Constants.ae_wae_address
+      transactionParams.args[2][0] !== Constants.ae_dex_router_address &&
+      transactionParams.args[2][1] !== Constants.ae_wae_address
     ) {
       throw new Error("Invalid router address");
     }
 
     // If the account was never used, upon transaction verifying sdk will throw an error: Account not found
-    // this is a known issue from sdk
+    // this is a known issue from sdk, using { verify: false } to avoid it
     return aeSdk.payForTransaction(singedTx, { verify: false });
   }
 
