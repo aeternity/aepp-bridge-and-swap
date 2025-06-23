@@ -82,8 +82,16 @@ const WizardFlowContainer = ({
 }) => {
   const theme = useTheme();
 
-  const { flow, nextStep, prevStep, setStep, currentStep, reset, steps, status } =
-    useExchangeStore();
+  const {
+    flow,
+    nextStep,
+    prevStep,
+    setStep,
+    currentStep,
+    reset,
+    steps,
+    status,
+  } = useExchangeStore();
 
   const { aeAccount, disconnectAe, disconnectEth } = useWalletStore();
 
@@ -174,37 +182,50 @@ const WizardFlowContainer = ({
           columnGap={'40px'}
           flexWrap={'wrap'}
         >
-          <BackBox>
-            {(currentStep !== steps.length - 1 ||
-              status !== Status.COMPLETED) &&
-              currentStep < 2 && (
-                <StepArrowButton
-                  text={'Back'}
-                  prev={true}
-                  onClick={currentStep == 0 ? reset : prevStep}
-                />
-              )}
+          <BackBox
+            style={{
+              visibility:
+                (currentStep !== steps.length - 1 ||
+                  status !== Status.COMPLETED) &&
+                currentStep < 2
+                  ? 'visible'
+                  : 'hidden',
+            }}
+          >
+            <StepArrowButton
+              text={'Back'}
+              prev={true}
+              onClick={currentStep == 0 ? reset : prevStep}
+            />
           </BackBox>
           <ContentBox>
             {content}
 
-            {currentStep === 0 && (aeAccount || isAppKitConnected) &&
+            {currentStep === 0 && (aeAccount || isAppKitConnected) && (
               <Box>
-                <Link href="#" onClick={event => returnToConnectStep(event)} sx={{ opacity: '80%' }}>
+                <Link
+                  href="#"
+                  onClick={(event) => returnToConnectStep(event)}
+                  sx={{ opacity: '80%' }}
+                >
                   Disconnect wallets
                 </Link>
               </Box>
-            }
-          </ContentBox>
-          <NextBox>
-            {(currentStep !== steps.length - 1 ||
-              status !== Status.COMPLETED) && (
-              <StepArrowButton
-                text={'Next'}
-                onClick={nextStep}
-                disabled={buttonDisabled}
-              />
             )}
+          </ContentBox>
+          <NextBox
+            style={{
+              visibility:
+                currentStep !== steps.length - 1 || status !== Status.COMPLETED
+                  ? 'visible'
+                  : 'hidden',
+            }}
+          >
+            <StepArrowButton
+              text={'Next'}
+              onClick={nextStep}
+              disabled={buttonDisabled}
+            />
           </NextBox>
         </Box>
         <Typography fontSize="16px" color={'error'}>

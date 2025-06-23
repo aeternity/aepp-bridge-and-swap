@@ -19,11 +19,7 @@ const AeEthToAeStep1 = () => {
           </>
         }
         buttonDisabled={!aeAccount}
-        content={
-          <Box marginTop={'16px'}>
-            <ConnectWalletButton protocol={'AE'} />
-          </Box>
-        }
+        content={<ConnectWalletButton protocol={'AE'} />}
       />
     </>
   );
