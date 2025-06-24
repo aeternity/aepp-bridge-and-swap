@@ -181,14 +181,7 @@ const EthToAeStep4 = () => {
                   display: 'inline-block',
                 }}
               >
-                <Box
-                  display={'flex'}
-                  alignContent={'center'}
-                  justifyContent={'center'}
-                  gap={'2px'}
-                >
-                  View in blockchain explorer <ExternalIcon />
-                </Box>
+                View in blockchain explorer <ExternalIcon style={{ verticalAlign: 'sub'}}/>
               </Link>
             )}
           </>
