@@ -54,7 +54,7 @@ class DexService {
       const cost = getExecutionCostBySignedTx(query.transaction as `tx_${string}`, 'ae_mainnet', { innerTx: "fee-payer" });
       const isUserHaveEnoughCoins = userBalance > cost + Constants.ae_balance_threshold;
       if (unpackedTransaction.encodedTx.contractId === contractId) {
-        return postOrPayForTransaction(query.transaction as `tx_${string}`, isUserHaveEnoughCoins)
+        return postOrPayForTransaction(query.transaction as `tx_${string}`, isUserHaveEnoughCoins);
       }
     }
     const contractCallTx = await aeSdk.buildTx({
@@ -64,6 +64,7 @@ class DexService {
       amount: 0,
       gasLimit: 1000000,
       gasPrice: 1500000000,
+      ttl: await aeSdk.getHeight({ cached: true }) + 3,
       callData,
       ...(newAccount ? { nonce: 1 } : {}),
     });
@@ -78,6 +79,7 @@ class DexService {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step, amountWei, !isUserHaveEnoughCoins);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return;
     }
     const signedContractCallTx = await aeSdk.signTransaction(
@@ -87,7 +89,7 @@ class DexService {
     return postOrPayForTransaction(signedContractCallTx, isUserHaveEnoughCoins);
   }
 
-  async changeAllowance(amountWei: bigint): Promise<void> {
+  async changeAllowance(amountWei: bigint): Promise<{ hash: Encoded.TxHash } | undefined> {
     return WalletService.getAeBalance(this.address).then((balance: bigint) =>
       this.changeAllowanceInternal(amountWei, balance),
     );
@@ -96,7 +98,7 @@ class DexService {
   async changeAllowanceInternal(
     amountWei: bigint,
     userBalance: bigint,
-  ): Promise<void> {
+  ) {
     console.log(`Change allowance, user balance:${userBalance}!`);
     const tokenContract = await aeSdk.initializeContract({
       aci: aex9ACI,
@@ -137,7 +139,7 @@ class DexService {
           amountWei + (amountWei * Constants.allowance_slippage) / 100n,
         ],
       );
-      await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, amountWei, newAccount);
+      return this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, amountWei, newAccount);
     } else {
       const amount_with_allowance_slippage =
         amountWei + (amountWei * Constants.allowance_slippage) / 100n;
@@ -151,7 +153,7 @@ class DexService {
             (amount_with_allowance_slippage - allowance).toString(),
           ],
         );
-        await this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, amountWei, newAccount);
+        return this.buildAndSend(calldata, Constants.ae_weth_address, userBalance, amountWei, newAccount);
       }
     }
   }
@@ -212,7 +214,7 @@ class DexService {
       throw new Error('Failed to build and send the transaction');
     }
 
-    return result?.hash;
+    return result.hash;
   }
 
   async pollSwapAeEthToAE(

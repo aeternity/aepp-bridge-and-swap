@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import Link from 'next/link';
@@ -16,6 +16,7 @@ import {
   TokenTypography,
 } from '../../shared';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
+import { aeSdk } from '../../../services/WalletService';
 
 let isCancelled = false;
 let currentSubstep: () => Promise<void>;
@@ -66,7 +67,10 @@ const EthToAeStep4 = () => {
         try {
           setError('');
           if (isCancelled) return;
-          await DexServiceInstance.changeAllowance(amountInWei);
+          const { hash } = (await DexServiceInstance.changeAllowance(amountInWei)) || {};
+          if (hash) {
+            await aeSdk.poll(hash, { blocks: 3 });
+          }
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
