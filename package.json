@@ -1,6 +1,6 @@
 {
   "name": "aepp-swap-bridge",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@aeternity/aepp-calldata": "^1.9.1",
