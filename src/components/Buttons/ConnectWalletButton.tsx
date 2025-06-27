@@ -9,7 +9,11 @@ import {
   formatNumber,
   isSafariBrowser,
 } from '../../helpers';
-import { useAppKit, useAppKitAccount, useAppKitBalance } from '@reown/appkit/react';
+import {
+  useAppKit,
+  useAppKitAccount,
+  useAppKitBalance,
+} from '@reown/appkit/react';
 import { useExchangeStore } from '../../stores/exchangeStore';
 
 type Protocol = 'ETH' | 'AE';
@@ -38,7 +42,7 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     address: ethereumAddressFromProvider,
     isConnected: isAppKitConnected,
   } = useAppKitAccount();
-  const { fetchBalance} = useAppKitBalance();
+  const { fetchBalance } = useAppKitBalance();
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -53,7 +57,6 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     }
   }, []);
 
-
   const isConnected = !!(
     (protocol === 'ETH' && ethereumAddressFromProvider && isAppKitConnected) ||
     (protocol === 'AE' && aeAccount)
@@ -64,7 +67,10 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       setIsConnecting(true);
       let address: string;
 
-      if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
+      if (
+        (window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) &&
+        window.parent === window
+      ) {
         const addressDeepLink = createDeepLinkUrl({
           type: 'address',
           'x-success': `${window.location.href.split('?')[0]}?ae-address={address}&networkId={networkId}&step=0&flow=${flow}`,
@@ -87,6 +93,7 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       }
     } catch (error) {
       console.error(error);
+      window.location.reload();
     } finally {
       setIsConnecting(false);
     }
@@ -98,9 +105,10 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       await open({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        view: window.navigator.userAgent.includes('Mobi') || isSafariBrowser()
-          ? 'ConnectingWalletConnect'
-          : 'Connect'
+        view:
+          window.navigator.userAgent.includes('Mobi') || isSafariBrowser()
+            ? 'ConnectingWalletConnect'
+            : 'Connect',
       });
     } catch (error) {
       console.error(error);
@@ -170,11 +178,11 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       if (!pollEthBalanceInterval) {
         pollEthBalanceInterval = executeAndSetInterval(() => {
           fetchBalance()
-             .then((balance) => {
-               updateEthBalance(BigNumber(balance.data?.balance || 0));
-               setIsConnecting(false);
-             })
-             .catch(() => setIsConnecting(false));
+            .then((balance) => {
+              updateEthBalance(BigNumber(balance.data?.balance || 0));
+              setIsConnecting(false);
+            })
+            .catch(() => setIsConnecting(false));
         }, 5000);
       }
     }
@@ -189,7 +197,11 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       sx={{ minWidth: '240px' }}
       style={
         isConnected
-          ? { background: 'transparent', border: '1px solid var(--variant-containedBg)', color: 'var(--variant-containedBg)' }
+          ? {
+              background: 'transparent',
+              border: '1px solid var(--variant-containedBg)',
+              color: 'var(--variant-containedBg)',
+            }
           : {}
       }
     >

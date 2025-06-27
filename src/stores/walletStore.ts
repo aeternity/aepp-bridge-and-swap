@@ -34,8 +34,15 @@ export const useWalletStore = create<WalletState>((set) => ({
   disconnectEth: () =>
     set((state) => (state.ethAccount ? { ethAccount: null } : {})),
 
-  disconnectAe: () =>
-    set((state) => (state.aeAccount ? { aeAccount: null } : {})),
+  disconnectAe: () => {
+    set((state) => {
+      if (state.aeAccount) {
+        window.location.reload();
+        return { aeAccount: null };
+      }
+      return {};
+    });
+  },
 
   updateEthBalance: (balance) =>
     set((state) =>

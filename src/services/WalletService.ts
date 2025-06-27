@@ -115,6 +115,10 @@ export default class WalletService {
   }
 
   static disconnectWallet() {
-    aeSdk.disconnectWallet();
+    try {
+      aeSdk.disconnectWallet();
+    } catch (e: unknown) {
+      console.error(e);
+    }
   }
 }
