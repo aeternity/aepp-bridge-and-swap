@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import { unpackTx, Tag } from '@aeternity/aepp-sdk';
-import { BytecodeContractCallEncoder } from '@aeternity/aepp-calldata';
 import { BigNumber } from 'bignumber.js';
 
 import { darkTheme, lightTheme } from './app/theme';
