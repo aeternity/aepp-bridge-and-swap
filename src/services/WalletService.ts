@@ -1,6 +1,7 @@
 import {
   AeSdkAepp,
   BrowserWindowMessageConnection,
+  Contract,
   Node,
   SUBSCRIPTION_TYPES,
   walletDetector,
@@ -66,7 +67,8 @@ export default class WalletService {
 
   static async getAeWethBalance(address: `ak_${string}`): Promise<bigint> {
     console.log('getAeWethBalance');
-    const tokenInstance = await aeSdk.initializeContract({
+    const tokenInstance = await Contract.initialize({
+      ...aeSdk.getContext(),
       aci: aex9ACI,
       address: Constants.ae_weth_address,
     });

@@ -100,7 +100,8 @@ class DexService {
     userBalance: bigint,
   ) {
     console.log(`Change allowance, user balance:${userBalance}!`);
-    const tokenContract = await aeSdk.initializeContract({
+    const tokenContract = await Contract.initialize({
+      ...aeSdk.getContext(),
       aci: aex9ACI,
       address: Constants.ae_weth_address,
     });
@@ -162,7 +163,8 @@ class DexService {
     amountinAettos: bigint,
     amountOut: bigint,
   ) {
-    const routerContract = await aeSdk.initializeContract({
+    const routerContract = await Contract.initialize({
+      ...aeSdk.getContext(),
       aci: routerACI,
       address: Constants.ae_dex_router_address,
     });
@@ -191,7 +193,8 @@ class DexService {
     userBalance: bigint,
   ): Promise<Encoded.TxHash> {
     console.log('Swap aeEth to AE');
-    const routerContract = await aeSdk.initializeContract({
+    const routerContract = await Contract.initialize({
+      ...aeSdk.getContext(),
       aci: routerACI,
       address: Constants.ae_dex_router_address,
     });

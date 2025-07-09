@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { Contract } from "@aeternity/aepp-sdk";
 import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
 
 import { BRIDGE_ABI, BRIDGE_ACI, Constants } from "../constants";
@@ -24,7 +25,8 @@ class BridgeService {
   }
 
   static async bridgeAeToEth(amountInWei: bigint, aeternityAddress: string, ethereumAddress: string) {
-      const asset_contract = await aeSdk.initializeContract({
+      const asset_contract = await Contract.initialize({
+        ...aeSdk.getContext(),
         aci: aex9ACI,
         address: Constants.ae_weth_address,
         omitUnknown: true,
@@ -47,7 +49,8 @@ class BridgeService {
           );
       }
 
-      const bridge_contract = await aeSdk.initializeContract({
+      const bridge_contract = await Contract.initialize({
+        ...aeSdk.getContext(),
         aci: BRIDGE_ACI,
         address: Constants.ae_bridge_address,
         omitUnknown: true,
