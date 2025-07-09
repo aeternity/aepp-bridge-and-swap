@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@aeternity/aepp-calldata": "^1.9.1",
-    "@aeternity/aepp-sdk": "^13.3.3",
+    "@aeternity/aepp-sdk": "^14.1.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^7.1.0",
