@@ -21,7 +21,7 @@ if (!process.env.NEXT_PUBLIC_AE_PRIVATE_KEY) {
   throw new Error("NEXT_PUBLIC_AE_PRIVATE_KEY is required");
 }
 
-const payerAccount = new MemoryAccount(process.env.NEXT_PUBLIC_AE_PRIVATE_KEY!);
+const payerAccount = new MemoryAccount(process.env.NEXT_PUBLIC_AE_PRIVATE_KEY! as `sk_${string}`);
 
 const node = new Node(Constants.ae_node_url);
 const aeSdk = new AeSdk({
