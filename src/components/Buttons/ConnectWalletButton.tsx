@@ -93,7 +93,7 @@ const ConnectWalletButton = ({ protocol }: Props) => {
       }
     } catch (error) {
       console.error(error);
-      window.location.reload();
+      window.location.href = window.location.pathname;
     } finally {
       setIsConnecting(false);
     }

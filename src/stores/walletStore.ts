@@ -37,7 +37,7 @@ export const useWalletStore = create<WalletState>((set) => ({
   disconnectAe: () => {
     set((state) => {
       if (state.aeAccount) {
-        window.location.reload();
+        window.location.href = window.location.pathname;
         return { aeAccount: null };
       }
       return {};
