@@ -219,6 +219,7 @@ const WizardFlowContainer = ({
                 currentStep !== steps.length - 1 || status !== Status.COMPLETED
                   ? 'visible'
                   : 'hidden',
+              animation: buttonDisabled ? '' : 'pulse 6s ease-in-out 1.5s',
             }}
           >
             <StepArrowButton
