@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.0.0...v1.1.0) (2025-07-10)
+
+
+### Features
+
+* be able to connect to metamask via deep link ([3ed3259](https://github.com/aeternity/aepp-bridge-and-swap/commit/3ed3259e4f5ca99ce9361ff4f628cabd6fecec78))
+* force reload when disconnecting from ae wallet to cleanup ([9288680](https://github.com/aeternity/aepp-bridge-and-swap/commit/9288680755a4e49dcb55b135e58e157a72c510d1))
+* make next button more prominent when enabled ([bc60260](https://github.com/aeternity/aepp-bridge-and-swap/commit/bc602602f61cdfcd92340209c662dc7150d460c0))
+
+
+### Bug Fixes
+
+* disconnect issue on mobile ([0f779f5](https://github.com/aeternity/aepp-bridge-and-swap/commit/0f779f5f092cee08e8265106a8fc098df1dad380))
+* use correct type on memory account creation ([9b2f6f2](https://github.com/aeternity/aepp-bridge-and-swap/commit/9b2f6f278515af4d9a0243b636606d81533cd1fe))
+
+
+### CI / CD
+
+* update node version in Dockerfile ([a9bf460](https://github.com/aeternity/aepp-bridge-and-swap/commit/a9bf4608dd5e58ea334b85be9589a7f1006caab4))
+
 ## 1.0.0 (2025-06-24)
 
 
