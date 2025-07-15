@@ -10,9 +10,9 @@ const font = Tomorrow({
 });
 
 export const metadata: Metadata = {
-  title: 'DEXBridge',
+  title: 'Superhero Swap',
   description:
-    'A website which can be used to buy Aeternity coins with native Ethereum',
+    'Superhero Swap is a simple Web3 DEX bridge on the æternity blockchain. It allows users to swap ETH and aeTH quickly and securely across chains, with low fees and no KYC. Designed for fast cross-chain swaps, it is available within your Superhero wallet and works seamlessly on both desktop and mobile browsers.',
 };
 
 export default function RootLayout({
