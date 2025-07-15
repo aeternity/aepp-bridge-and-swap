@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.1.0...v1.2.0) (2025-07-15)
+
+
+### Features
+
+* change tab title and description ([8edc624](https://github.com/aeternity/aepp-bridge-and-swap/commit/8edc624f8a3c31e33e3d833853f6db4f4ee46e12))
+
 ## [1.1.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.0.0...v1.1.0) (2025-07-10)
 
 
