@@ -4,10 +4,10 @@ import { AppKitNetwork, mainnet } from '@reown/appkit/networks';
 
 const networks = [mainnet] as [AppKitNetwork, ...AppKitNetwork[]];
 const metadata = {
-  name: 'AE Bridge and Swap',
-  description: 'aeternity/aepp-bridge-and-swap',
-  url: 'https://bridge-and-swap.aepps.com/',
-  icons: [],
+  name: 'Superhero Swap',
+  description: 'Superhero Swap is a simple Web3 DEX bridge on the æternity blockchain. It allows users to swap ETH and aeTH quickly and securely across chains, with low fees and no KYC. Designed for fast cross-chain swaps, it is available within your Superhero wallet and works seamlessly on both desktop and mobile browsers',
+  url: window.location.origin,
+  icons: ['https://swap.superhero.com/favicon.ico'],
 };
 
 createAppKit({
