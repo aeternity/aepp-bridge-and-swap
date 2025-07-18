@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.2.0...v1.2.1) (2025-07-18)
+
+
+### Bug Fixes
+
+* convert private key from old format to new ([280d992](https://github.com/aeternity/aepp-bridge-and-swap/commit/280d992bca5b7c7754558585100312eb75e9f5b5))
+
 ## [1.2.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.1.0...v1.2.0) (2025-07-15)
 
 
