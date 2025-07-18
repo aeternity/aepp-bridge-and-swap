@@ -2,7 +2,9 @@
 
 import {
   AeSdk,
+  encode,
   Encoded,
+  Encoding,
   MemoryAccount,
   Node,
   Tag,
@@ -20,8 +22,9 @@ export interface AeDecodedCallData {
 if (!process.env.NEXT_PUBLIC_AE_PRIVATE_KEY) {
   throw new Error("NEXT_PUBLIC_AE_PRIVATE_KEY is required");
 }
-
-const payerAccount = new MemoryAccount(process.env.NEXT_PUBLIC_AE_PRIVATE_KEY! as `sk_${string}`);
+// Convert secret key as hex to new format
+const secretKey = encode(Buffer.from(process.env.NEXT_PUBLIC_AE_PRIVATE_KEY!, 'hex').subarray(0, 32), Encoding.AccountSecretKey)
+const payerAccount = new MemoryAccount(secretKey);
 
 const node = new Node(Constants.ae_node_url);
 const aeSdk = new AeSdk({
