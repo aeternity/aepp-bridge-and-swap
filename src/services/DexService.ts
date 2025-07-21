@@ -75,10 +75,12 @@ class DexService {
 
     if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
       console.log('sendTxDeepLinkUrl');
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step, amountWei, !isUserHaveEnoughCoins);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (window.confirm('Open in mobile?')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step, amountWei, !isUserHaveEnoughCoins);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
       return;
     }
     const signedContractCallTx = await aeSdk.signTransaction(
