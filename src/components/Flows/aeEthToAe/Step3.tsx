@@ -77,7 +77,12 @@ const AeEthToAeStep3 = () => {
           if (isCancelled) return;
           setStatus(Status.CONFIRMED);
           setError('');
-          await attemptSwapAeEthToAe();
+
+          setStatus(Status.PENDING);
+          currentSubstep = attemptSwapAeEthToAe;
+          setError('click next again');
+
+          // await attemptSwapAeEthToAe();
         } catch (e: unknown) {
           setStatus(Status.PENDING);
           currentSubstep = attemptChangeAllowance;
