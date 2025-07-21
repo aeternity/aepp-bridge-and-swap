@@ -75,7 +75,6 @@ class DexService {
 
     if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
       console.log('sendTxDeepLinkUrl');
-       await new Promise((resolve) => setTimeout(resolve, 3000));
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       window.location = sendTxDeepLinkUrl('ae_mainnet', contractCallTx, this.flow, this.step, amountWei, !isUserHaveEnoughCoins);
