@@ -13,7 +13,6 @@ const DEXBridgeExchange = () => {
       <Container sx={{ maxWidth: '472px' }} maxWidth={false}>
         <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
           <Box sx={{ position: 'relative', marginTop: '160px', paddingRight: '24px' }}>
-          <a style={{fontSize: '32px'}} href="https://wallet.superhero.com/sign-transaction?transaction=tx%2BPArAaEBcDtTzdneYuKH6m2Hu6mJ908M8vpY0KhxRuVfsVMgakGCAhehBU0vafe4mKDW4%2FdiJO11L08phyXiBHtawBrlsxBV3KsvA4aoHGgKUACDlyVdAIMPQkCEWWgvALIPKxFC.JIFHa2%2BFAZ1dyXVvhwNgBRyJX8AinwKgcXiBvP9e93L4HYHEUH10Hwez9vE8NPYf93IQ17sgez2fAgAmt6xUJXjPyhzyCLDs0NG4IDdIONnAYNbF10%2FcSbXW9KZ8AoHA7U83Z3mLih%2Bpth7upifdPDPL6WNCocUbIX7FTKmpBb4YBmCx4XTuvggABAD8In49f&networkid=ae_mainnet&innerTx=false&x-success=https%3A%2F%2Fbridge-and-swap.aepps.com%2F%3Fae-address%3Dak_rRowge6KvB7SU4br4dC8GPmr9s52r1eYjhJytSZ8e3c1aYYXp%26networkld%3Dae_mainnet%26transaction%3D%78transaction%7D%26flow%3DaeEthToAe%26step%3D2%26amountFrom%3D6935136693&x-cancel=https%3A%2F%2Fbridge-and-swap.aepps.com%2F%3Fae-address%3Dak_rRowge6KyB7SU4br4dC8GPmr9s52r1eYih,JytSZ8e3c1aYYXp%26network|d%3Dae_mainnet%26transaction-status%3Dcancelled%26flow%3DaeEthToAe%26step%3D2%26amountFrom%3D6935136693">Wallet</a>
             <img
               src={'/assets/superheroswaplogo.svg'}
               style={{
