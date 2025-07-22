@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.2.1...v1.2.2) (2025-07-22)
+
+
+### Bug Fixes
+
+* remove unnecessary delay ([d0200e5](https://github.com/aeternity/aepp-bridge-and-swap/commit/d0200e535ddf6bdc643488dfb06da19f65d8b4d0))
+
 ## [1.2.1](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.2.0...v1.2.1) (2025-07-18)
 
 
