@@ -119,17 +119,17 @@ export function sendTxDeepLinkUrl(
 
   // append transaction parameter for success case
   const successUrl = new URL(currentUrl.href);
-  successUrl.searchParams.set('transaction', '{transaction}');
-  successUrl.searchParams.set('flow', flow as unknown as string);
-  successUrl.searchParams.set('step', step.toString());
-  successUrl.searchParams.set('amountFrom', amountWei.toString());
+  // successUrl.searchParams.set('transaction', '{transaction}');
+  // successUrl.searchParams.set('flow', flow as unknown as string);
+  // successUrl.searchParams.set('step', step.toString());
+  // successUrl.searchParams.set('amountFrom', amountWei.toString());
 
   // append transaction parameter for failed case
   const cancelUrl = new URL(currentUrl.href);
-  cancelUrl.searchParams.set('transaction-status', 'cancelled');
-  cancelUrl.searchParams.set('flow', flow as unknown as string);
-  cancelUrl.searchParams.set('step', step.toString());
-  cancelUrl.searchParams.set('amountFrom', amountWei.toString());
+  // cancelUrl.searchParams.set('transaction-status', 'cancelled');
+  // cancelUrl.searchParams.set('flow', flow as unknown as string);
+  // cancelUrl.searchParams.set('step', step.toString());
+  // cancelUrl.searchParams.set('amountFrom', amountWei.toString());
 
   return createDeepLinkUrl({
     type: 'sign-transaction',
