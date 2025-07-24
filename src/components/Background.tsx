@@ -16,7 +16,7 @@ const Background = () => {
           zIndex: -2,
           background:
             mode === 'dark'
-              ? 'linear-gradient(180deg, transparent 70%, #53b6bf8c 100%), url("assets/darkthemebg.png")'
+              ? 'linear-gradient(180deg, transparent 80%, #53b6bf8c 120%), url("assets/darkthemebg.png")'
               : 'linear-gradient(180deg, white 20%, #53b6bf 100%);',
           backgroundAttachment: 'fixed',
           opacity: mode === 'dark' ? 1 : 0.4,

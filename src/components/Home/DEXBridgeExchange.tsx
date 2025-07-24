@@ -69,8 +69,8 @@ const DEXBridgeExchange = () => {
           maxWidth={false}
           disableGutters
         >
-          <Typography mb={'10px'} color='#269ad6'>are you <b>new</b> to all this?</Typography>
-          <Typography>
+          <Typography mb={'10px'} color='#269ad6' fontFamily={'sans-serif'}>are you <b>new</b> to all this?</Typography>
+          <Typography fontFamily={'sans-serif'}>
             Don't worry: it’s quick, and we’ll guide you along the way.
           </Typography>
         </Container>
