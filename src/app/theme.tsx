@@ -1,5 +1,9 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 
+export const MAIN_GRADIENT = 'linear-gradient(to right, #2879e8, #53b6bf)';
+export const SECONDARY_GRADIENT = 'linear-gradient(to left, #2879e8, #53b6bf)';
+export const TEXT_GRADIENT = 'linear-gradient(to bottom, #00b2fe, #5adebe)';
+
 const common: ThemeOptions = {
   typography: {
     fontFamily: 'var(--my-font), sans-serif',
@@ -17,15 +21,54 @@ const common: ThemeOptions = {
       },
       styleOverrides: {
         root: {
-          borderRadius: '16px',
+          borderRadius: '100px',
           padding: '7px 14px',
           minHeight: '0px',
           color: 'white',
           fontSize: '16px',
           fontWeight: 500,
           textTransform: 'none',
+          overflow: 'hidden',
         },
       },
+      variants: [
+        {
+          props: { variant: 'primary' },
+          style: {
+            background: 'linear-gradient(to right, #2879e8, #53b6bf)',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              transition: 'background-color 0.3s ease',
+              zIndex: 1,
+              pointerEvents: 'none',
+            },
+            '&:hover::after': {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            },
+          },
+        },
+        {
+          props: { variant: 'secondary' },
+          style: {
+            background: 'linear-gradient(to left, #2879e8, #53b6bf)',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              transition: 'background-color 0.3s ease',
+              zIndex: 1,
+              pointerEvents: 'none',
+            },
+            '&:hover::after': {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            },
+          },
+        },
+      ],
     },
   },
 };

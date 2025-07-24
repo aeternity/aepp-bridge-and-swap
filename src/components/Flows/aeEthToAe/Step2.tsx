@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
@@ -11,16 +11,19 @@ import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import WalletService from '../../../services/WalletService';
 import { powerAndTruncFloat } from '../../../helpers';
 import { useWalletStore } from '../../../stores/walletStore';
+import { SECONDARY_GRADIENT } from '../../../app/theme';
 
 const AeEthToAeStep2 = () => {
-  const theme = useTheme();
-
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
 
   const [amountAeEth, setAmountAeEth] = useState(0n);
   const { aeAccount } = useWalletStore();
 
-  const [prices, setPrices] = useState<{ AE: number; ETH: number, aeEthToAeRatio: BigNumber }>();
+  const [prices, setPrices] = useState<{
+    AE: number;
+    ETH: number;
+    aeEthToAeRatio: BigNumber;
+  }>();
 
   useEffect(() => {
     if (aeAccount?.address) {
@@ -35,16 +38,26 @@ const AeEthToAeStep2 = () => {
   const onEthChange = (value: string) => {
     setFromAmount(value);
     setToAmount(
-      Number(value) ? BigNumber(value).multipliedBy(prices ?  prices.aeEthToAeRatio : 1).toFixed(18).toString() : '',
+      Number(value)
+        ? BigNumber(value)
+            .multipliedBy(prices ? prices.aeEthToAeRatio : 1)
+            .toFixed(18)
+            .toString()
+        : '',
     );
   };
 
   const onAeChange = (value: string) => {
     setToAmount(value);
     setFromAmount(
-      Number(value) ? BigNumber(value).dividedBy(prices ?  prices.aeEthToAeRatio : 1).toFixed(18).toString() : '',
+      Number(value)
+        ? BigNumber(value)
+            .dividedBy(prices ? prices.aeEthToAeRatio : 1)
+            .toFixed(18)
+            .toString()
+        : '',
     );
-  }
+  };
 
   return (
     <>
@@ -74,7 +87,7 @@ const AeEthToAeStep2 = () => {
                 label="æETH"
                 onChange={onEthChange}
                 value={fromAmount}
-                backgroundColor={theme.palette.secondary.main}
+                background={SECONDARY_GRADIENT}
               />
               <Box
                 position={'absolute'}

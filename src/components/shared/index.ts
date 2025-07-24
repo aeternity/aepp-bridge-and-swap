@@ -48,7 +48,7 @@ export const BridgeBox = styled(Box)<StepProps>(({ theme }) => ({
 }));
 export const AmountBox = styled(Box)(() => ({
   padding: '12px',
-  borderRadius: '12px',
+  borderRadius: '100px',
   display: 'flex',
   gap: '2px',
   alignItems: 'end',

@@ -1,13 +1,5 @@
 import styled from '@emotion/styled';
-import {
-  Box,
-  Button,
-  Container,
-  Link,
-  Theme,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Container, Link, Theme, Typography } from '@mui/material';
 import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 
 import { Status, useExchangeStore } from '../stores/exchangeStore';
@@ -16,6 +8,7 @@ import WalletService from '../services/WalletService';
 
 import ConnectedWalletInfo from './ConnectedWalletInfo';
 import StepArrowButton from './Buttons/StepArrowButton';
+import { TEXT_GRADIENT } from '../app/theme';
 
 type StyledProps = {
   theme?: Theme;
@@ -80,8 +73,6 @@ const WizardFlowContainer = ({
   buttonDisabled: boolean;
   retry?: () => {};
 }) => {
-  const theme = useTheme();
-
   const {
     flow,
     nextStep,
@@ -130,38 +121,39 @@ const WizardFlowContainer = ({
       <Box
         display={'flex'}
         justifyContent={'space-between'}
-        width={'100%'}
-        maxWidth={'700px'}
+        width={'992px'}
+        maxWidth={'100%'}
         marginBottom={'15px'}
       >
-        <Box flex={1}>
+        <Box flex={1} maxWidth={'200px'}>
           {flow != 'aeEthToAe' && <ConnectedWalletInfo protocol={'ETH'} />}
         </Box>
         <Box flex={1} display={'flex'} justifyContent={'center'}>
-          <Box
-            position={'relative'}
-            sx={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '100%',
-              backgroundColor: theme.palette.primary.main,
-            }}
-          >
+          <Box position={'relative'}>
             <Typography
               sx={{
-                position: 'absolute',
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                color: 'white',
-                fontSize: '40px',
+                color: 'black',
+                fontSize: '70px',
+                background: TEXT_GRADIENT,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
               {currentStep + 1}
             </Typography>
+            <img
+              src={'/assets/superherologo.svg'}
+              style={{
+                width: 'auto',
+                height: '30px',
+                position: 'absolute',
+                right: '-25px',
+                top: '0px',
+              }}
+            />
           </Box>
         </Box>
-        <Box flex={1}>
+        <Box flex={1} maxWidth={'200px'}>
           <ConnectedWalletInfo protocol={'AE'} />
         </Box>
       </Box>
@@ -193,7 +185,6 @@ const WizardFlowContainer = ({
             }}
           >
             <StepArrowButton
-              text={'Back'}
               prev={true}
               onClick={currentStep == 0 ? reset : prevStep}
             />
@@ -222,11 +213,7 @@ const WizardFlowContainer = ({
               animation: buttonDisabled ? '' : 'pulse 6s ease-in-out 1.5s',
             }}
           >
-            <StepArrowButton
-              text={'Next'}
-              onClick={nextStep}
-              disabled={buttonDisabled}
-            />
+            <StepArrowButton onClick={nextStep} disabled={buttonDisabled} />
           </NextBox>
         </Box>
         <Typography fontSize="16px" color={'error'}>
@@ -241,12 +228,12 @@ const WizardFlowContainer = ({
         </Box>
       </Box>
       <Button
-        color={'primary'}
+        variant={'primary'}
         sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
         onClick={resetState}
       >
         {currentStep === steps.length - 1 && status === Status.COMPLETED
-          ? 'Do another:)'
+          ? 'Swap more'
           : 'Cancel'}
       </Button>
     </StyledContainer>

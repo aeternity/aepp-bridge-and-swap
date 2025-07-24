@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Typography, Container, Button } from '@mui/material';
 import { useExchangeStore } from '../../stores/exchangeStore';
-import { useThemeStore } from '../../stores/themeStore';
 
 const DEXBridgeExchange = () => {
   const { setFlow } = useExchangeStore();
-  const { toggleMode } = useThemeStore();
   const [tab, setTab] = useState(0);
 
   return (
@@ -41,26 +39,26 @@ const DEXBridgeExchange = () => {
           flexDirection={'column'}
           alignItems={'stretch'}
           gap={'15px'}
-          sx={{ margin: '60px 0px' }}
+          sx={{ margin: '60px auto', maxWidth: '150px' }}
         >
           {tab === 0 ? (
             <>
-              <Button color="primary" onClick={() => setFlow('ethToAe')} style={{ display: 'block' }}>
+              <Button variant="primary" onClick={() => setFlow('ethToAe')} style={{ display: 'block' }}>
                 ETH to AE
               </Button>
-              <Button color="secondary" onClick={() => setFlow('aeToEth')} style={{ display: 'none' }}>
+              <Button variant="secondary" onClick={() => setFlow('aeToEth')} style={{ display: 'none' }}>
                 AE to ETH
               </Button>
-              <Button color="secondary" onClick={() => setFlow('aeEthToAe')}>
+              <Button variant="secondary" onClick={() => setFlow('aeEthToAe')}>
                 aeETH to AE
               </Button>
             </>
           ) : (
             <>
-              <Button color="primary" onClick={() => setFlow('aeEthToAe')}>
+              <Button variant="primary" onClick={() => setFlow('aeEthToAe')}>
                 aeETH to AE
               </Button>
-              <Button color="secondary" onClick={() => setFlow('aeEthToEth')}>
+              <Button variant="secondary" onClick={() => setFlow('aeEthToEth')}>
                 aeETH to ETH
               </Button>
             </>
@@ -71,34 +69,14 @@ const DEXBridgeExchange = () => {
           maxWidth={false}
           disableGutters
         >
-          <Typography mb={'10px'}>new to all this?</Typography>
+          <Typography mb={'10px'} color='#269ad6'>are you <b>new</b> to all this?</Typography>
           <Typography>
             Don't worry: it’s quick, and we’ll guide you along the way.
           </Typography>
         </Container>
         <Box>
           <Button
-            sx={{
-              position: 'fixed',
-              bottom: '20px',
-              left: '20px',
-              borderRadius: '100%',
-              width: '50px',
-              height: '50px',
-              minWidth: '50px',
-            }}
-            onClick={toggleMode}
-          >
-            <img
-              src={'/assets/mode.svg'}
-              style={{
-                width: '40px',
-                height: 'auto',
-              }}
-            />
-          </Button>
-          <Button
-            color={'primary'}
+            variant={'primary'}
             sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
             onClick={() => setTab(tab === 0 ? 1 : 0)}
             style={{ display: 'none' }}

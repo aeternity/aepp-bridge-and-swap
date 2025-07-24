@@ -12,7 +12,7 @@ const EthToAeStep1 = () => {
         title={'Connect Wallets'}
         subtitle={
           <>
-            Got your two wallets sorted?
+            <span style={{ color: '#00b2ff' }}>Got your two wallets sorted?</span>
             <br />
             Just hit connect!
           </>

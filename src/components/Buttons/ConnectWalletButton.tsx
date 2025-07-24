@@ -183,11 +183,11 @@ const ConnectWalletButton = ({ protocol }: Props) => {
 
   return (
     <Button
-      color={protocol === 'AE' ? 'primary' : 'secondary'}
+      variant={protocol === 'AE' ? 'primary' : 'secondary'}
       onClick={connect}
       loading={isConnecting}
       disabled={isConnected}
-      sx={{ minWidth: '240px' }}
+      sx={{ minWidth: '240px', minHeight: '55px', textTransform: 'lowercase' }}
       style={
         isConnected
           ? {

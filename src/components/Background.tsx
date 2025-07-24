@@ -1,8 +1,10 @@
 import React from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import { useThemeStore } from '../stores/themeStore';
+import ModeIcon from '../assets/ModeIcon';
 
 const Background = () => {
-  const theme = useTheme();
+  const { toggleMode, mode } = useThemeStore();
 
   return (
     <>
@@ -13,13 +15,32 @@ const Background = () => {
           inset: '0',
           zIndex: -2,
           background:
-            theme.palette.mode === 'dark'
-              ? 'linear-gradient(340deg, #141414 50%, #1b3c3f 100%);'
-              : 'linear-gradient(160deg, white 30%, #53b6bf 100%);',
+            mode === 'dark'
+              ? 'linear-gradient(180deg, transparent 70%, #53b6bf8c 100%), url("assets/darkthemebg.png")'
+              : 'linear-gradient(180deg, white 20%, #53b6bf 100%);',
           backgroundAttachment: 'fixed',
-          opacity: theme.palette.mode === 'dark' ? 1 : 0.4,
+          opacity: mode === 'dark' ? 1 : 0.4,
         }}
       />
+      <Button
+        sx={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          borderRadius: '100%',
+          width: '50px',
+          height: '50px',
+          minWidth: '50px',
+          padding: 0,
+        }}
+        onClick={toggleMode}
+      >
+        <ModeIcon
+          color={mode === 'dark' ? 'black' : 'white'}
+          width={'40px'}
+          height={'auto'}
+        />
+      </Button>
     </>
   );
 };

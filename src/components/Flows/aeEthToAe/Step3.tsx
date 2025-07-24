@@ -19,6 +19,7 @@ import {
 } from '../../shared';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import { aeSdk } from '../../../services/WalletService';
+import { MAIN_GRADIENT } from '../../../app/theme';
 
 let isCancelled = false;
 let currentSubstep: () => Promise<void>;
@@ -218,7 +219,7 @@ const AeEthToAeStep3 = () => {
             <BridgeBox>
               <AmountBox
                 style={{
-                  backgroundColor: theme.palette.secondary.main,
+                  background: MAIN_GRADIENT,
                 }}
               >
                 <AmountTypography>

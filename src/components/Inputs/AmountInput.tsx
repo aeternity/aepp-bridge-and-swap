@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, InputBase, Typography, useTheme } from '@mui/material';
+import { Box, InputBase, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import TokenPriceService from '../../services/TokenPriceService';
 import WebsocketService from '../../services/WebsocketService';
 import { formatCurrency } from '../../helpers';
+import { MAIN_GRADIENT } from '../../app/theme';
 
 type Protocol = 'ETH' | 'AE';
 
@@ -12,7 +13,7 @@ interface Props {
   onChange: (amount: string | null) => void;
   value: string | number | null;
   label?: string;
-  backgroundColor?: string;
+  background?: string;
 }
 
 const TextInput = styled(InputBase)({
@@ -35,10 +36,8 @@ const AmountInput = ({
   onChange,
   value,
   label,
-  backgroundColor,
+  background,
 }: Props) => {
-  const theme = useTheme();
-
   const [prices, setPrices] = useState<{ AE: number; ETH: number }>();
 
   useEffect(() => {
@@ -76,14 +75,14 @@ const AmountInput = ({
       justifyContent={'space-between'}
       gap={'6px'}
       sx={{
-        backgroundColor: backgroundColor ?? theme.palette.primary.main,
-        borderRadius: '16px',
-        padding: '14px 7px',
+        background: background ?? MAIN_GRADIENT,
+        borderRadius: '100px',
+        padding: '14px',
         minHeight: '44px',
         fontSize: '16px',
         fontWeight: 500,
         maxWidth: '100%',
-        width: '320px',
+        width: '334px',
       }}
     >
       <Typography fontSize={'12px'} color="white">

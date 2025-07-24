@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import WizardFlowContainer from '../../WizardFlowContainer';
 import { useFormStore } from '../../../stores/formStore';
 import { useWalletStore } from '../../../stores/walletStore';
@@ -8,10 +8,9 @@ import TokenPriceService from '../../../services/TokenPriceService';
 import WebsocketService from '../../../services/WebsocketService';
 import SwapArrowButton from '../../Buttons/SwapArrowButton';
 import { powerAndTruncFloat } from '../../../helpers';
+import { SECONDARY_GRADIENT } from '../../../app/theme';
 
 const AeToEthStep2 = () => {
-  const theme = useTheme();
-
   const { fromAmount, toAmount, setFromAmount, setToAmount } = useFormStore();
   const { aeAccount } = useWalletStore();
 
@@ -64,7 +63,7 @@ const AeToEthStep2 = () => {
                 protocol="AE"
                 onChange={onAeChange}
                 value={fromAmount}
-                backgroundColor={theme.palette.secondary.main}
+                background={SECONDARY_GRADIENT}
               />
               <Box
                 position={'absolute'}
