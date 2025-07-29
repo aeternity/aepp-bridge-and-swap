@@ -1,9 +1,6 @@
 import { ethers } from "ethers";
-import { Contract } from "@aeternity/aepp-sdk";
-import aex9ACI from "dex-contracts-v2/build/FungibleTokenFull.aci.json";
 
-import { BRIDGE_ABI, BRIDGE_ACI, Constants } from "../constants";
-import { aeSdk } from "./WalletService";
+import { BRIDGE_ABI, Constants } from "../constants";
 
 class BridgeService {
   static async bridgeEthToAe(amountInWei: bigint, aeAddress: string, signer: ethers.JsonRpcSigner): Promise<void> {
@@ -22,43 +19,6 @@ class BridgeService {
         value: amountInWei,
       },
     );
-  }
-
-  static async bridgeAeToEth(amountInWei: bigint, aeternityAddress: string, ethereumAddress: string) {
-      const asset_contract = await Contract.initialize({
-        ...aeSdk.getContext(),
-        aci: aex9ACI,
-        address: Constants.ae_weth_address,
-        omitUnknown: true,
-      });
-
-      const { decodedResult: allowance } = await asset_contract.allowance({
-        from_account: aeternityAddress,
-        for_account: Constants.ae_bridge_address.replace('ct_', 'ak_'),
-      });
-
-      if (allowance === undefined) {
-          await asset_contract.create_allowance(
-            Constants.ae_bridge_address.replace('ct_', 'ak_'),
-            amountInWei.toString(),
-          );
-      } else if (amountInWei > allowance) {
-          await asset_contract.change_allowance(
-            Constants.ae_bridge_address.replace('ct_', 'ak_'),
-            amountInWei.toString(),
-          );
-      }
-
-      const bridge_contract = await Contract.initialize({
-        ...aeSdk.getContext(),
-        aci: BRIDGE_ACI,
-        address: Constants.ae_bridge_address,
-        omitUnknown: true,
-      });
-      return bridge_contract.bridge_out(
-        [Constants.eth_mock_address, ethereumAddress, amountInWei.toString(), Constants.bridge_eth_action_type],
-        { waitMined: true},
-      );
   }
 }
 

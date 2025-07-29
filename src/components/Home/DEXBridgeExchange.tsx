@@ -46,10 +46,7 @@ const DEXBridgeExchange = () => {
               <Button variant="primary" onClick={() => setFlow('ethToAe')} style={{ display: 'block' }}>
                 ETH to AE
               </Button>
-              <Button variant="secondary" onClick={() => setFlow('aeToEth')} style={{ display: 'none' }}>
-                AE to ETH
-              </Button>
-              <Button variant="secondary" onClick={() => setFlow('aeEthToAe')}>
+              <Button color="secondary" onClick={() => setFlow('aeEthToAe')}>
                 aeETH to AE
               </Button>
             </>
@@ -57,9 +54,6 @@ const DEXBridgeExchange = () => {
             <>
               <Button variant="primary" onClick={() => setFlow('aeEthToAe')}>
                 aeETH to AE
-              </Button>
-              <Button variant="secondary" onClick={() => setFlow('aeEthToEth')}>
-                aeETH to ETH
               </Button>
             </>
           )}

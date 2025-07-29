@@ -159,28 +159,6 @@ class DexService {
     }
   }
 
-  async swapAetoAeEth(
-    amountinAettos: bigint,
-    amountOut: bigint,
-  ) {
-    const routerContract = await Contract.initialize({
-      ...aeSdk.getContext(),
-      aci: routerACI,
-      address: Constants.ae_dex_router_address,
-    });
-
-    const aHourFromNow = Date.now() + 60 * 60 * 1000;
-
-    return routerContract.swap_exact_ae_for_tokens(
-      (amountOut / 100n) * 95n,
-      [Constants.ae_wae_address, Constants.ae_weth_address],
-      this.address,
-      aHourFromNow,
-      undefined,
-      { amount: amountinAettos.toString() },
-    );
-  }
-
   async swapAeEthToAE(amountWei: bigint, amountOut: bigint): Promise<Encoded.TxHash> {
     return WalletService.getAeBalance(this.address).then((balance: bigint) =>
       this.swapAeEthToAEInternal(amountWei, amountOut, balance),

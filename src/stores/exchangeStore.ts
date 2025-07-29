@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type FlowType = 'ethToAe' | 'aeToEth' | 'aeEthToAe' | 'aeEthToEth';
+export type FlowType = 'ethToAe' | 'aeEthToAe';
 
 export enum Status {
   PENDING,
@@ -10,9 +10,7 @@ export enum Status {
 
 const steps = {
   ethToAe: ['Connect wallets', 'Set amount', 'Bridge to æETH', 'Swap for AE'],
-  aeToEth: ['Connect wallets', 'Set amount', 'Swap for AE', 'Bridge to ETH'],
   aeEthToAe: ['Connect wallet', 'Set amount', 'Swap for AE'],
-  aeEthToEth: ['Connect wallet', 'Set amount', 'Bridge to ETH'],
 };
 
 interface ExchangeState {
