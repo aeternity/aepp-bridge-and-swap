@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.2.1...v1.3.0) (2025-07-30)
+
+
+### Features
+
+* move mode icon to the bottom left ([8337673](https://github.com/aeternity/aepp-bridge-and-swap/commit/83376738dedf3e20f10c2ea3363ed2a9e32ae21b))
+* new logo and small color changes ([cd4ed30](https://github.com/aeternity/aepp-bridge-and-swap/commit/cd4ed304d61b4f8f50a4cc3eb2e4d30dd73d42c0))
+* ui changes based on new marketing design ([7c0085b](https://github.com/aeternity/aepp-bridge-and-swap/commit/7c0085b666c53c1f09a44f12e7f924131e81671d))
+
+
+### Refactorings
+
+* use correct walletConnect metadata ([af74686](https://github.com/aeternity/aepp-bridge-and-swap/commit/af74686a65d8404a07a1d225d601bd0210c6287c))
+
 ## [1.2.1](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.2.0...v1.2.1) (2025-07-18)
 
 
