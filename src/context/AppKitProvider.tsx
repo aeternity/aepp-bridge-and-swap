@@ -22,6 +22,10 @@ createAppKit({
       ': -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;',
     '--w3m-border-radius-master': '.5px',
   },
+  featuredWalletIds: [
+    'd15c9975084e5bc349d63aa83be8d9a053941483aa2c3934d00d4c4d73d45667',
+    'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+  ],
   features: {
     analytics: false,
     email: false,
