@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.3.0...v1.4.0) (2025-09-02)
+
+
+### Features
+
+* add google verification html ([a3a6132](https://github.com/aeternity/aepp-bridge-and-swap/commit/a3a613241a7812ac8422881a9d1791707e8afa21))
+* improve SEO ([9ed72b2](https://github.com/aeternity/aepp-bridge-and-swap/commit/9ed72b223703380905039d81c8d3fb2458a79d1f))
+* show featured wallets ([9bedd18](https://github.com/aeternity/aepp-bridge-and-swap/commit/9bedd18110d200a1c0b02bd7e2d38c3eec6b70a3))
+
 ## [1.3.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.2.1...v1.3.0) (2025-07-30)
 
 
