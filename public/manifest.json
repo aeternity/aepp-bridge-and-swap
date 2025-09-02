@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Superhero Swap",
+  "name": "Superhero Swap — Web3 DEX Bridge",
+  "description": "Swap ETH and aeTH on the æternity blockchain with the Superhero DEX bridge. Fast, low-fee, no KYC.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +19,10 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#000000",
   "background_color": "#ffffff"
 }
