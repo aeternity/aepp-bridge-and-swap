@@ -3,12 +3,7 @@ import { Button } from '@mui/material';
 import { useWalletStore } from '../../stores/walletStore';
 import WalletService from '../../services/WalletService';
 import { BigNumber } from 'bignumber.js';
-import {
-  createDeepLinkUrl,
-  executeAndSetInterval,
-  formatNumber,
-  isSafariBrowser,
-} from '../../helpers';
+import { executeAndSetInterval, formatNumber, createDeepLinkUrl } from '../../helpers';
 import {
   useAppKit,
   useAppKitAccount,
@@ -66,22 +61,21 @@ const ConnectWalletButton = ({ protocol }: Props) => {
     try {
       setIsConnecting(true);
       let address: string;
-
-      if (
-        (window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) &&
-        window.parent === window
-      ) {
-        const addressDeepLink = createDeepLinkUrl({
-          type: 'address',
-          'x-success': `${window.location.href.split('?')[0]}?ae-address={address}&networkId={networkId}&step=0&flow=${flow}`,
-          'x-cancel': window.location.href.split('?')[0],
-        });
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        window.location = addressDeepLink;
-      } else {
+      try {
         address = await WalletService.connectSuperHero();
         connectAe(address);
+      } catch (e) {
+        // Fallback: open deep link to request address
+        if (e instanceof Error && e.message === 'Timeout') {
+          const addressDeepLink = createDeepLinkUrl({
+            type: 'address',
+            'x-success': `${window.location.href.split('?')[0]}?ae-address={address}&networkId={networkId}&step=0&flow=${flow}`,
+            'x-cancel': window.location.href.split('?')[0],
+          });
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error assign string to location for deep link redirect
+          window.location = addressDeepLink;
+        }
       }
       if (!pollAeBalanceInterval) {
         pollAeBalanceInterval = executeAndSetInterval(async () => {
