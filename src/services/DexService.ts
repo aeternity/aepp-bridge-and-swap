@@ -43,8 +43,10 @@ class DexService {
     newAccount: boolean,
   ) {
 
+    const search = new URLSearchParams(window.location.search);
     const query = {
-      transaction: new URLSearchParams(window.location.search).get('transaction'),
+      transaction: search.get('transaction'),
+      aeAddress: search.get('ae-address'),
     };
 
     if (query.transaction) {
@@ -73,7 +75,7 @@ class DexService {
     const isUserHaveEnoughCoins =
       userBalance > cost + Constants.ae_balance_threshold;
 
-    if ((window.navigator.userAgent.includes('Mobi') || isSafariBrowser()) && window.parent === window) {
+    if (query.aeAddress) {
       console.log('sendTxDeepLinkUrl');
        await new Promise((resolve) => setTimeout(resolve, 3000));
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -66,7 +66,6 @@ export default class WalletService {
   }
 
   static async getAeWethBalance(address: `ak_${string}`): Promise<bigint> {
-    console.log('getAeWethBalance');
     const tokenInstance = await Contract.initialize({
       ...aeSdk.getContext(),
       aci: aex9ACI,
@@ -87,7 +86,9 @@ export default class WalletService {
 
   static connectSuperHero(): Promise<string> {
     return new Promise((resolve, reject) => {
+      let walletFound = false;
       const handleWallets = async ({ wallets, newWallet }: any) => {
+        walletFound = true;
         try {
           newWallet ||= Object.values(wallets)[0];
           if (newWallet) {
@@ -113,6 +114,12 @@ export default class WalletService {
 
       const scannerConnection = new BrowserWindowMessageConnection();
       const stopScan = walletDetector(scannerConnection, handleWallets);
+      // Reject if no wallet found in 8 seconds
+      setTimeout(() => {
+        if (!walletFound) {
+          reject(new Error('Timeout'));
+        }
+      }, 8000);
     });
   }
 
