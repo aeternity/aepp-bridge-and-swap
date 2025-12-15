@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import type { Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
 import '../index.css';
 import { Tomorrow } from 'next/font/google';
 
@@ -91,45 +91,10 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <html lang="en" className={font.variable}>
-      <head>
-        <meta name="theme-color" content="#000000" />
-        <link rel="canonical" href={`${siteUrl}/`} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@graph': [
-                {
-                  '@type': 'WebSite',
-                  name: 'Superhero Swap',
-                  url: siteUrl + '/',
-                  description:
-                    'Superhero Swap is a Web3 DEX bridge on the æternity blockchain.',
-                  potentialAction: {
-                    '@type': 'SearchAction',
-                    target: `${siteUrl}/?q={search_term_string}`,
-                    'query-input': 'required name=search_term_string',
-                  },
-                },
-                {
-                  '@type': 'Organization',
-                  name: 'Superhero',
-                  url: siteUrl + '/',
-                  logo: {
-                    '@type': 'ImageObject',
-                    url: `${siteUrl}/assets/superheroswaplogo.svg`,
-                  },
-                },
-              ],
-            }),
-          }}
-        />
-      </head>
       <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root">{children}</div>

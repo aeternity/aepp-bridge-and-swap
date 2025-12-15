@@ -13,7 +13,7 @@ import {
   unpackTx,
 } from '@aeternity/aepp-sdk';
 import { Constants } from '../constants';
-import { isSafariBrowser, sendTxDeepLinkUrl } from '../helpers';
+import { sendTxDeepLinkUrl } from '../helpers';
 import { FlowType } from '../stores/exchangeStore';
 
 export async function postOrPayForTransaction(signedTransaction: `tx_${string}`, isPost: boolean) {

@@ -21,8 +21,8 @@ Token contract address: ct_mZPohW4DSd4EDQDoYesyo4Nd5Kbok76oV4EepKm45XLyBoQgL
 
 const WAE_MAINNET = "ct_J3zBY8xxjsRr3QojETNw48Eb38fjvEuJKkQ6KzECvubvEcvCa";
 const AE_ETH_MAINNET = "ct_ryTY1mxqjCjq1yBn9i6HDaCSdA6thXUFZTA84EMzbWd1SLKdh";
-const AE_ETH_PAIR_MAINNET =
-  "ct_2iV2XwSftHrigPZGLrTJkhpxYvRQCHRgQA9V8NiEkGNe5Vb8hB";
+// const AE_ETH_PAIR_MAINNET =
+//   "ct_2iV2XwSftHrigPZGLrTJkhpxYvRQCHRgQA9V8NiEkGNe5Vb8hB";
 const ROUTER_MAINNET = "ct_azbNZ1XrPjXfqBqbAh1ffLNTQ1sbnuUDFvJrXjYz7JQA1saQ3";
 
 const node = new Node("https://mainnet.aeternity.io"); // ideally host your own node
