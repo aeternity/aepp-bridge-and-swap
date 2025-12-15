@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.4.0...v1.5.0) (2025-12-15)
+
+
+### Features
+
+* support wallet inAppBrowser communication ([c00cbbb](https://github.com/aeternity/aepp-bridge-and-swap/commit/c00cbbb09c66078a85e621089d3a7f2d321afc6c))
+
 ## [1.4.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.3.0...v1.4.0) (2025-09-02)
 
 
