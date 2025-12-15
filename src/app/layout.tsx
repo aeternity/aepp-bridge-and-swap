@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { Viewport } from 'next';
 import '../index.css';
 import { Tomorrow } from 'next/font/google';
 
@@ -80,8 +81,11 @@ export const metadata: Metadata = {
       { url: '/logo192.png', sizes: '192x192' },
     ],
   },
-  themeColor: '#000000',
   category: 'technology',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#000000',
 };
 
 export default function RootLayout({

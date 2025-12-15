@@ -34,7 +34,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "npx serve@latest ./build",
+    "start": "next start",
     "test": "craco test"
   },
   "eslintConfig": {
