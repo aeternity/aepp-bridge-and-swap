@@ -87,13 +87,25 @@ export default class WalletService {
   static connectSuperHero(): Promise<string> {
     return new Promise((resolve, reject) => {
       let walletFound = false;
-      const handleWallets = async ({ wallets, newWallet }: any) => {
+
+      type WalletLike = {
+        getConnection: () => unknown;
+      };
+
+      type WalletDetectorEvent = {
+        wallets?: Record<string, WalletLike>;
+        newWallet?: WalletLike;
+      };
+
+      const handleWallets = async (event: unknown) => {
+        const { wallets, newWallet }: WalletDetectorEvent =
+          (event as WalletDetectorEvent) ?? {};
         walletFound = true;
         try {
-          newWallet ||= Object.values(wallets)[0];
-          if (newWallet) {
+          const selectedWallet = newWallet ?? Object.values(wallets ?? {})[0];
+          if (selectedWallet) {
             const walletInfo = await aeSdk.connectToWallet(
-              newWallet.getConnection(),
+              selectedWallet.getConnection() as Parameters<typeof aeSdk.connectToWallet>[0],
             );
             const {
               address: { current },
@@ -104,6 +116,8 @@ export default class WalletService {
             const address = Object.keys(current)[0];
             console.log(walletInfo, current);
             resolve(address);
+            stopScan();
+            return;
           }
           stopScan();
           reject();

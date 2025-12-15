@@ -71,7 +71,7 @@ const WizardFlowContainer = ({
   error?: string;
   content: React.ReactNode;
   buttonDisabled: boolean;
-  retry?: () => {};
+  retry?: () => void;
 }) => {
   const {
     flow,

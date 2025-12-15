@@ -7,7 +7,7 @@ export default class WebsocketService {
     amountWei: bigint,
     aeAddress: string,
   ): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       console.log("waiting for bridge to complete");
       this.client.addEventListener("message", async (rawMessage) => {
         const data = JSON.parse(rawMessage.data.toString());
