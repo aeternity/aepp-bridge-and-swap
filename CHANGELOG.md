@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.1](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.5.0...v1.5.1) (2025-12-15)
+
+
+### Miscellaneous
+
+* **fix:** address a warning ([8d11c2a](https://github.com/aeternity/aepp-bridge-and-swap/commit/8d11c2a66287973b534507d4b79f174fb6213460))
+* **fix:** address some build warnings ([6b294ca](https://github.com/aeternity/aepp-bridge-and-swap/commit/6b294caeaadd7d13ae35720b6e7f4271567688dc))
+* **fix:** fix lint erros ([285e2ae](https://github.com/aeternity/aepp-bridge-and-swap/commit/285e2aef54a837f27247e08e79d0a1cb2d1e3958))
+
 ## [1.5.0](https://github.com/aeternity/aepp-bridge-and-swap/compare/v1.4.0...v1.5.0) (2025-12-15)
 
 
