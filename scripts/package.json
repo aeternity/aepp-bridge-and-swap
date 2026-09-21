@@ -9,6 +9,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@aeternity/aepp-sdk": "^14.0.0"
+    "@aeternity/aepp-sdk": "^15.0.0"
   }
 }
